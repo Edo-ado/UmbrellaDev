@@ -11,3 +11,261 @@ generator client {
 datasource db {
   provider = "mysql"
 }
+
+//Enums
+  enum Role {
+    ADMIN
+    USUARIO
+    DESARROLLADOR
+    
+  }
+  enum MODALIDAD {
+    PRESENCIAL
+    VIRTUAL
+    HIBRIDA
+  }
+  enum ESTADOCITA {
+
+    PENDIENTE
+    CONFIRMADA
+    CANCELADA
+    COMPLETADA
+  }
+  enum Estado {
+    ACTIVO
+    INACTIVO
+    BANEADO
+  }
+//Enums
+
+
+
+//Models
+  model Usuario {
+    Id Int @id @default(autoincrement())
+    NombreCompleto String @db.VarChar(150)
+    Gmail String @db.VarChar(150) @unique
+    Contraseña String @db.VarChar(150)
+    Pais String @db.VarChar(100)
+    Edad Int? 
+
+
+    //Enums
+    Role Role @default(USUARIO)
+    Estado Estado @default(ACTIVO)
+
+    //logins
+    LastLogin DateTime @default(now())
+    CreatedAt DateTime @default(now())
+    updatedAt DateTime @default(now()) @updatedAt
+
+    //Conexiones  
+
+    citas Cita[]
+
+  } 
+  model Categoria{
+
+      Id Int @id @default(autoincrement())
+      Nombre String @db.VarChar(150) @unique
+      Descripcion String? @db.VarChar(500)
+
+      //Enums
+      estado Estado @default(ACTIVO)
+
+
+      //Conexiones  
+
+      especialidad Especialidad[] //una categoria puede tener muchas especialidades
+      servicio Servicio[] //una categoria puede tener muchos servicios
+
+  }
+  model Especialidad{
+      Id Int @id @default(autoincrement())
+      Nombre String @db.VarChar(150) @unique
+      Descripcion String? @db.VarChar(500)
+      estado Estado @default(ACTIVO)
+
+      //Conexiones  
+      CategoriaId Int
+      unicaCategoria Categoria @relation(fields: [CategoriaId], references: [Id]) //una especialidad pertenece a una categoria
+
+      serviciosEspecialidad ServicioEspecialidad[] //una especialidad puede tener muchos servicios
+      profesionalEspecialidad ProfesionalEspecialidad[] //una especialidad puede tener muchos profesionales
+
+  }
+  model Servicio{
+
+      Id Int @id @default(autoincrement())
+
+
+      Nombre String @db.VarChar(150)
+      Descripcion String? @db.VarChar(500)
+      Precio Float
+      Duracion Int? // Duración en minutos
+      estado Estado @default(ACTIVO)
+      Modalidad MODALIDAD @default(PRESENCIAL)
+
+      //logins
+      CreatedAt DateTime @default(now())
+      updatedAt DateTime @default(now()) @updatedAt 
+
+
+      //Conexiones  
+      idprofesional Int
+      profesional Profesional @relation(fields: [idprofesional], references: [id]) //un servicio pertenece a un profesional
+
+      idcategoria Int
+      categoria Categoria @relation(fields: [idcategoria], references: [Id]) //un servicio pertenece a una categoria
+
+      servicioEspecialidades ServicioEspecialidad[] //un servicio puede tener muchas especialidades
+
+      citas Cita[] //un servicio puede tener muchas citas
+
+  
+      imagenesServicios imagenesServicio[]
+  }
+  model ServicioEspecialidad {
+    
+    idServicio     Int 
+      servicio Servicio @relation(fields: [idServicio], references: [Id]) //un servicio puede tener muchas especialidades
+
+      idEspecialidad Int
+      especialidad Especialidad @relation(fields: [idEspecialidad], references: [Id]) //una especialidad puede tener muchos servicios
+    
+
+
+      @@id([idServicio, idEspecialidad])
+
+  }
+  model ProfesionalEspecialidad {
+      idProfesional  Int
+      profesional Profesional @relation(fields: [idProfesional], references: [id]) //un
+      idEspecialidad Int
+      especialidad Especialidad @relation(fields: [idEspecialidad], references: [Id])
+
+
+      @@id([idProfesional, idEspecialidad])
+      @@map("profesional_especialidades")
+  }
+  model Profesional {
+      id Int @id @default(autoincrement())
+      NombreCompleto String @db.VarChar(150)
+      Apellido String @db.VarChar(150)
+      Correo String @db.VarChar(150) @unique
+      Contraseña String @db.VarChar(150)
+      Telefono String @db.VarChar(20)
+      Descripcion String? @db.VarChar(500)
+      AnosExperiencia Int?
+      Ubicacion String? @db.VarChar(150)
+      FotoPerfil String? @db.VarChar(500)
+      TituloProfesional String? @db.VarChar(150)
+      Modalidad MODALIDAD @default(PRESENCIAL)
+      TarifaBase Float?
+      Disponibilidad String? @db.VarChar(500)
+      Estado Estado @default(ACTIVO)
+      Edad Int?
+      Universidad String? @db.VarChar(150)
+
+      //logins
+      LastLogin DateTime @default(now())
+      CreatedAt DateTime @default(now())
+      updatedAt DateTime @default(now()) @updatedAt
+
+
+
+      //Conexiones  
+
+      servicios Servicio[] //un profesional puede tener muchos servicios
+      profesionalEspecialidad ProfesionalEspecialidad[] //un profesional puede tener muchas especialidades
+
+
+    
+
+
+      citas Cita[]
+    
+      curriculumProfesionals curriculumProfesional[]
+
+      imagenesProfesionals imagenesProfesional[]
+  }
+  model Cita{
+      Id Int @id @default(autoincrement())
+
+
+      Fecha DateTime
+      Hora DateTime
+      Modalidad MODALIDAD @default(PRESENCIAL)
+      Descripcion String? @db.VarChar(500)
+      Comentarios String? @db.VarChar(500)
+      Estado ESTADOCITA @default(PENDIENTE)
+
+      //logins
+      CreatedAt DateTime @default(now())
+      updatedAt DateTime @default(now()) @updatedAt
+
+
+
+      //Conexiones  
+      idcliente Int
+      cliente Usuario @relation(fields: [idcliente], references: [Id]) //una cita pertenece a un cliente
+
+      idservicio Int
+      servicio Servicio @relation(fields: [idservicio], references: [Id]) //una cita pertenece a un servicio
+
+      idprofesional Int
+      profesional Profesional @relation(fields: [idprofesional], references: [id]) //una cita pertenece a un profesional
+
+
+
+  }
+  model Imagenes{
+      Id Int @id @default(autoincrement())
+      Url String @db.VarChar(500)
+
+      //Conexiones  
+
+      imagenesProfesionals imagenesProfesional[]
+  
+      imagenesServicios imagenesServicio[]
+  }
+  model Curriculum{
+
+    Id Int @id @default(autoincrement())
+    Url String @db.VarChar(500)
+
+
+    //Conexiones  
+   
+    
+    curriculumProfesionals curriculumProfesional[]
+  }
+  model curriculumProfesional{
+    idCurriculum Int
+    curriculum Curriculum @relation(fields: [idCurriculum], references: [Id])
+
+    idProfesional Int
+    profesional Profesional @relation(fields: [idProfesional], references: [id])
+
+    @@id([idCurriculum, idProfesional])
+  }
+  model imagenesProfesional{
+    idImagen Int
+    imagen Imagenes @relation(fields: [idImagen], references: [Id])
+
+    idProfesional Int
+    profesional Profesional @relation(fields: [idProfesional], references: [id])
+
+    @@id([idImagen, idProfesional])
+  }
+  model imagenesServicio{
+    idImagen Int
+    imagen Imagenes @relation(fields: [idImagen], references: [Id])
+
+    idServicio Int
+    servicio Servicio @relation(fields: [idServicio], references: [Id])
+
+    @@id([idImagen, idServicio])
+  }
+
+//Models
