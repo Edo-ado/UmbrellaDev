@@ -1,9 +1,11 @@
 import { Role } from "../generated/prisma/enums";
 import { prisma } from "../src/config/prisma";
+import bcrypt from "bcryptjs";
 async function main() {
 console.log("Iniciando seed...");
 
 
+  const passwordHash = await bcrypt.hash("1221", 10);
 
 // 1. Limpieza de datos
 
@@ -237,14 +239,14 @@ const [
       {
         NombreCompleto: 'Eduardo Ulloa Murillo',
         Gmail:          'edu18088@usuario.com',
-        Contraseña:     'hash_password',
+        Contraseña:     passwordHash,
         Pais:           'Costa Rica',
         Role:           Role.USUARIO,
       },
       {
         NombreCompleto: 'Ashley Sibaja Rojas',
         Gmail:          'Ashkithur@usuario.com',
-        Contraseña:     'hash_password',
+        Contraseña:     passwordHash,
         Pais:           'Costa Rica',
         Role:           Role.USUARIO,
       },
