@@ -172,19 +172,15 @@ datasource db {
       CreatedAt DateTime @default(now())
       updatedAt DateTime @default(now()) @updatedAt
 
-
-
       //Conexiones  
 
       servicios Servicio[] //un profesional puede tener muchos servicios
       profesionalEspecialidad ProfesionalEspecialidad[] //un profesional puede tener muchas especialidades
-
-
-    
+  
 
 
       citas Cita[]
-    
+
       curriculumProfesionals curriculumProfesional[]
 
       imagenesProfesionals imagenesProfesional[]
@@ -193,8 +189,7 @@ datasource db {
       Id Int @id @default(autoincrement())
 
 
-      Fecha DateTime
-      Hora DateTime
+      fechaHora       DateTime
       Modalidad MODALIDAD @default(PRESENCIAL)
       Descripcion String? @db.VarChar(500)
       Comentarios String? @db.VarChar(500)
@@ -215,10 +210,11 @@ datasource db {
 
       idprofesional Int
       profesional Profesional @relation(fields: [idprofesional], references: [id]) //una cita pertenece a un profesional
-
-
-
   }
+
+
+
+
   model Imagenes{
       Id Int @id @default(autoincrement())
       Url String @db.VarChar(500)
