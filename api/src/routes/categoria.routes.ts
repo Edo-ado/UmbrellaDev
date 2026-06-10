@@ -7,12 +7,14 @@ export class CategoriaRoutes {
     const categoriaController = new CategoriaController();
 
     router.get("/", categoriaController.getAll);
+    
+    router.get("/id/:id", categoriaController.getById);
 
     router.get("/buscar", categoriaController.getByName);
 
     router.get("/estado/:estado", categoriaController.getByEstado);
 
-    router.get("/id/:id", categoriaController.getById);
+    
 
     return router;
   }

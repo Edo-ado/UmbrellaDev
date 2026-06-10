@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { StatusCodes } from "http-status-codes";
-import { UsuarioService } from "../services/usuarios.service";
+import { UsuarioService } from "../services/usuario.service";
 import { MODALIDAD, Role } from "../../generated/prisma/enums";
 
 export class usuarioController {
