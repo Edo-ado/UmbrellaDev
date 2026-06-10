@@ -23,6 +23,16 @@ async function main() {
     await (model as any).deleteMany();
   }
 
+await prisma.$executeRaw`ALTER TABLE Cita AUTO_INCREMENT = 1`;
+await prisma.$executeRaw`ALTER TABLE ImagenesServicio AUTO_INCREMENT = 1`;
+await prisma.$executeRaw`ALTER TABLE ImagenesUsuario AUTO_INCREMENT = 1`;
+await prisma.$executeRaw`ALTER TABLE Curriculum AUTO_INCREMENT = 1`;
+await prisma.$executeRaw`ALTER TABLE Servicio AUTO_INCREMENT = 1`;
+await prisma.$executeRaw`ALTER TABLE Usuario AUTO_INCREMENT = 1`;
+await prisma.$executeRaw`ALTER TABLE Especialidad AUTO_INCREMENT = 1`;
+await prisma.$executeRaw`ALTER TABLE Categoria AUTO_INCREMENT = 1`;
+await prisma.$executeRaw`ALTER TABLE Imagenes AUTO_INCREMENT = 1`;
+
   //categorias
   await prisma.categoria.createMany({
     data: [
@@ -126,134 +136,134 @@ async function main() {
   const catMap = Object.fromEntries(categorias.map((c: { Id: number; Nombre: string }) => [c.Nombre, c.Id]));
   const espMap = Object.fromEntries(especialidades.map((e: { Id: number; Nombre: string }) => [e.Nombre, e.Id]));
 
-  //usuarios
-  await prisma.usuario.create({
-    data: {
-      NombreCompleto: "Carlos Méndez",
-      Email: "carlos@profesional.com",
-      Contraseña: passwordHash,
-      Pais: "Costa Rica",
-      Telefono: "8888-1111",
-      Role: Role.DESARROLLADOR,
-      Estado: Estado.ACTIVO,
-      Modalidad: MODALIDAD.HIBRIDA,
-      Descripcion: "Desarrollador backend especializado en APIs REST.",
-      AnosExperiencia: 5,
-      Ubicacion: "San José",
-      TituloProfesional: "Ingeniero en Sistemas",
-      TarifaBase: 18000,
-      Disponibilidad: true,
-      Universidad: "TEC",
-      especialidades: {
-        connect: [{ Id: espMap["NodeJS"] }, { Id: espMap["MySQL"] }],
+//usuarios
+    await prisma.usuario.create({
+      data: {
+        NombreCompleto: "Carlos Méndez",
+        Email: "carlos@profesional.com",
+        Contraseña: passwordHash,
+        Pais: "Costa Rica",
+        Telefono: "8888-1111",
+        Role: Role.DESARROLLADOR,
+        Estado: Estado.ACTIVO,
+        Modalidad: MODALIDAD.HIBRIDA,
+        Descripcion: "Desarrollador backend especializado en APIs REST.",
+        AnosExperiencia: 5,
+        Ubicacion: "San José",
+        TituloProfesional: "Ingeniero en Sistemas",
+        TarifaBase: 18000,
+        Disponibilidad: false,
+        Universidad: "TEC",
+        especialidades: {
+          connect: [{ Id: espMap["NodeJS"] }, { Id: espMap["MySQL"] }],
+        },
       },
-    },
-  });
+    });
 
-  await prisma.usuario.create({
-    data: {
-      NombreCompleto: "María Solano",
-      Email: "maria@profesional.com",
-      Contraseña: passwordHash,
-      Pais: "Costa Rica",
-      Telefono: "8888-1112",
-      Role: Role.DESARROLLADOR,
-      Estado: Estado.ACTIVO,
-      Modalidad: MODALIDAD.VIRTUAL,
-      Descripcion: "Especialista en frontend con Angular y UX.",
-      AnosExperiencia: 4,
-      Ubicacion: "San José",
-      TituloProfesional: "Ingeniera en Sistemas",
-      TarifaBase: 16000,
-      Disponibilidad: true,
-      Universidad: "UCR",
-      especialidades: {
-        connect: [{ Id: espMap["Angular"] }, { Id: espMap["React"] }, { Id: espMap["Css"] }],
+    await prisma.usuario.create({
+      data: {
+        NombreCompleto: "María Solano",
+        Email: "maria@profesional.com",
+        Contraseña: passwordHash,
+        Pais: "Costa Rica",
+        Telefono: "8888-1112",
+        Role: Role.DESARROLLADOR,
+        Estado: Estado.ACTIVO,
+        Modalidad: MODALIDAD.VIRTUAL,
+        Descripcion: "Especialista en frontend con Angular y UX.",
+        AnosExperiencia: 4,
+        Ubicacion: "San José",
+        TituloProfesional: "Ingeniera en Sistemas",
+        TarifaBase: 16000,
+         Disponibilidad: true,
+        Universidad: "UCR",
+        especialidades: {
+          connect: [{ Id: espMap["Angular"] }, { Id: espMap["React"] }, { Id: espMap["Css"] }],
+        },
       },
-    },
-  });
+    });
 
-  await prisma.usuario.create({
-    data: {
-      NombreCompleto: "Andrés Rojas",
-      Email: "andres@profesional.com",
-      Contraseña: passwordHash,
-      Pais: "Costa Rica",
-      Telefono: "8888-1113",
-      Role: Role.DESARROLLADOR,
-      Estado: Estado.ACTIVO,
-      Modalidad: MODALIDAD.PRESENCIAL,
-      Descripcion: "Técnico en mantenimiento de equipos de cómputo.",
-      AnosExperiencia: 6,
-      Ubicacion: "Alajuela",
-      TituloProfesional: "Ingeniero en Computación",
-      TarifaBase: 20000,
-      Disponibilidad: true,
-      Universidad: "TEC",
-      especialidades: {
-        connect: [{ Id: espMap["Laptops"] }, { Id: espMap["Computadoras"] }],
+    await prisma.usuario.create({
+      data: {
+        NombreCompleto: "Andrés Rojas",
+        Email: "andres@profesional.com",
+        Contraseña: passwordHash,
+        Pais: "Costa Rica",
+        Telefono: "8888-1113",
+        Role: Role.DESARROLLADOR,
+        Estado: Estado.ACTIVO,
+        Modalidad: MODALIDAD.PRESENCIAL,
+        Descripcion: "Técnico en mantenimiento de equipos de cómputo.",
+        AnosExperiencia: 6,
+        Ubicacion: "Alajuela",
+        TituloProfesional: "Ingeniero en Computación",
+        TarifaBase: 20000,
+        Disponibilidad: true,
+        Universidad: "TEC",
+        especialidades: {
+          connect: [{ Id: espMap["Laptops"] }, { Id: espMap["Computadoras"] }],
+        },
       },
-    },
-  });
+    });
 
-  await prisma.usuario.create({
-    data: {
-      NombreCompleto: "Sofía Vargas",
-      Email: "sofia@profesional.com",
-      Contraseña: passwordHash,
-      Pais: "Costa Rica",
-      Telefono: "8888-1114",
-      Role: Role.DESARROLLADOR,
-      Estado: Estado.ACTIVO,
-      Modalidad: MODALIDAD.VIRTUAL,
-      Descripcion: "Analista de datos con experiencia en Power BI y Python.",
-      AnosExperiencia: 3,
-      Ubicacion: "Heredia",
-      TituloProfesional: "Ingeniera en Estadística",
-      TarifaBase: 15000,
-      Disponibilidad: true,
-      Universidad: "UNA",
-      especialidades: {
-        connect: [{ Id: espMap["Power BI"] }, { Id: espMap["Excel"] }, { Id: espMap["Python"] }],
+    await prisma.usuario.create({
+      data: {
+        NombreCompleto: "Sofía Vargas",
+        Email: "sofia@profesional.com",
+        Contraseña: passwordHash,
+        Pais: "Costa Rica",
+        Telefono: "8888-1114",
+        Role: Role.DESARROLLADOR,
+        Estado: Estado.ACTIVO,
+        Modalidad: MODALIDAD.VIRTUAL,
+        Descripcion: "Analista de datos con experiencia en Power BI y Python.",
+        AnosExperiencia: 3,
+        Ubicacion: "Heredia",
+        TituloProfesional: "Ingeniera en Estadística",
+        TarifaBase: 15000,
+        Disponibilidad: true,
+        Universidad: "UNA",
+        especialidades: {
+          connect: [{ Id: espMap["Power BI"] }, { Id: espMap["Excel"] }, { Id: espMap["Python"] }],
+        },
       },
-    },
-  });
+    });
 
-  await prisma.usuario.create({
-    data: {
-      NombreCompleto: "Daniela Castro",
-      Email: "daniela@cliente.com",
-      Contraseña: passwordHash,
-      Pais: "Costa Rica",
-      Telefono: "8888-2222",
-      Role: Role.USUARIO,
-      Estado: Estado.ACTIVO,
-    },
-  });
+    await prisma.usuario.create({
+      data: {
+        NombreCompleto: "Daniela Castro",
+        Email: "daniela@cliente.com",
+        Contraseña: passwordHash,
+        Pais: "Costa Rica",
+        Telefono: "8888-2222",
+        Role: Role.USUARIO,
+        Estado: Estado.ACTIVO,
+      },
+    });
 
-  await prisma.usuario.create({
-    data: {
-      NombreCompleto: "Eduardo Ulloa",
-      Email: "eduardo@admin.com",
-      Contraseña: passwordHash,
-      Pais: "Costa Rica",
-      Telefono: "8888-0001",
-      Role: Role.ADMIN,
-      Estado: Estado.ACTIVO,
-    },
-  });
+    await prisma.usuario.create({
+      data: {
+        NombreCompleto: "Eduardo Ulloa",
+        Email: "eduardo@admin.com",
+        Contraseña: passwordHash,
+        Pais: "Costa Rica",
+        Telefono: "8888-0001",
+        Role: Role.ADMIN,
+        Estado: Estado.ACTIVO,
+      },
+    });
 
-  await prisma.usuario.create({
-    data: {
-      NombreCompleto: "Ashley Sibaja",
-      Email: "ashley@admin.com",
-      Contraseña: passwordHash,
-      Pais: "Costa Rica",
-      Telefono: "8888-0002",
-      Role: Role.ADMIN,
-      Estado: Estado.ACTIVO,
-    },
-  });
+    await prisma.usuario.create({
+      data: {
+        NombreCompleto: "Ashley Sibaja",
+        Email: "ashley@admin.com",
+        Contraseña: passwordHash,
+        Pais: "Costa Rica",
+        Telefono: "8888-0002",
+        Role: Role.ADMIN,
+        Estado: Estado.ACTIVO,
+      },
+    });
 
   const usuarios = await prisma.usuario.findMany({ select: { Id: true, Email: true } });
   const userMap: Record<string, number> = Object.fromEntries( usuarios.map((u: { Id: number; Email: string }) => [u.Email, u.Id]));
