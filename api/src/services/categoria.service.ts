@@ -44,4 +44,6 @@ export const CategoriaService = {
       },
     });
   },
+
+  async toggleStatus(Id: number) {}, //por hacer
 };

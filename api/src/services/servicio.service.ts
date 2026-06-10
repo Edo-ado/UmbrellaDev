@@ -1,4 +1,4 @@
-import { Estado, MODALIDAD, Role } from "../../generated/prisma/enums";
+import {  MODALIDAD } from "../../generated/prisma/enums";
 import { prisma } from "../config/prisma";
 
 export const ServicioServices = {
@@ -45,6 +45,17 @@ export const ServicioServices = {
     });
   },
 
+  async searchByName(Nombre: string) {
+    return await prisma.servicio.findMany({
+      where: { Nombre: { contains: Nombre } },
+      include: {
+        profesional: true,
+        categoria: true,
+        servicioEspecialidades: true,
+      },
+    });
+  },
+
   async getByModalidad(modalidad: MODALIDAD) {
     return await prisma.servicio.findMany({
       where: { Modalidad: modalidad },
@@ -71,4 +82,10 @@ export const ServicioServices = {
       },
     });
   },
+
+  async toggleStatus() {}, //por hacer
+
+  async create() {}, //por hacer
+  
+  async update() {}, //por hacer
 };

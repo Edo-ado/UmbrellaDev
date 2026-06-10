@@ -1,4 +1,4 @@
-import { Estado, MODALIDAD, Role } from "../../generated/prisma/enums";
+import {  MODALIDAD, Role } from "../../generated/prisma/enums";
 import { prisma } from "../config/prisma";
 
 export const UsuarioService = {
@@ -33,4 +33,10 @@ export const UsuarioService = {
       include: { especialidades: true },
     });
   },
+
+  async toggleStatus(Id: Number) {}, //por hacer
+
+  async create(/*Mucha vaina*/) {}, //por hacer
+
+   async update(/*Mucha vaina*/) {}, //por hacer
 };

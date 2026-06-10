@@ -32,4 +32,6 @@ export const EspecialidadService = {
       omit: { CategoriaId: true },
     });
   },
+
+  async toggleStatus(Id: number) {}, //por hacer
 };
