@@ -1,83 +1,49 @@
-import { Role } from "../generated/prisma/enums";
 import { prisma } from "../src/config/prisma";
+import { Role, ESTADOCITA, Estado, MODALIDAD } from "../generated/prisma/client";
 import bcrypt from "bcryptjs";
+
 async function main() {
   console.log("Iniciando seed...");
 
   const passwordHash = await bcrypt.hash("1221", 10);
 
-  // 1. Limpieza de datos
-
+  //limmpieza
   const models = [
-    prisma.usuario,
-    prisma.categoria,
-    prisma.especialidad,
-    prisma.servicio,
-    prisma.cita,
-    prisma.imagenes,
-    prisma.curriculum,
     prisma.imagenesServicio,
-    prisma.imagenesUsuario
-    ,
+    prisma.imagenesUsuario,
+    prisma.imagenes,
+    prisma.cita,
+    prisma.servicio,
+    prisma.curriculum,
+    prisma.especialidad,
+    prisma.categoria,
+    prisma.usuario,
   ];
   for (const model of models) {
     await (model as any).deleteMany();
   }
 
-  // 2. Creación de datos maestros (Independientes)
-
-
+  //categorias
   await prisma.categoria.createMany({
     data: [
-      {
-        Nombre: "Desarrollo de software",
-        Descripcion: "Servicios de desarrollo y programación de software.",
-      },
-      {
-        Nombre: "Mantenimientos de Computadoras",
-        Descripcion: "Reparación y mantenimiento de equipos de cómputo.",
-      },
-      {
-        Nombre: "Mantenimiento de Consolas",
-        Descripcion: "Reparación y mantenimiento de consolas de videojuegos.",
-      },
+      { Nombre: "Desarrollo de software", Descripcion: "Servicios de desarrollo y programación de software." },
+      { Nombre: "Mantenimientos de Computadoras", Descripcion: "Reparación y mantenimiento de equipos de cómputo." },
+      { Nombre: "Mantenimiento de Consolas", Descripcion: "Reparación y mantenimiento de consolas de videojuegos." },
       { Nombre: "Hogar", Descripcion: "Servicios y productos para el hogar." },
-      {
-        Nombre: "Arreglo de Celulares",
-        Descripcion: "Reparación de dispositivos móviles.",
-      },
-      {
-        Nombre: "Magia (Consolas)",
-        Descripcion: "Modificaciones y desbloqueados especiales para consolas.",
-      },
-      {
-        Nombre: "Asesoramiento",
-        Descripcion: "Consultoría y orientación técnica.",
-      },
-      {
-        Nombre: "Análisis de datos",
-        Descripcion: "Procesamiento, análisis y visualización de datos.",
-      },
+      { Nombre: "Arreglo de Celulares", Descripcion: "Reparación de dispositivos móviles." },
+      { Nombre: "Magia (Consolas)", Descripcion: "Modificaciones y desbloqueados especiales para consolas." },
+      { Nombre: "Asesoramiento", Descripcion: "Consultoría y orientación técnica." },
+      { Nombre: "Análisis de datos", Descripcion: "Procesamiento, análisis y visualización de datos." },
     ],
   });
 
   const [
-    catSoftware,
-    catComputadoras,
-    catConsolas,
-    catHogar,
-    catCelulares,
-    catMagia,
-    catAsesoramiento,
-    catAnalisisDatos,
+    catSoftware, catComputadoras, catConsolas, catHogar,
+    catCelulares, catMagia, catAsesoramiento, catAnalisisDatos,
   ] = await Promise.all([
     prisma.categoria.findFirst({ where: { Nombre: "Desarrollo de software" } }),
-    prisma.categoria.findFirst({
-      where: { Nombre: "Mantenimientos de Computadoras" },
-    }),
-    prisma.categoria.findFirst({
-      where: { Nombre: "Mantenimiento de Consolas" },
-    }),
+    prisma.categoria.findFirst({ where: { Nombre: "Mantenimientos de Computadoras" } }),
+    prisma.categoria.findFirst({ where: { Nombre: "Mantenimiento de Consolas" } }),
     prisma.categoria.findFirst({ where: { Nombre: "Hogar" } }),
     prisma.categoria.findFirst({ where: { Nombre: "Arreglo de Celulares" } }),
     prisma.categoria.findFirst({ where: { Nombre: "Magia (Consolas)" } }),
@@ -85,24 +51,14 @@ async function main() {
     prisma.categoria.findFirst({ where: { Nombre: "Análisis de datos" } }),
   ]);
 
-  if (
-    !catSoftware ||
-    !catComputadoras ||
-    !catConsolas ||
-    !catHogar ||
-    !catCelulares ||
-    !catMagia ||
-    !catAsesoramiento ||
-    !catAnalisisDatos
-  ) {
-    throw new Error(
-      "Error: no se encontraron todas las categorías. Verificá el paso anterior.",
-    );
+  if (!catSoftware || !catComputadoras || !catConsolas || !catHogar ||
+      !catCelulares || !catMagia || !catAsesoramiento || !catAnalisisDatos) {
+    throw new Error("Error: no se encontraron todas las categorías.");
   }
 
+  //especialidades
   await prisma.especialidad.createMany({
     data: [
-      // ── Desarrollo de software ──────────────────────────────
       { Nombre: "Html", CategoriaId: catSoftware.Id },
       { Nombre: "Oracle", CategoriaId: catSoftware.Id },
       { Nombre: "Css", CategoriaId: catSoftware.Id },
@@ -131,8 +87,6 @@ async function main() {
       { Nombre: "Git", CategoriaId: catSoftware.Id },
       { Nombre: "Terraform", CategoriaId: catSoftware.Id },
       { Nombre: "Cisco", CategoriaId: catSoftware.Id },
-
-      // ── Mantenimiento de Computadoras ───────────────────────
       { Nombre: "Computadoras", CategoriaId: catComputadoras.Id },
       { Nombre: "Laptops", CategoriaId: catComputadoras.Id },
       { Nombre: "Monitores", CategoriaId: catComputadoras.Id },
@@ -147,89 +101,18 @@ async function main() {
       { Nombre: "Webcams", CategoriaId: catComputadoras.Id },
       { Nombre: "Parlantes", CategoriaId: catComputadoras.Id },
       { Nombre: "Micrófonos", CategoriaId: catComputadoras.Id },
-
-      // ── Mantenimiento de Consolas ───────────────────────────
-      { Nombre: "Play Station 1", CategoriaId: catConsolas.Id },
-      { Nombre: "Play Station 2", CategoriaId: catConsolas.Id },
-      { Nombre: "Play Station 3", CategoriaId: catConsolas.Id },
       { Nombre: "Play Station 4", CategoriaId: catConsolas.Id },
-      { Nombre: "Play Station 4 Slim", CategoriaId: catConsolas.Id },
-      { Nombre: "Play Station 4 Pro", CategoriaId: catConsolas.Id },
-      { Nombre: "Play Station 5 Pro", CategoriaId: catConsolas.Id },
-      { Nombre: "Play Station 5 Slim", CategoriaId: catConsolas.Id },
-      { Nombre: "Play Station 5 Digital", CategoriaId: catConsolas.Id },
-      { Nombre: "Nintendo DS", CategoriaId: catConsolas.Id },
-      { Nombre: "Nintendo 3DS", CategoriaId: catConsolas.Id },
-      { Nombre: "Nintendo WII", CategoriaId: catConsolas.Id },
-      { Nombre: "Nintendo WII U", CategoriaId: catConsolas.Id },
       { Nombre: "Nintendo Switch", CategoriaId: catConsolas.Id },
-      { Nombre: "Nintendo Switch Oled", CategoriaId: catConsolas.Id },
-      { Nombre: "Nintendo Switch Lite", CategoriaId: catConsolas.Id },
-      { Nombre: "Nintendo Switch 2", CategoriaId: catConsolas.Id },
-      { Nombre: "Nintendo 64", CategoriaId: catConsolas.Id },
-      { Nombre: "Super Nintendo", CategoriaId: catConsolas.Id },
-      { Nombre: "Nintendo Gamecube", CategoriaId: catConsolas.Id },
-      { Nombre: "Gameboy Color", CategoriaId: catConsolas.Id },
-      { Nombre: "GameBoy", CategoriaId: catConsolas.Id },
-      { Nombre: "Xbox", CategoriaId: catConsolas.Id },
-      { Nombre: "Xbox 360", CategoriaId: catConsolas.Id },
-      { Nombre: "Xbox 360 S", CategoriaId: catConsolas.Id },
-      { Nombre: "Xbox 360 E", CategoriaId: catConsolas.Id },
       { Nombre: "Xbox One", CategoriaId: catConsolas.Id },
-      { Nombre: "Xbox One S", CategoriaId: catConsolas.Id },
-      { Nombre: "Xbox One X", CategoriaId: catConsolas.Id },
-      { Nombre: "Xbox Series X|S", CategoriaId: catConsolas.Id },
-      { Nombre: "SteamDeck", CategoriaId: catConsolas.Id },
-      { Nombre: "SteamMachine", CategoriaId: catConsolas.Id },
-      { Nombre: "Joy-Con", CategoriaId: catConsolas.Id },
-      { Nombre: "Joy-Con 2", CategoriaId: catConsolas.Id },
-      { Nombre: "DualSense", CategoriaId: catConsolas.Id },
-      { Nombre: "Dualshock", CategoriaId: catConsolas.Id },
-      { Nombre: "Dualshock 2", CategoriaId: catConsolas.Id },
-      { Nombre: "Dualshock 3", CategoriaId: catConsolas.Id },
-      { Nombre: "Dualshock 4", CategoriaId: catConsolas.Id },
-      { Nombre: "Controles XBOX", CategoriaId: catConsolas.Id },
-
-      // ── Hogar ───────────────────────────────────────────────
       { Nombre: "Iluminación", CategoriaId: catHogar.Id },
-      { Nombre: "Sonido", CategoriaId: catHogar.Id },
       { Nombre: "Electrodomésticos", CategoriaId: catHogar.Id },
-      { Nombre: "Refrigeradoras", CategoriaId: catHogar.Id },
-      { Nombre: "Lavadoras", CategoriaId: catHogar.Id },
-      { Nombre: "Secadoras", CategoriaId: catHogar.Id },
-      { Nombre: "Cocina", CategoriaId: catHogar.Id },
-      { Nombre: "Horno", CategoriaId: catHogar.Id },
-      { Nombre: "Ventiladores", CategoriaId: catHogar.Id },
-      { Nombre: "Aires Acondicionados", CategoriaId: catHogar.Id },
-
-      // ── Arreglo de Celulares ────────────────────────────────
       { Nombre: "iPhone", CategoriaId: catCelulares.Id },
-      { Nombre: "Huawei", CategoriaId: catCelulares.Id },
-      { Nombre: "Xiaomi", CategoriaId: catCelulares.Id },
       { Nombre: "Samsung", CategoriaId: catCelulares.Id },
-      { Nombre: "Honor", CategoriaId: catCelulares.Id },
-      { Nombre: "Nokia", CategoriaId: catCelulares.Id },
-      { Nombre: "BlackBerry", CategoriaId: catCelulares.Id },
-      { Nombre: "Motorola", CategoriaId: catCelulares.Id },
-
-      // ── Magia (Consolas) ────────────────────────────────────
       { Nombre: "Switch Arista", CategoriaId: catMagia.Id },
-      { Nombre: "Switch Mariko", CategoriaId: catMagia.Id },
-      { Nombre: "Switch Oled", CategoriaId: catMagia.Id },
       { Nombre: "PS4 Jailbreak", CategoriaId: catMagia.Id },
-      { Nombre: "PS3 Jailbreak", CategoriaId: catMagia.Id },
-      { Nombre: "DS Flashcard", CategoriaId: catMagia.Id },
-      { Nombre: "3DS Custom Firmware", CategoriaId: catMagia.Id },
-
-      // ── Asesoramiento ───────────────────────────────────────
       { Nombre: "Componentes", CategoriaId: catAsesoramiento.Id },
-      { Nombre: "Cuidados de Equipos", CategoriaId: catAsesoramiento.Id },
-      { Nombre: "Sistemas eléctricos", CategoriaId: catAsesoramiento.Id },
       { Nombre: "Problemas de Software", CategoriaId: catAsesoramiento.Id },
-
-      // ── Análisis de datos ───────────────────────────────────
       { Nombre: "Machine learning", CategoriaId: catAnalisisDatos.Id },
-      { Nombre: "Optimización de procesos", CategoriaId: catAnalisisDatos.Id },
       { Nombre: "Power BI", CategoriaId: catAnalisisDatos.Id },
       { Nombre: "Excel", CategoriaId: catAnalisisDatos.Id },
       { Nombre: "Python", CategoriaId: catAnalisisDatos.Id },
@@ -238,10 +121,311 @@ async function main() {
     ],
   });
 
-  //Usuarios simples
+  const categorias = await prisma.categoria.findMany();
+  const especialidades = await prisma.especialidad.findMany();
+  const catMap = Object.fromEntries(categorias.map((c: { Id: number; Nombre: string }) => [c.Nombre, c.Id]));
+  const espMap = Object.fromEntries(especialidades.map((e: { Id: number; Nombre: string }) => [e.Nombre, e.Id]));
+
+  //usuarios
+  await prisma.usuario.create({
+    data: {
+      NombreCompleto: "Carlos Méndez",
+      Email: "carlos@profesional.com",
+      Contraseña: passwordHash,
+      Pais: "Costa Rica",
+      Telefono: "8888-1111",
+      Role: Role.DESARROLLADOR,
+      Estado: Estado.ACTIVO,
+      Modalidad: MODALIDAD.HIBRIDA,
+      Descripcion: "Desarrollador backend especializado en APIs REST.",
+      AnosExperiencia: 5,
+      Ubicacion: "San José",
+      TituloProfesional: "Ingeniero en Sistemas",
+      TarifaBase: 18000,
+      Disponibilidad: true,
+      Universidad: "TEC",
+      especialidades: {
+        connect: [{ Id: espMap["NodeJS"] }, { Id: espMap["MySQL"] }],
+      },
+    },
+  });
+
+  await prisma.usuario.create({
+    data: {
+      NombreCompleto: "María Solano",
+      Email: "maria@profesional.com",
+      Contraseña: passwordHash,
+      Pais: "Costa Rica",
+      Telefono: "8888-1112",
+      Role: Role.DESARROLLADOR,
+      Estado: Estado.ACTIVO,
+      Modalidad: MODALIDAD.VIRTUAL,
+      Descripcion: "Especialista en frontend con Angular y UX.",
+      AnosExperiencia: 4,
+      Ubicacion: "San José",
+      TituloProfesional: "Ingeniera en Sistemas",
+      TarifaBase: 16000,
+      Disponibilidad: true,
+      Universidad: "UCR",
+      especialidades: {
+        connect: [{ Id: espMap["Angular"] }, { Id: espMap["React"] }, { Id: espMap["Css"] }],
+      },
+    },
+  });
+
+  await prisma.usuario.create({
+    data: {
+      NombreCompleto: "Andrés Rojas",
+      Email: "andres@profesional.com",
+      Contraseña: passwordHash,
+      Pais: "Costa Rica",
+      Telefono: "8888-1113",
+      Role: Role.DESARROLLADOR,
+      Estado: Estado.ACTIVO,
+      Modalidad: MODALIDAD.PRESENCIAL,
+      Descripcion: "Técnico en mantenimiento de equipos de cómputo.",
+      AnosExperiencia: 6,
+      Ubicacion: "Alajuela",
+      TituloProfesional: "Ingeniero en Computación",
+      TarifaBase: 20000,
+      Disponibilidad: true,
+      Universidad: "TEC",
+      especialidades: {
+        connect: [{ Id: espMap["Laptops"] }, { Id: espMap["Computadoras"] }],
+      },
+    },
+  });
+
+  await prisma.usuario.create({
+    data: {
+      NombreCompleto: "Sofía Vargas",
+      Email: "sofia@profesional.com",
+      Contraseña: passwordHash,
+      Pais: "Costa Rica",
+      Telefono: "8888-1114",
+      Role: Role.DESARROLLADOR,
+      Estado: Estado.ACTIVO,
+      Modalidad: MODALIDAD.VIRTUAL,
+      Descripcion: "Analista de datos con experiencia en Power BI y Python.",
+      AnosExperiencia: 3,
+      Ubicacion: "Heredia",
+      TituloProfesional: "Ingeniera en Estadística",
+      TarifaBase: 15000,
+      Disponibilidad: true,
+      Universidad: "UNA",
+      especialidades: {
+        connect: [{ Id: espMap["Power BI"] }, { Id: espMap["Excel"] }, { Id: espMap["Python"] }],
+      },
+    },
+  });
+
+  await prisma.usuario.create({
+    data: {
+      NombreCompleto: "Daniela Castro",
+      Email: "daniela@cliente.com",
+      Contraseña: passwordHash,
+      Pais: "Costa Rica",
+      Telefono: "8888-2222",
+      Role: Role.USUARIO,
+      Estado: Estado.ACTIVO,
+    },
+  });
+
+  await prisma.usuario.create({
+    data: {
+      NombreCompleto: "Eduardo Ulloa",
+      Email: "eduardo@admin.com",
+      Contraseña: passwordHash,
+      Pais: "Costa Rica",
+      Telefono: "8888-0001",
+      Role: Role.ADMIN,
+      Estado: Estado.ACTIVO,
+    },
+  });
+
+  await prisma.usuario.create({
+    data: {
+      NombreCompleto: "Ashley Sibaja",
+      Email: "ashley@admin.com",
+      Contraseña: passwordHash,
+      Pais: "Costa Rica",
+      Telefono: "8888-0002",
+      Role: Role.ADMIN,
+      Estado: Estado.ACTIVO,
+    },
+  });
+
+  const usuarios = await prisma.usuario.findMany({ select: { Id: true, Email: true } });
+  const userMap: Record<string, number> = Object.fromEntries( usuarios.map((u: { Id: number; Email: string }) => [u.Email, u.Id]));
+
+  //servicios
+  await prisma.servicio.create({
+    data: {
+      Nombre: "Desarrollo de API REST",
+      Descripcion: "API con Node.js, Prisma y MySQL.",
+      Precio: 95000,
+      Duracion: 480,
+      Estado: Estado.ACTIVO,
+      Modalidad: MODALIDAD.HIBRIDA,
+      profesional: { connect: { Id: userMap["carlos@profesional.com"] } },
+      categoria: { connect: { Id: catMap["Desarrollo de software"] } },
+      servicioEspecialidades: {
+        connect: [{ Id: espMap["NodeJS"] }, { Id: espMap["MySQL"] }],
+      },
+    },
+  });
+
+  await prisma.servicio.create({
+    data: {
+      Nombre: "Landing page en Angular",
+      Descripcion: "Sitio responsivo con Angular y CSS moderno.",
+      Precio: 70000,
+      Duracion: 360,
+      Estado: Estado.ACTIVO,
+      Modalidad: MODALIDAD.VIRTUAL,
+      profesional: { connect: { Id: userMap["maria@profesional.com"] } },
+      categoria: { connect: { Id: catMap["Desarrollo de software"] } },
+      servicioEspecialidades: {
+        connect: [{ Id: espMap["Angular"] }, { Id: espMap["Css"] }, { Id: espMap["Html"] }],
+      },
+    },
+  });
+
+  await prisma.servicio.create({
+    data: {
+      Nombre: "Mantenimiento preventivo de laptop",
+      Descripcion: "Limpieza interna, cambio de pasta térmica y revisión general.",
+      Precio: 25000,
+      Duracion: 120,
+      Estado: Estado.ACTIVO,
+      Modalidad: MODALIDAD.PRESENCIAL,
+      profesional: { connect: { Id: userMap["andres@profesional.com"] } },
+      categoria: { connect: { Id: catMap["Mantenimientos de Computadoras"] } },
+      servicioEspecialidades: {
+        connect: [{ Id: espMap["Laptops"] }, { Id: espMap["Computadoras"] }],
+      },
+    },
+  });
+
+  await prisma.servicio.create({
+    data: {
+      Nombre: "Dashboard en Power BI",
+      Descripcion: "Construcción de tablero interactivo para análisis empresarial.",
+      Precio: 85000,
+      Duracion: 300,
+      Estado: Estado.INACTIVO,
+      Modalidad: MODALIDAD.VIRTUAL,
+      profesional: { connect: { Id: userMap["sofia@profesional.com"] } },
+      categoria: { connect: { Id: catMap["Análisis de datos"] } },
+      servicioEspecialidades: {
+        connect: [{ Id: espMap["Power BI"] }, { Id: espMap["Excel"] }],
+      },
+    },
+  });
+
+  const servicios = await prisma.servicio.findMany({ select: { Id: true, Nombre: true } });
+  const servicioMap: Record<string, number> = Object.fromEntries(servicios.map((s: { Id: number; Nombre: string }) => [s.Nombre, s.Id]) );
+
+  //citas
+  await prisma.cita.createMany({
+    data: [
+      {
+        idcliente: userMap["daniela@cliente.com"],
+        idprofesional: userMap["carlos@profesional.com"],
+        idservicio: servicioMap["Desarrollo de API REST"],
+        fechaHora: new Date("2026-06-15"),
+        Modalidad: MODALIDAD.VIRTUAL,
+        Descripcion: "Necesito una API REST para gestión de usuarios.",
+        Estado: ESTADOCITA.PENDIENTE,
+      },
+      {
+        idcliente: userMap["daniela@cliente.com"],
+        idprofesional: userMap["sofia@profesional.com"],
+        idservicio: servicioMap["Dashboard en Power BI"],
+        fechaHora: new Date("2026-06-16"),
+        Modalidad: MODALIDAD.VIRTUAL,
+        Descripcion: "Ocupo un dashboard para ventas mensuales.",
+        Estado: ESTADOCITA.PENDIENTE,
+      },
+      {
+        idcliente: userMap["daniela@cliente.com"],
+        idprofesional: userMap["andres@profesional.com"],
+        idservicio: servicioMap["Mantenimiento preventivo de laptop"],
+        fechaHora: new Date("2026-06-17"),
+        Modalidad: MODALIDAD.PRESENCIAL,
+        Descripcion: "Mi laptop se apaga sola.",
+        Estado: ESTADOCITA.PENDIENTE,
+      },
+      {
+        idcliente: userMap["daniela@cliente.com"],
+        idprofesional: userMap["maria@profesional.com"],
+        idservicio: servicioMap["Landing page en Angular"],
+        fechaHora: new Date("2026-06-18"),
+        Modalidad: MODALIDAD.VIRTUAL,
+        Descripcion: "Quiero una landing moderna para mi negocio.",
+        Estado: ESTADOCITA.PENDIENTE,
+      },
+    ],
+  });
+
+  //imgs
+  await prisma.imagenes.createMany({
+    data: [
+      { Url: "https://picsum.photos/seed/pro1/400/400" },
+      { Url: "https://picsum.photos/seed/pro2/400/400" },
+      { Url: "https://picsum.photos/seed/pro3/400/400" },
+      { Url: "https://picsum.photos/seed/pro4/400/400" },
+      { Url: "https://picsum.photos/seed/serv1/600/400" },
+      { Url: "https://picsum.photos/seed/serv2/600/400" },
+    ],
+  });
+
+  const imagenes = await prisma.imagenes.findMany({ select: { Id: true, Url: true } });
+  const imagenMap: Record<string, number> = Object.fromEntries(
+    imagenes.map((i: { Id: number; Url: string }) => [i.Url, i.Id])
+  );
+
+  //cvs
+  await prisma.curriculum.createMany({
+    data: [
+      {
+        Url: "https://example.com/cv-andres.pdf",
+        UsuarioID: userMap["andres@profesional.com"],
+      },
+    ],
+  });
+
+  //imagenservicio
+  await prisma.imagenesServicio.createMany({
+    data: [
+      {
+        idServicio: servicioMap["Desarrollo de API REST"],
+        idImagen: imagenMap["https://picsum.photos/seed/serv1/600/400"],
+      },
+      {
+        idServicio: servicioMap["Landing page en Angular"],
+        idImagen: imagenMap["https://picsum.photos/seed/serv2/600/400"],
+      },
+    ],
+  });
+
+  //img usuario
+  await prisma.imagenesUsuario.createMany({
+    data: [
+      {
+        idImagen: imagenMap["https://picsum.photos/seed/pro1/400/400"],
+        idUsuario: userMap["carlos@profesional.com"],
+      },
+      {
+        idImagen: imagenMap["https://picsum.photos/seed/pro2/400/400"],
+        idUsuario: userMap["maria@profesional.com"],
+      },
+    ],
+  });
 
   console.log("Seed completado con éxito.");
 }
+
 main()
   .catch((e) => {
     console.error("Error en seed:", e);
