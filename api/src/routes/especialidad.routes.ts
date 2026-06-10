@@ -8,7 +8,11 @@ export class especialidadRoutes {
         const especialidadcontroller = new EspecialidadController();
 
         router.get('/', especialidadcontroller.getAll)
-        router.get('/:id', especialidadcontroller.getById)
+      router.get("/buscar", especialidadcontroller.getByName);
+
+    router.get("/estado/:estado", especialidadcontroller.getByEstado);
+
+    router.get("/id/:id", especialidadcontroller.getById);
         return router;
     }
 }
