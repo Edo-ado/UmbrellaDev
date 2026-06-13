@@ -1,4 +1,4 @@
-import { ESTADOCITA } from "../../generated/prisma/enums";
+import { Estado, ESTADOCITA } from "../../generated/prisma/enums";
 import { prisma } from "../config/prisma";
 
 export const CitaServices = {
@@ -56,9 +56,12 @@ export const CitaServices = {
     });
   },
 
-  async toggleStatus() {}, //por hacer
+  async toggleStatus(id: number) {
+    const cita = await this.getById(id);
+    
+  
+  }, 
 
   async create() {}, //por hacer
 
-  async update() {}, //por hacer
 };
