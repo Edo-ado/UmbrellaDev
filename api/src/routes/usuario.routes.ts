@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { usuarioController } from "../controllers/usuario.controller";
+import { asyncHandler } from "../middlewares/async-handler.middleware";
 
 //La api reconoce primero los que estan hasta arriba es decir que si hay alguna busqueda que tenga que ser con numero
 // o se especifica como se hace abajo o se deja hasta el final
@@ -16,6 +17,9 @@ export class usuarioRoutes {
     router.get("/modalidad/:modalidad",usuariosController.getByModalidad)
     router.get('/disponibilidad/:disponibilidad', usuariosController.getByDisponibilidad)
     router.get('/buscar',usuariosController.searchByName)
+    router.post("/", asyncHandler(usuariosController.crear));
+    router.put("/:id", asyncHandler(usuariosController.update));
+    router.patch("/:id/toggle-status", asyncHandler(usuariosController.toggleStatus));
 
     //Metodos para conseguir datos especificos
 

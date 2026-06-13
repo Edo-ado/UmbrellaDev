@@ -91,4 +91,18 @@ export class citaController {
       const citas = await CitaServices.getByFechas(min, max);
       response.json(citas);
     };
+
+toggleStatus = async (request: Request,response: Response,next: NextFunction,) => {
+  try {
+    const id = Number(request.params.id);
+    const cita = await CitaServices.toggleStatus(id);
+
+    return response.status(StatusCodes.OK).json(cita);
+  } catch (error) {
+    next(error);
+  }
+};
+
+
+
 }
