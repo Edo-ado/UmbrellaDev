@@ -40,25 +40,24 @@ export const CitaServices = {
     });
   },
 
-  async getByFechas(DiaInicial: Date, DiaFinal: Date) {
-    return await prisma.cita.findMany({
-      where: {
-        fechaHora: {
-          gte: DiaInicial,
-          lte: DiaFinal,
-        },
+async getByFechas(DiaInicial: Date, DiaFinal: Date) {
+  return await prisma.cita.findMany({
+    where: {
+      Fecha: {
+        gte: DiaInicial,
+        lte: DiaFinal,
       },
-      include: {
-        cliente: true,
-        profesional: true,
-        servicio: true,
-      },
-    });
-  },
+    },
+    include: {
+      cliente: true,
+      profesional: true,
+      servicio: true,
+    }
+  });
+},
 
-  async toggleStatus(id: number) {
-    const cita = await this.getById(id);
-    
+  async toggleStatus() {//por hacer
+
   
   }, 
 

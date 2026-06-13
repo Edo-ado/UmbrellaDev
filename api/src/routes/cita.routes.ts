@@ -16,9 +16,7 @@ export class citasRoutes {
     router.get("/fechas", citaControlleer.getByFechas);
 
     router.get("/estado/:estado", citaControlleer.getByStatus);
-        router.patch("/:id/toggle-status", asyncHandler(citaControlleer.toggleStatus));
-    
-
+  
     return router;
   }
 }
