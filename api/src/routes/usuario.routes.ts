@@ -15,6 +15,7 @@ export class usuarioRoutes {
     router.get("/rol/:rol", usuariosController.getByRol);
     router.get("/modalidad/:modalidad",usuariosController.getByModalidad)
     router.get('/disponibilidad/:disponibilidad', usuariosController.getByDisponibilidad)
+    router.get('/buscar',usuariosController.searchByName)
 
     //Metodos para conseguir datos especificos
 

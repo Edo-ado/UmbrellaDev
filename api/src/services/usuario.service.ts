@@ -34,6 +34,15 @@ export const UsuarioService = {
     });
   },
 
+
+  async searchByNombre(Nombre :string){
+
+ return await prisma.usuario.findMany({
+  where: { NombreCompleto: { contains: Nombre } },
+       include: { especialidades: true },
+    });
+  },
+
   async toggleStatus(Id: Number) {}, //por hacer
 
   async create(/*Mucha vaina*/) {}, //por hacer
