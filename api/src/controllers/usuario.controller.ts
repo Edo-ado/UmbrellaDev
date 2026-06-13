@@ -3,7 +3,7 @@ import { StatusCodes } from "http-status-codes";
 import { UsuarioService } from "../services/usuario.service";
 import { MODALIDAD, Role } from "../../generated/prisma/enums";
 
-export class usuarioController {
+export class usuarioController  {
   getAll = async (request: Request, response: Response, next: NextFunction) => {
     try {
       const usuarios = await UsuarioService.getAll();
@@ -91,6 +91,23 @@ getByDisponibilidad = async (
     next(error);
   }
 };
+
+
+searchByName = async (
+    request: Request,
+    response: Response,
+    next: NextFunction,
+  ) => {
+    try {
+      const nombre = (request.query.nombre || request.query.Nombre) as string;
+      const Usuario = await UsuarioService.searchByNombre(String(nombre));
+
+      return response.status(StatusCodes.OK).json(Usuario);
+    } catch (error) {
+      console.error(error);
+      next(error);
+    }
+  };
 
 
 
