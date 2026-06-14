@@ -1,4 +1,4 @@
-import { ESTADOCITA } from "../../generated/prisma/enums";
+import { Estado, ESTADOCITA } from "../../generated/prisma/enums";
 import { prisma } from "../config/prisma";
 
 export const CitaServices = {
@@ -40,25 +40,27 @@ export const CitaServices = {
     });
   },
 
-  async getByFechas(DiaInicial: Date, DiaFinal: Date) {
-    return await prisma.cita.findMany({
-      where: {
-        fechaHora: {
-          gte: DiaInicial,
-          lte: DiaFinal,
-        },
+async getByFechas(DiaInicial: Date, DiaFinal: Date) {
+  return await prisma.cita.findMany({
+    where: {
+      Fecha: {
+        gte: DiaInicial,
+        lte: DiaFinal,
       },
-      include: {
-        cliente: true,
-        profesional: true,
-        servicio: true,
-      },
-    });
-  },
+    },
+    include: {
+      cliente: true,
+      profesional: true,
+      servicio: true,
+    }
+  });
+},
 
-  async toggleStatus() {}, //por hacer
+  async toggleStatus() {//por hacer
+
+  
+  }, 
 
   async create() {}, //por hacer
 
-  async update() {}, //por hacer
 };

@@ -68,4 +68,23 @@ export class CategoriaController {
       next(error);
     }
   };
+
+
+toggleStatus = async (request: Request,response: Response,next: NextFunction,) => {
+  try {
+    const id = Number(request.params.id);
+    const categoria = await CategoriaService.toggleStatus(id);
+
+    return response.status(StatusCodes.OK).json(categoria);
+  } catch (error) {
+    next(error);
+  }
+};
+
+
+
+
+
+
+
 }

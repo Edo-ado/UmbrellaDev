@@ -69,4 +69,18 @@ export class EspecialidadController {
         next(error);
       }
     };
+
+toggleStatus = async (request: Request,response: Response,next: NextFunction,) => {
+  try {
+    const id = Number(request.params.id);
+    const especialidad = await EspecialidadService.toggleStatus(id);
+
+    return response.status(StatusCodes.OK).json(especialidad);
+  } catch (error) {
+    next(error);
+  }
+};
+
+
+
 }

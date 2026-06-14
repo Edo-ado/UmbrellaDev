@@ -124,4 +124,38 @@ export class ServicioController {
     const servicios = await ServicioServices.getByRangoPrecio(min, max);
     response.json(servicios);
   };
+
+toggleStatus = async (request: Request,response: Response,next: NextFunction,) => {
+  try {
+    const id = Number(request.params.id);
+    const servicio = await ServicioServices.toggleStatus(id);
+
+    return response.status(StatusCodes.OK).json(servicio);
+  } catch (error) {
+    next(error);
+  }
+};
+
+create = async (request: Request,response: Response, next: NextFunction,) => {
+  try {
+    const servicio = await ServicioServices.create(request.body);
+
+    return response.status(StatusCodes.CREATED).json(servicio);
+  } catch (error) {
+    next(error);
+  }
+};
+
+update = async (request: Request,response: Response,next: NextFunction,) => {
+  try {
+    const id = Number(request.params.id);
+    const servicio = await ServicioServices.update(id, request.body);
+
+    return response.status(StatusCodes.OK).json(servicio);
+  } catch (error) {
+    next(error);
+  }
+};
+
+
 }
