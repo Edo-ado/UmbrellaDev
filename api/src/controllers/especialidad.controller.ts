@@ -69,8 +69,6 @@ export class EspecialidadController {
         next(error);
       }
     };
-<<<<<<< HEAD
-=======
 
 toggleStatus = async (request: Request,response: Response,next: NextFunction,) => {
   try {
@@ -85,5 +83,4 @@ toggleStatus = async (request: Request,response: Response,next: NextFunction,) =
 
 
 
->>>>>>> origin
 }

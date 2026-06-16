@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-import { ESTADOCITA } from "../../generated/prisma/enums";
-=======
 import { Estado, ESTADOCITA } from "../../generated/prisma/enums";
->>>>>>> origin
 import { prisma } from "../config/prisma";
 
 export const CitaServices = {
@@ -44,29 +40,6 @@ export const CitaServices = {
     });
   },
 
-<<<<<<< HEAD
-  async getByFechas(DiaInicial: Date, DiaFinal: Date) {
-    return await prisma.cita.findMany({
-      where: {
-        fechaHora: {
-          gte: DiaInicial,
-          lte: DiaFinal,
-        },
-      },
-      include: {
-        cliente: true,
-        profesional: true,
-        servicio: true,
-      },
-    });
-  },
-
-  async toggleStatus() {}, //por hacer
-
-  async create() {}, //por hacer
-
-  async update() {}, //por hacer
-=======
 async getByFechas(DiaInicial: Date, DiaFinal: Date) {
   return await prisma.cita.findMany({
     where: {
@@ -90,5 +63,4 @@ async getByFechas(DiaInicial: Date, DiaFinal: Date) {
 
   async create() {}, //por hacer
 
->>>>>>> origin
 };

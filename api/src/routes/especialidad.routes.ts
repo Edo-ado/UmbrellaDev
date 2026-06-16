@@ -1,9 +1,5 @@
 import { Router } from "express";
 import { EspecialidadController } from "../controllers/especialidad.controller";
-<<<<<<< HEAD
-=======
-import { asyncHandler } from "../middlewares/async-handler.middleware";
->>>>>>> origin
 
 export class especialidadRoutes {
   static get routes(): Router {
@@ -15,11 +11,8 @@ export class especialidadRoutes {
     router.get("/buscar", especialidadcontroller.getByName);
 
     router.get("/estado/:estado", especialidadcontroller.getByEstado);
-<<<<<<< HEAD
-=======
-        router.patch("/:id/toggle-status", asyncHandler(especialidadcontroller.toggleStatus));
-    
->>>>>>> origin
+
+    router.post("/CambioEstado/:id", especialidadcontroller.toggleStatus);
 
     return router;
   }

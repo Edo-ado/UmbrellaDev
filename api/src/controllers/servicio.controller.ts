@@ -124,8 +124,6 @@ export class ServicioController {
     const servicios = await ServicioServices.getByRangoPrecio(min, max);
     response.json(servicios);
   };
-<<<<<<< HEAD
-=======
 
 toggleStatus = async (request: Request,response: Response,next: NextFunction,) => {
   try {
@@ -160,5 +158,4 @@ update = async (request: Request,response: Response,next: NextFunction,) => {
 };
 
 
->>>>>>> origin
 }

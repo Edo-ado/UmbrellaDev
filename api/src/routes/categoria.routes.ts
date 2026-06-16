@@ -1,9 +1,5 @@
 import { Router } from "express";
 import { CategoriaController } from "../controllers/categoria.controller";
-<<<<<<< HEAD
-=======
-import { asyncHandler } from "../middlewares/async-handler.middleware";
->>>>>>> origin
 
 export class CategoriaRoutes {
   static get routes(): Router {
@@ -18,10 +14,7 @@ export class CategoriaRoutes {
 
     router.get("/estado/:estado", categoriaController.getByEstado);
 
-<<<<<<< HEAD
-=======
-        router.patch("/:id/toggle-status", asyncHandler(categoriaController.toggleStatus));
->>>>>>> origin
+    router.post("/CambioEstado/:id", categoriaController.toggleStatus)
     
 
     return router;

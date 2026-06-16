@@ -33,9 +33,6 @@ export const EspecialidadService = {
     });
   },
 
-<<<<<<< HEAD
-  async toggleStatus(Id: number) {}, //por hacer
-=======
   async toggleStatus(id: number) {
 const especialidad = await this.getById(id);
 
@@ -60,5 +57,4 @@ return await prisma.especialidad.update({
 
 
   }, 
->>>>>>> origin
 };

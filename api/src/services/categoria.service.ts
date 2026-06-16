@@ -45,9 +45,6 @@ export const CategoriaService = {
     });
   },
 
-<<<<<<< HEAD
-  async toggleStatus(Id: number) {}, //por hacer
-=======
   async toggleStatus(id: number) {
 
 
@@ -74,5 +71,4 @@ return await prisma.categoria.update({
   }, 
 
   
->>>>>>> origin
 };

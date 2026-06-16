@@ -1,13 +1,8 @@
-<<<<<<< HEAD
-import {  MODALIDAD } from "../../generated/prisma/enums";
-import { prisma } from "../config/prisma";
-=======
 import {  Estado, MODALIDAD } from "../../generated/prisma/enums";
 import { prisma } from "../config/prisma";
 import { CreateServicioDto } from "../dtos/cita.dto";
 import { UpdateServicioDto } from "../dtos/servicio.dto";
 import { AppError } from "../utils/app-error";
->>>>>>> origin
 
 export const ServicioServices = {
   async getAll() {
@@ -91,14 +86,6 @@ export const ServicioServices = {
     });
   },
 
-<<<<<<< HEAD
-  async toggleStatus() {}, //por hacer
-
-  async create() {}, //por hacer
-  
-  async update() {}, //por hacer
-};
-=======
   async toggleStatus(id: number) {
 
 
@@ -205,4 +192,3 @@ throw AppError.badRequest("El servicio indicado no existe")
 
 
 }
->>>>>>> origin

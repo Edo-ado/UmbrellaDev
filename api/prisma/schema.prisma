@@ -76,14 +76,12 @@ datasource db {
     especialidades Especialidad[]
     imagenesUsuario ImagenesUsuario[]
     curriculum Curriculum[]
-<<<<<<< HEAD
-  }
-=======
+
   
     resenas Resena[] @relation("ResenaCliente")
     resenasProfesional Resena[] @relation("ResenaProfesional")
-}
->>>>>>> origin
+  }
+
 
   model Categoria {
     Id          Int          @id @default(autoincrement())
@@ -134,12 +132,12 @@ datasource db {
 
   model Cita {
     Id Int @id @default(autoincrement())
-<<<<<<< HEAD
+
     fechaHora DateTime
-=======
+
     Fecha DateTime
-  Hora String @db.VarChar(10)
->>>>>>> origin
+    Hora String @db.VarChar(10)
+
     Modalidad MODALIDAD @default(PRESENCIAL)
     Descripcion String? @db.VarChar(500)
     Comentarios String? @db.VarChar(500)
@@ -158,23 +156,12 @@ datasource db {
     servicio Servicio @relation(fields: [idservicio], references: [Id])
 
   
-<<<<<<< HEAD
-  }
 
-  model Imagenes {
-    Id  Int @id @default(autoincrement())
-    Nombre String? @default("NoName")
-    Url String @db.VarChar(500) @default("NoImage.url")
-
-    imagenesUsuario ImagenesUsuario[]
-    imagenesServicios ImagenesServicio[]
-  }
-
-=======
   
-    resenas Resena?
+    resenas Resena[]
 }
 
+ 
 
 model Resena {
   Id Int @id @default(autoincrement())
@@ -193,9 +180,9 @@ model Resena {
 
   @@index([profesionalId])
   @@index([clienteId])
+    imagenes Imagenes[]
 }
-
-
+  
   model Imagenes {
     Id  Int @id @default(autoincrement())
     Nombre String? @default("NoName")
@@ -203,9 +190,12 @@ model Resena {
 
     imagenesUsuario ImagenesUsuario[]
     imagenesServicios ImagenesServicio[]
+
+    resena Resena? @relation(fields: [resenaId], references: [Id])
+    resenaId Int?
   }
 
->>>>>>> origin
+
   model Curriculum {
     Id Int @id @default(autoincrement())
     Url String @db.VarChar(500)

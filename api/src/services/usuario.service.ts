@@ -1,12 +1,7 @@
-<<<<<<< HEAD
-import {  MODALIDAD, Role } from "../../generated/prisma/enums";
-import { prisma } from "../config/prisma";
-=======
 import {  MODALIDAD, Role, Estado } from "../../generated/prisma/enums";
 import { prisma } from "../config/prisma";
 import { CreateUsuarioDto, UpdateUsuarioDto } from "../dtos/usuario.dto";
 import { AppError } from "../utils/app-error";
->>>>>>> origin
 
 export const UsuarioService = {
   async getAll() {
@@ -50,14 +45,6 @@ export const UsuarioService = {
     });
   },
 
-<<<<<<< HEAD
-  async toggleStatus(Id: Number) {}, //por hacer
-
-  async create(/*Mucha vaina*/) {}, //por hacer
-
-   async update(/*Mucha vaina*/) {}, //por hacer
-};
-=======
   async toggleStatus(id: number) {
 
 const usuario = await this.getById(id);
@@ -89,7 +76,7 @@ return await prisma.usuario.update({
     Pais: data.Pais,
     Edad: data.Edad,
     Telefono: data.Telefono ?? null,
-    Role: data.Role ?? "DESARROLLADOR",
+    Role: data.Role ?? "USUARIO",
     Estado: data.Estado ?? "ACTIVO",
     Modalidad: data.Modalidad ?? "PRESENCIAL",
     Descripcion: data.Descripcion ?? null,
@@ -170,13 +157,10 @@ await this.getById(id)
 
    }, 
 
-
-
-
-async validateUsuario(Id: number) {
+  async validateUsuario(Id: number) {
  const usuario = await this.getById(Id);
-if (!usuario) {
-throw AppError.badRequest("El usuario indicado no existe")
+  if (!usuario) {
+  throw AppError.badRequest("El usuario indicado no existe")
 }
 
 },
@@ -189,4 +173,3 @@ throw AppError.badRequest("El usuario indicado no existe")
 
 };
 
->>>>>>> origin

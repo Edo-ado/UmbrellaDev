@@ -68,8 +68,6 @@ export class CategoriaController {
       next(error);
     }
   };
-<<<<<<< HEAD
-=======
 
 
 toggleStatus = async (request: Request,response: Response,next: NextFunction,) => {
@@ -89,5 +87,4 @@ toggleStatus = async (request: Request,response: Response,next: NextFunction,) =
 
 
 
->>>>>>> origin
 }
