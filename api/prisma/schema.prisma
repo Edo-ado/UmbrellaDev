@@ -76,10 +76,12 @@ datasource db {
     especialidades Especialidad[]
     imagenesUsuario ImagenesUsuario[]
     curriculum Curriculum[]
+
   
     resenas Resena[] @relation("ResenaCliente")
     resenasProfesional Resena[] @relation("ResenaProfesional")
-}
+  }
+
 
   model Categoria {
     Id          Int          @id @default(autoincrement())
@@ -130,8 +132,12 @@ datasource db {
 
   model Cita {
     Id Int @id @default(autoincrement())
+
+    fechaHora DateTime
+
     Fecha DateTime
-  Hora String @db.VarChar(10)
+    Hora String @db.VarChar(10)
+
     Modalidad MODALIDAD @default(PRESENCIAL)
     Descripcion String? @db.VarChar(500)
     Comentarios String? @db.VarChar(500)
@@ -150,10 +156,12 @@ datasource db {
     servicio Servicio @relation(fields: [idservicio], references: [Id])
 
   
+
   
-    resenas Resena?
+    resenas Resena[]
 }
 
+ 
 
 model Resena {
   Id Int @id @default(autoincrement())
@@ -172,9 +180,9 @@ model Resena {
 
   @@index([profesionalId])
   @@index([clienteId])
+    imagenes Imagenes[]
 }
-
-
+  
   model Imagenes {
     Id  Int @id @default(autoincrement())
     Nombre String? @default("NoName")
@@ -182,7 +190,11 @@ model Resena {
 
     imagenesUsuario ImagenesUsuario[]
     imagenesServicios ImagenesServicio[]
+
+    resena Resena? @relation(fields: [resenaId], references: [Id])
+    resenaId Int?
   }
+
 
   model Curriculum {
     Id Int @id @default(autoincrement())

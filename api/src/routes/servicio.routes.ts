@@ -1,6 +1,5 @@
 import { Router } from "express";
 import { ServicioController } from "../controllers/servicio.controller";
-import { asyncHandler } from "../middlewares/async-handler.middleware";
 
 export class ServicioRoutes {
   static get routes(): Router {
@@ -22,10 +21,6 @@ export class ServicioRoutes {
 
     router.get("/rango-precio", ServiciosController.getByRangoPrecio);
 
-    router.post("/", asyncHandler(ServiciosController.create));
-    router.put("/:id", asyncHandler(ServiciosController.update));
-    router.patch("/:id/toggle-status", asyncHandler(ServiciosController.toggleStatus));
-    
 
     
     return router;

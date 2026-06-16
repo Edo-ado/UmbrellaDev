@@ -112,9 +112,10 @@ searchByName = async (
 
   crear = async (request: Request, response: Response, next: NextFunction) => {
     try {
+       console.log("body:", request.body);  // ← agregá esto
       const usuario = await UsuarioService.crear(request.body);
       return response.status(StatusCodes.CREATED).json({
-        message: "Profesional creado correctamente",
+        message: "Usuario creado correctamente",
         data: usuario,
       });
     } catch (error) {
@@ -127,7 +128,7 @@ searchByName = async (
       const id = Number(request.params.id);
       const usuario = await UsuarioService.actualizar(id, request.body);
       return response.status(StatusCodes.OK).json({
-        message: "Profesional actualizado correctamente",
+        message: "Usuario actualizado correctamente",
         data: usuario,
       });
     } catch (error) {

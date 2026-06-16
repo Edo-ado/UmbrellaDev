@@ -76,7 +76,7 @@ return await prisma.usuario.update({
     Pais: data.Pais,
     Edad: data.Edad,
     Telefono: data.Telefono ?? null,
-    Role: data.Role ?? "DESARROLLADOR",
+    Role: data.Role ?? "USUARIO",
     Estado: data.Estado ?? "ACTIVO",
     Modalidad: data.Modalidad ?? "PRESENCIAL",
     Descripcion: data.Descripcion ?? null,
@@ -157,13 +157,10 @@ await this.getById(id)
 
    }, 
 
-
-
-
-async validateUsuario(Id: number) {
+  async validateUsuario(Id: number) {
  const usuario = await this.getById(Id);
-if (!usuario) {
-throw AppError.badRequest("El usuario indicado no existe")
+  if (!usuario) {
+  throw AppError.badRequest("El usuario indicado no existe")
 }
 
 },
