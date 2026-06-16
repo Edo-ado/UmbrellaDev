@@ -1,5 +1,13 @@
+<<<<<<< HEAD
 import {  MODALIDAD } from "../../generated/prisma/enums";
 import { prisma } from "../config/prisma";
+=======
+import {  Estado, MODALIDAD } from "../../generated/prisma/enums";
+import { prisma } from "../config/prisma";
+import { CreateServicioDto } from "../dtos/cita.dto";
+import { UpdateServicioDto } from "../dtos/servicio.dto";
+import { AppError } from "../utils/app-error";
+>>>>>>> origin
 
 export const ServicioServices = {
   async getAll() {
@@ -83,9 +91,118 @@ export const ServicioServices = {
     });
   },
 
+<<<<<<< HEAD
   async toggleStatus() {}, //por hacer
 
   async create() {}, //por hacer
   
   async update() {}, //por hacer
 };
+=======
+  async toggleStatus(id: number) {
+
+
+const servicio = await this.getById(id);
+
+ let nuevoEstado: Estado;
+
+  if (servicio?.Estado === "ACTIVO") {
+    nuevoEstado = "INACTIVO";
+  } else {
+    nuevoEstado = "ACTIVO";
+  }
+
+return await prisma.servicio.update({
+    where: { Id: id },
+    data: {
+      Estado: nuevoEstado
+    }
+  });
+
+
+  }, 
+
+  async create(data: CreateServicioDto) {
+//futuras validaciones q ahi iremos agregando
+
+ return await prisma.servicio.create({
+      data: {
+        Nombre: data.Nombre,
+        Descripcion: data.Descripcion,
+        Precio: data.Precio,
+        Duracion: data.Duracion,
+        Estado: data.Estado,
+        Modalidad: data.Modalidad,
+        profesional: {
+          connect: { Id: data.idprofesional },
+        },
+        categoria: {
+          connect: { Id: data.idcategoria },
+        },
+        servicioEspecialidades: data.especialidadIds?.length
+          ? {
+              connect: data.especialidadIds.map((id) => ({ Id: id })),
+            }
+          : undefined,
+      },
+      include: {
+        profesional: true,
+        categoria: true,
+        servicioEspecialidades: true,
+      },
+    });
+
+
+
+
+
+  }, 
+  
+  async update(id: number, data:  UpdateServicioDto) {
+this.validateServicio(id);
+    return await prisma.servicio.update({
+    where: { Id: id },
+    data: {
+      Nombre: data.Nombre,
+      Descripcion: data.Descripcion,
+      Precio: data.Precio,
+      Duracion: data.Duracion,
+      Estado: data.Estado,
+      Modalidad: data.Modalidad,
+      profesional: {
+        connect: { Id: data.idprofesional },
+      },
+      categoria: {
+        connect: { Id: data.idcategoria },
+      },
+      servicioEspecialidades: {
+        set: data.especialidadIds.map((id) => ({ Id: id })),
+      },
+    },
+    include: {
+      profesional: true,
+      categoria: true,
+      servicioEspecialidades: true,
+    },
+  });
+
+
+  }, 
+
+
+async validateServicio(Id: number) {
+ const servicio = await this.getById(Id);
+if (!servicio) {
+throw AppError.badRequest("El servicio indicado no existe")
+}
+
+},
+
+
+
+
+
+
+
+}
+>>>>>>> origin

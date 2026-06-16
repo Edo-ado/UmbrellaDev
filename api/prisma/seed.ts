@@ -337,6 +337,7 @@ await prisma.$executeRaw`ALTER TABLE Imagenes AUTO_INCREMENT = 1`;
   const servicioMap: Record<string, number> = Object.fromEntries(servicios.map((s: { Id: number; Nombre: string }) => [s.Nombre, s.Id]) );
 
   //citas
+<<<<<<< HEAD
   await prisma.cita.createMany({
     data: [
       {
@@ -374,10 +375,174 @@ await prisma.$executeRaw`ALTER TABLE Imagenes AUTO_INCREMENT = 1`;
         Modalidad: MODALIDAD.VIRTUAL,
         Descripcion: "Quiero una landing moderna para mi negocio.",
         Estado: ESTADOCITA.PENDIENTE,
+=======
+// citas
+await prisma.cita.createMany({
+  data: [
+    {
+      idcliente: userMap["daniela@cliente.com"],
+      idprofesional: userMap["carlos@profesional.com"],
+      idservicio: servicioMap["Desarrollo de API REST"],
+      Fecha: new Date("2026-06-15"),
+      Hora: "09:00",
+      Modalidad: MODALIDAD.VIRTUAL,
+      Descripcion: "Necesito una API REST para gestión de usuarios.",
+      Comentarios: "Requiero autenticación y CRUD base.",
+      Estado: ESTADOCITA.PENDIENTE,
+    },
+    {
+      idcliente: userMap["daniela@cliente.com"],
+      idprofesional: userMap["sofia@profesional.com"],
+      idservicio: servicioMap["Dashboard en Power BI"],
+      Fecha: new Date("2026-06-16"),
+      Hora: "10:30",
+      Modalidad: MODALIDAD.VIRTUAL,
+      Descripcion: "Ocupo un dashboard para ventas mensuales.",
+      Comentarios: "Necesito gráficos por sucursal.",
+      Estado: ESTADOCITA.PENDIENTE,
+    },
+    {
+      idcliente: userMap["daniela@cliente.com"],
+      idprofesional: userMap["andres@profesional.com"],
+      idservicio: servicioMap["Mantenimiento preventivo de laptop"],
+      Fecha: new Date("2026-06-17"),
+      Hora: "08:00",
+      Modalidad: MODALIDAD.PRESENCIAL,
+      Descripcion: "Mi laptop se apaga sola.",
+      Comentarios: "También suena mucho el ventilador.",
+      Estado: ESTADOCITA.PENDIENTE,
+    },
+    {
+      idcliente: userMap["daniela@cliente.com"],
+      idprofesional: userMap["maria@profesional.com"],
+      idservicio: servicioMap["Landing page en Angular"],
+      Fecha: new Date("2026-06-18"),
+      Hora: "02:00",
+      Modalidad: MODALIDAD.VIRTUAL,
+      Descripcion: "Quiero una landing moderna para mi negocio.",
+      Comentarios: "Debe ser responsive.",
+      Estado: ESTADOCITA.PENDIENTE,
+    },
+    {
+      idcliente: userMap["daniela@cliente.com"],
+      idprofesional: userMap["carlos@profesional.com"],
+      idservicio: servicioMap["Desarrollo de API REST"],
+      Fecha: new Date("2026-06-19"),
+      Hora: "11:00",
+      Modalidad: MODALIDAD.HIBRIDA,
+      Descripcion: "Necesito exponer endpoints para un sistema web.",
+      Comentarios: "Ojalá con Prisma y MySQL.",
+      Estado: ESTADOCITA.PENDIENTE,
+    },
+    {
+      idcliente: userMap["daniela@cliente.com"],
+      idprofesional: userMap["maria@profesional.com"],
+      idservicio: servicioMap["Landing page en Angular"],
+      Fecha: new Date("2026-06-20"),
+      Hora: "03:30",
+      Modalidad: MODALIDAD.VIRTUAL,
+      Descripcion: "Deseo una página promocional para mis servicios.",
+      Comentarios: "Con formulario de contacto.",
+      Estado: ESTADOCITA.PENDIENTE,
+    },
+    {
+      idcliente: userMap["daniela@cliente.com"],
+      idprofesional: userMap["andres@profesional.com"],
+      idservicio: servicioMap["Mantenimiento preventivo de laptop"],
+      Fecha: new Date("2026-06-21"),
+      Hora: "09:45",
+      Modalidad: MODALIDAD.PRESENCIAL,
+      Descripcion: "La laptop está muy lenta.",
+      Comentarios: "Necesito revisión general.",
+      Estado: ESTADOCITA.PENDIENTE,
+    },
+    {
+      idcliente: userMap["daniela@cliente.com"],
+      idprofesional: userMap["sofia@profesional.com"],
+      idservicio: servicioMap["Dashboard en Power BI"],
+      Fecha: new Date("2026-06-22"),
+      Hora: "01:15",
+      Modalidad: MODALIDAD.VIRTUAL,
+      Descripcion: "Necesito analizar inventario y ventas.",
+      Comentarios: "Con filtros por fecha.",
+      Estado: ESTADOCITA.PENDIENTE,
+    },
+    {
+      idcliente: userMap["daniela@cliente.com"],
+      idprofesional: userMap["carlos@profesional.com"],
+      idservicio: servicioMap["Desarrollo de API REST"],
+      Fecha: new Date("2026-06-23"),
+      Hora: "04:00",
+      Modalidad: MODALIDAD.VIRTUAL,
+      Descripcion: "Busco apoyo para backend con Node.js.",
+      Comentarios: "Debe incluir documentación en Postman.",
+      Estado: ESTADOCITA.PENDIENTE,
+    },
+    {
+      idcliente: userMap["daniela@cliente.com"],
+      idprofesional: userMap["maria@profesional.com"],
+      idservicio: servicioMap["Landing page en Angular"],
+      Fecha: new Date("2026-06-24"),
+      Hora: "10:00",
+      Modalidad: MODALIDAD.HIBRIDA,
+      Descripcion: "Quiero renovar la web de mi emprendimiento.",
+      Comentarios: "Me interesa un diseño limpio.",
+      Estado: ESTADOCITA.PENDIENTE,
+    },
+    {
+      idcliente: userMap["daniela@cliente.com"],
+      idprofesional: userMap["andres@profesional.com"],
+      idservicio: servicioMap["Mantenimiento preventivo de laptop"],
+      Fecha: new Date("2026-06-25"),
+      Hora: "12:30",
+      Modalidad: MODALIDAD.PRESENCIAL,
+      Descripcion: "Necesito cambiar pasta térmica y limpieza interna.",
+      Comentarios: "Equipo de uso diario.",
+      Estado: ESTADOCITA.PENDIENTE,
+    },
+    {
+      idcliente: userMap["daniela@cliente.com"],
+      idprofesional: userMap["sofia@profesional.com"],
+      idservicio: servicioMap["Dashboard en Power BI"],
+      Fecha: new Date("2026-06-26"),
+      Hora: "02:45",
+      Modalidad: MODALIDAD.VIRTUAL,
+      Descripcion: "Ocupo un tablero para seguimiento de KPIs.",
+      Comentarios: "Con datos mensuales y trimestrales.",
+      Estado: ESTADOCITA.PENDIENTE,
+    },
+  ],
+});
+
+  //imgs
+  await prisma.imagenes.createMany({
+    data: [
+      { Url: "https://picsum.photos/seed/pro1/400/400" },
+      { Url: "https://picsum.photos/seed/pro2/400/400" },
+      { Url: "https://picsum.photos/seed/pro3/400/400" },
+      { Url: "https://picsum.photos/seed/pro4/400/400" },
+      { Url: "https://picsum.photos/seed/serv1/600/400" },
+      { Url: "https://picsum.photos/seed/serv2/600/400" },
+    ],
+  });
+
+  const imagenes = await prisma.imagenes.findMany({ select: { Id: true, Url: true } });
+  const imagenMap: Record<string, number> = Object.fromEntries(
+    imagenes.map((i: { Id: number; Url: string }) => [i.Url, i.Id])
+  );
+
+  //cvs
+  await prisma.curriculum.createMany({
+    data: [
+      {
+        Url: "https://example.com/cv-andres.pdf",
+        UsuarioID: userMap["andres@profesional.com"],
+>>>>>>> origin
       },
     ],
   });
 
+<<<<<<< HEAD
   //imgs
   await prisma.imagenes.createMany({
     data: [
@@ -433,6 +598,36 @@ await prisma.$executeRaw`ALTER TABLE Imagenes AUTO_INCREMENT = 1`;
     ],
   });
 
+=======
+  //imagenservicio
+  await prisma.imagenesServicio.createMany({
+    data: [
+      {
+        idServicio: servicioMap["Desarrollo de API REST"],
+        idImagen: imagenMap["https://picsum.photos/seed/serv1/600/400"],
+      },
+      {
+        idServicio: servicioMap["Landing page en Angular"],
+        idImagen: imagenMap["https://picsum.photos/seed/serv2/600/400"],
+      },
+    ],
+  });
+
+  //img usuario
+  await prisma.imagenesUsuario.createMany({
+    data: [
+      {
+        idImagen: imagenMap["https://picsum.photos/seed/pro1/400/400"],
+        idUsuario: userMap["carlos@profesional.com"],
+      },
+      {
+        idImagen: imagenMap["https://picsum.photos/seed/pro2/400/400"],
+        idUsuario: userMap["maria@profesional.com"],
+      },
+    ],
+  });
+
+>>>>>>> origin
   console.log("Seed completado con éxito.");
 }
 

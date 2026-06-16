@@ -1,5 +1,12 @@
+<<<<<<< HEAD
 import {  MODALIDAD, Role } from "../../generated/prisma/enums";
 import { prisma } from "../config/prisma";
+=======
+import {  MODALIDAD, Role, Estado } from "../../generated/prisma/enums";
+import { prisma } from "../config/prisma";
+import { CreateUsuarioDto, UpdateUsuarioDto } from "../dtos/usuario.dto";
+import { AppError } from "../utils/app-error";
+>>>>>>> origin
 
 export const UsuarioService = {
   async getAll() {
@@ -43,9 +50,143 @@ export const UsuarioService = {
     });
   },
 
+<<<<<<< HEAD
   async toggleStatus(Id: Number) {}, //por hacer
 
   async create(/*Mucha vaina*/) {}, //por hacer
 
    async update(/*Mucha vaina*/) {}, //por hacer
 };
+=======
+  async toggleStatus(id: number) {
+
+const usuario = await this.getById(id);
+
+ let nuevoEstado: Estado;
+
+  if (usuario?.Estado === "ACTIVO") {
+    nuevoEstado = "INACTIVO";
+  } else {
+    nuevoEstado = "ACTIVO";
+  }
+
+return await prisma.usuario.update({
+    where: { Id: id },
+    data: {
+      Estado: nuevoEstado
+    }
+  });
+
+  
+  }, 
+
+  async crear(data: CreateUsuarioDto) {
+   return prisma.usuario.create({
+  data: {
+    NombreCompleto: data.NombreCompleto,
+    Email: data.Email,
+    Contraseña: data.Contraseña,
+    Pais: data.Pais,
+    Edad: data.Edad,
+    Telefono: data.Telefono ?? null,
+    Role: data.Role ?? "DESARROLLADOR",
+    Estado: data.Estado ?? "ACTIVO",
+    Modalidad: data.Modalidad ?? "PRESENCIAL",
+    Descripcion: data.Descripcion ?? null,
+    AnosExperiencia: data.AnosExperiencia ?? null,
+    Ubicacion: data.Ubicacion ?? null,
+    TituloProfesional: data.TituloProfesional ?? null,
+    TarifaBase: data.TarifaBase ?? null,
+    Disponibilidad: data.Disponibilidad ?? true,
+    Universidad: data.Universidad ?? null,
+    especialidades: data.especialidadIds
+      ? {
+          connect: data.especialidadIds.map((Id) => ({ Id })),
+        }
+      : undefined,
+  },
+  include: {
+    especialidades: true,
+    servicios: true,
+    curriculum: true,
+    imagenesUsuario: {
+      include: {
+        imagen: true,
+      },
+    },
+  },
+});
+
+
+
+
+
+
+
+  }, 
+
+   async actualizar(id: number, data: UpdateUsuarioDto) {
+
+await this.validateUsuario(id)//reviso si exsite
+await this.getById(id)
+
+//futuras validaciones que iremos viendo
+
+ return prisma.usuario.update({
+    where: { Id: id },
+    data: {
+   NombreCompleto: data.NombreCompleto,
+      Email: data.Email,
+     Contraseña: data.Contraseña,
+      Telefono: data.Telefono,
+      Pais: data.Pais,
+      Edad: data.Edad,
+      Role: data.Role,
+      Estado: data.Estado,
+      Modalidad: data.Modalidad,
+      TituloProfesional: data.TituloProfesional,
+      Descripcion: data.Descripcion,
+      AnosExperiencia: data.AnosExperiencia,
+      Ubicacion: data.Ubicacion,
+      TarifaBase: data.TarifaBase,
+      Disponibilidad: data.Disponibilidad,
+      Universidad: data.Universidad,
+      especialidades: data.especialidadIds
+        ? {  set: data.especialidadIds.map((Id) => ({ Id })),
+          }
+        : undefined,
+    },
+    include: {
+      especialidades: true,
+      servicios: true,
+      curriculum: true,
+      imagenesUsuario: {
+        include: {
+          imagen: true,
+        },
+      },
+    },
+  });
+
+   }, 
+
+
+
+
+async validateUsuario(Id: number) {
+ const usuario = await this.getById(Id);
+if (!usuario) {
+throw AppError.badRequest("El usuario indicado no existe")
+}
+
+},
+
+
+
+
+
+
+
+};
+
+>>>>>>> origin

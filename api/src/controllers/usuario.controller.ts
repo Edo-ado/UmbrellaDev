@@ -110,5 +110,43 @@ searchByName = async (
   };
 
 
+<<<<<<< HEAD
+=======
+  crear = async (request: Request, response: Response, next: NextFunction) => {
+    try {
+      const usuario = await UsuarioService.crear(request.body);
+      return response.status(StatusCodes.CREATED).json({
+        message: "Profesional creado correctamente",
+        data: usuario,
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  update = async (request: Request, response: Response, next: NextFunction) => {
+    try {
+      const id = Number(request.params.id);
+      const usuario = await UsuarioService.actualizar(id, request.body);
+      return response.status(StatusCodes.OK).json({
+        message: "Profesional actualizado correctamente",
+        data: usuario,
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+toggleStatus = async (request: Request,response: Response,next: NextFunction,) => {
+  try {
+    const id = Number(request.params.id);
+    const usuario = await UsuarioService.toggleStatus(id);
+
+    return response.status(StatusCodes.OK).json(usuario);
+  } catch (error) {
+    next(error);
+  }
+};
+>>>>>>> origin
 
 }

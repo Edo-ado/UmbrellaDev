@@ -91,4 +91,12 @@ export class citaController {
       const citas = await CitaServices.getByFechas(min, max);
       response.json(citas);
     };
+<<<<<<< HEAD
+=======
+
+
+
+
+
+>>>>>>> origin
 }

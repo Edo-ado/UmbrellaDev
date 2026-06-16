@@ -1,5 +1,9 @@
 import { Router } from "express";
 import { citaController } from "../controllers/cita.controller";
+<<<<<<< HEAD
+=======
+import { asyncHandler } from "../middlewares/async-handler.middleware";
+>>>>>>> origin
 
 export class citasRoutes {
   static get routes(): Router {
@@ -15,7 +19,11 @@ export class citasRoutes {
     router.get("/fechas", citaControlleer.getByFechas);
 
     router.get("/estado/:estado", citaControlleer.getByStatus);
+<<<<<<< HEAD
 
+=======
+  
+>>>>>>> origin
     return router;
   }
 }

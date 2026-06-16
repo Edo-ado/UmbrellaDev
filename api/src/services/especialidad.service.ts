@@ -33,5 +33,32 @@ export const EspecialidadService = {
     });
   },
 
+<<<<<<< HEAD
   async toggleStatus(Id: number) {}, //por hacer
+=======
+  async toggleStatus(id: number) {
+const especialidad = await this.getById(id);
+
+ let nuevoEstado: Estado;
+
+  if (especialidad?.Estado === "ACTIVO") {
+    nuevoEstado = "INACTIVO";
+  } else {
+    nuevoEstado = "ACTIVO";
+  }
+
+return await prisma.especialidad.update({
+    where: { Id: id },
+    data: {
+      Estado: nuevoEstado
+    }
+  });
+
+  
+
+
+
+
+  }, 
+>>>>>>> origin
 };
