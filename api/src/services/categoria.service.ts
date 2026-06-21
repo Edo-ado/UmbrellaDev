@@ -1,5 +1,6 @@
 import { Estado, ESTADOCITA } from "../../generated/prisma/enums";
 import { prisma } from "../config/prisma";
+import { AppError } from "../utils/app-error";
 
 export const CategoriaService = {
   async getAll() {
@@ -47,8 +48,13 @@ export const CategoriaService = {
 
   async toggleStatus(id: number) {
 
+    
 
 const categoria = await this.getById(id);
+
+  if (!categoria) {
+    throw AppError.badRequest("La categoría indicada no existe");
+  }
 
  let nuevoEstado: Estado;
 

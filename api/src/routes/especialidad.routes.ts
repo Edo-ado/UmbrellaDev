@@ -12,7 +12,7 @@ export class especialidadRoutes {
 
     router.get("/estado/:estado", especialidadcontroller.getByEstado);
 
-    router.post("/CambioEstado/:id", especialidadcontroller.toggleStatus);
+    router.patch("/CambioEstado/:id", especialidadcontroller.toggleStatus);
 
     return router;
   }

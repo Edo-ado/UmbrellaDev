@@ -68,6 +68,7 @@ app.get("/", (req, res) => {
 //---- Definir rutas ----
 app.use(AppRoutes.routes)
 
+
 // Handle errors middleware
 
 //Acceso a las imágenes

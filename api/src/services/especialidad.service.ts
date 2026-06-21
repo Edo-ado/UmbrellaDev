@@ -1,5 +1,6 @@
 import { Estado } from "../../generated/prisma/enums";
 import { prisma } from "../config/prisma";
+import { AppError } from "../utils/app-error";
 
 export const EspecialidadService = {
   async getAll() {
@@ -35,6 +36,11 @@ export const EspecialidadService = {
 
   async toggleStatus(id: number) {
 const especialidad = await this.getById(id);
+
+if (!especialidad) {
+    throw AppError.badRequest("La especialidad indicada no existe");
+  }
+  
 
  let nuevoEstado: Estado;
 
