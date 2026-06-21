@@ -94,6 +94,37 @@ export class citaController {
 
 
 
+  create = async (
+    request: Request,
+    response: Response,
+    next: NextFunction,
+  ) => {
+    try {
+      const body = request.body;
+      const cita = await CitaServices.create(body);
+
+      return response.status(StatusCodes.CREATED).json(cita);
+    } catch (error) {
+      console.error(error);
+      next(error);
+    }
+  };
+
+  toggleStatus = async (
+  request: Request,
+  response: Response,
+  next: NextFunction,
+) => {
+  try {
+    const { id } = request.params;
+    const cita = await CitaServices.toggleStatus(Number(id));
+
+    return response.status(StatusCodes.OK).json(cita);
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+};
 
 
 }

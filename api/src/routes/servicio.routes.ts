@@ -21,6 +21,11 @@ export class ServicioRoutes {
 
     router.get("/rango-precio", ServiciosController.getByRangoPrecio);
 
+    //CRUD
+    router.post("/crear", ServiciosController.create);
+    router.put("/update/:id", ServiciosController.update);
+    router.patch("/CambioEstado/:id", ServiciosController.toggleStatus);
+
 
     
     return router;

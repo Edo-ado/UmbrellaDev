@@ -10,8 +10,8 @@ export class usuarioRoutes {
     const usuariosController = new usuarioController();
 
     //metodos de CRUD
-    router.post("/", usuariosController.crear);
-    router.put("/:id", usuariosController.update);
+    router.post("/crear", usuariosController.crear);
+    router.put("/update/:id", usuariosController.update);
     router.patch("/CambioEstado/:id", usuariosController.toggleStatus);
 
     //Metodos para conseguir datos generales

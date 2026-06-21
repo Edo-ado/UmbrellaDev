@@ -110,7 +110,23 @@ return await prisma.servicio.update({
   }, 
 
   async create(data: CreateServicioDto) {
-//futuras validaciones q ahi iremos agregando
+
+
+const profesionalExiste = await prisma.usuario.findUnique({
+  where: { Id: data.idprofesional },
+});
+
+if (!profesionalExiste) {
+  throw AppError.badRequest("El profesional indicado no existe");
+}
+
+const categoriaExiste = await prisma.categoria.findUnique({
+  where: { Id: data.idcategoria },
+});
+
+if (!categoriaExiste) {
+  throw AppError.badRequest("La categoría indicada no existe");
+}
 
  return await prisma.servicio.create({
       data: {
@@ -146,7 +162,7 @@ return await prisma.servicio.update({
   }, 
   
   async update(id: number, data:  UpdateServicioDto) {
-this.validateServicio(id);
+await this.validateServicio(id);
     return await prisma.servicio.update({
     where: { Id: id },
     data: {

@@ -65,7 +65,7 @@ export class usuarioController  {
       if (!Object.values(MODALIDAD).includes(modalidad as MODALIDAD)) {
         return response
           .status(StatusCodes.BAD_REQUEST)
-          .json({ error: "Rol inválido" });
+          .json({ error: "Modalidad inválida" });
       }
 
       const usuarios = await UsuarioService.getByModalidad(modalidad as MODALIDAD);

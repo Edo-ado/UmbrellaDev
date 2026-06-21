@@ -14,7 +14,7 @@ export class CategoriaRoutes {
 
     router.get("/estado/:estado", categoriaController.getByEstado);
 
-    router.post("/CambioEstado/:id", categoriaController.toggleStatus)
+    router.patch("/CambioEstado/:id", categoriaController.toggleStatus)
     
 
     return router;
