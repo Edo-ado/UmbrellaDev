@@ -1,0 +1,1064 @@
+{
+  "info": {
+    "_postman_id": "93c857fe-dc49-4257-b064-221f916a8c94",
+    "name": "UmbrellaDev",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "49000581"
+  },
+  "item": [
+    {
+      "name": "Categorias",
+      "item": [
+        {
+          "name": "getAll",
+          "request": {
+            "auth": {
+              "type": "inherit"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3000/categorias",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "categorias"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "getById",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3000/categorias/id/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "categorias",
+                "id",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "getByName",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3000/categorias/buscar?nombre=Desarrollo",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "categorias",
+                "buscar"
+              ],
+              "query": [
+                {
+                  "key": "nombre",
+                  "value": "Desarrollo"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "getByEstado",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3000/categorias/estado/Activo",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "categorias",
+                "estado",
+                "Activo"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "CambioEstado Copy",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": ""
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Especialidades",
+      "item": [
+        {
+          "name": "getAll",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3000/especialidades",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "especialidades"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "getById",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3000/especialidades/id/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "especialidades",
+                "id",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "getByName",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3000/especialidades/buscar?nombre=Html",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "especialidades",
+                "buscar"
+              ],
+              "query": [
+                {
+                  "key": "nombre",
+                  "value": "Html"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "getByEstado",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3000/especialidades/estado/Activo",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "especialidades",
+                "estado",
+                "Activo"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "CambioEstado",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": ""
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Usuarios",
+      "item": [
+        {
+          "name": "CambioEstado",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": ""
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "getAll",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3000/usuarios",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "usuarios"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "getById",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3000/usuarios/id/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "usuarios",
+                "id",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "getByRol",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3000/usuarios/rol/ADMIN",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "usuarios",
+                "rol",
+                "ADMIN"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "Admin",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "http://localhost:3000/usuarios/rol/ADMIN",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "3000",
+                  "path": [
+                    "usuarios",
+                    "rol",
+                    "ADMIN"
+                  ]
+                }
+              },
+              "_postman_previewlanguage": "Text",
+              "header": [],
+              "cookie": [],
+              "body": ""
+            },
+            {
+              "name": "Usuario",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "http://localhost:3000/usuarios/rol/USUARIO",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "3000",
+                  "path": [
+                    "usuarios",
+                    "rol",
+                    "USUARIO"
+                  ]
+                }
+              },
+              "_postman_previewlanguage": "Text",
+              "header": [],
+              "cookie": [],
+              "body": ""
+            },
+            {
+              "name": "Desarrollo",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "http://localhost:3000/usuarios/rol/DESARROLLADOR",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "3000",
+                  "path": [
+                    "usuarios",
+                    "rol",
+                    "DESARROLLADOR"
+                  ]
+                }
+              },
+              "_postman_previewlanguage": "Text",
+              "header": [],
+              "cookie": [],
+              "body": ""
+            }
+          ]
+        },
+        {
+          "name": "getByModalidad",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3000/usuarios/modalidad/PRESENCIAL",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "usuarios",
+                "modalidad",
+                "PRESENCIAL"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "HIBRIDA",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "http://localhost:3000/usuarios/modalidad/HIBRIDA",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "3000",
+                  "path": [
+                    "usuarios",
+                    "modalidad",
+                    "HIBRIDA"
+                  ]
+                }
+              },
+              "_postman_previewlanguage": "Text",
+              "header": [],
+              "cookie": [],
+              "body": ""
+            },
+            {
+              "name": "PRESENCIAL",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "http://localhost:3000/usuarios/modalidad/PRESENCIAL",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "3000",
+                  "path": [
+                    "usuarios",
+                    "modalidad",
+                    "PRESENCIAL"
+                  ]
+                }
+              },
+              "_postman_previewlanguage": "Text",
+              "header": [],
+              "cookie": [],
+              "body": ""
+            },
+            {
+              "name": "VIRTUAL",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "http://localhost:3000/usuarios/modalidad/VIRTUAL",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "3000",
+                  "path": [
+                    "usuarios",
+                    "modalidad",
+                    "VIRTUAL"
+                  ]
+                }
+              },
+              "_postman_previewlanguage": "Text",
+              "header": [],
+              "cookie": [],
+              "body": ""
+            }
+          ]
+        },
+        {
+          "name": "getByDisponibilidad",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3000/usuarios/disponibilidad/",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "usuarios",
+                "disponibilidad",
+                ""
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "True",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "http://localhost:3000/usuarios/disponibilidad/true",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "3000",
+                  "path": [
+                    "usuarios",
+                    "disponibilidad",
+                    "true"
+                  ]
+                }
+              },
+              "_postman_previewlanguage": "Text",
+              "header": [],
+              "cookie": [],
+              "body": ""
+            },
+            {
+              "name": "False",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "http://localhost:3000/usuarios/disponibilidad/false",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "3000",
+                  "path": [
+                    "usuarios",
+                    "disponibilidad",
+                    "false"
+                  ]
+                }
+              },
+              "_postman_previewlanguage": "Text",
+              "header": [],
+              "cookie": [],
+              "body": ""
+            }
+          ]
+        },
+        {
+          "name": "searchByName",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3000/usuarios/buscar?nombre=solano",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "usuarios",
+                "buscar"
+              ],
+              "query": [
+                {
+                  "key": "nombre",
+                  "value": "solano"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": ""
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Actualizar",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": ""
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Servicio",
+      "item": [
+        {
+          "name": "getAll",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3000/servicios",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "servicios"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "getByID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3000/servicios/id/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "servicios",
+                "id",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "getByProfesional",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3000/servicios/profesional/3",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "servicios",
+                "profesional",
+                "3"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "getByCategories",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3000/servicios/categoria/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "servicios",
+                "categoria",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "getbyName",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3000/servicios/buscar?nombre=Desarrollo de API REST",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "servicios",
+                "buscar"
+              ],
+              "query": [
+                {
+                  "key": "nombre",
+                  "value": "Desarrollo de API REST"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "getByModalidad",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3000/servicios/modalidad",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "servicios",
+                "modalidad"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "HIBRIDA",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "http://localhost:3000/servicios/modalidad/HIBRIDA",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "3000",
+                  "path": [
+                    "servicios",
+                    "modalidad",
+                    "HIBRIDA"
+                  ]
+                }
+              },
+              "_postman_previewlanguage": "Text",
+              "header": [],
+              "cookie": [],
+              "body": ""
+            },
+            {
+              "name": "VIRTUAL",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "http://localhost:3000/servicios/modalidad/VIRTUAL",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "3000",
+                  "path": [
+                    "servicios",
+                    "modalidad",
+                    "VIRTUAL"
+                  ]
+                }
+              },
+              "_postman_previewlanguage": "Text",
+              "header": [],
+              "cookie": [],
+              "body": ""
+            },
+            {
+              "name": "PRESENCIAL",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "http://localhost:3000/servicios/modalidad/PRESENCIAL",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "3000",
+                  "path": [
+                    "servicios",
+                    "modalidad",
+                    "PRESENCIAL"
+                  ]
+                }
+              },
+              "_postman_previewlanguage": "Text",
+              "header": [],
+              "cookie": [],
+              "body": ""
+            }
+          ]
+        },
+        {
+          "name": "getByRangoPrecio",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3000/servicios/rango-precio?precioMin=80000&precioMax=100000",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "servicios",
+                "rango-precio"
+              ],
+              "query": [
+                {
+                  "key": "precioMin",
+                  "value": "80000"
+                },
+                {
+                  "key": "precioMax",
+                  "value": "100000"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Crear",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": ""
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": ""
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "CambioEstado",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": ""
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Cita",
+      "item": [
+        {
+          "name": "getAll",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3000/citas",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "citas"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "getById",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3000/citas/id/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "citas",
+                "id",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "getByProfesional",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3000/citas/Profesional/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "citas",
+                "Profesional",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "getByFechas",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3000/citas/fechas?fechaInicial=2026-06-01T00:00:00&fechaFinal=2026-06-30T23:59:59",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "citas",
+                "fechas"
+              ],
+              "query": [
+                {
+                  "key": "fechaInicial",
+                  "value": "2026-06-01T00:00:00"
+                },
+                {
+                  "key": "fechaFinal",
+                  "value": "2026-06-30T23:59:59"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "getByStatus",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3000/citas/estado/PENDIENTE",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "citas",
+                "estado",
+                "PENDIENTE"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Crear",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": ""
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "CambioEstado",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": ""
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Images",
+      "item": [
+        {
+          "name": "SubirImagen",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "text"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/images/uploads",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "images",
+                "uploads"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Lista archivos",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3000/images/files",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "images",
+                "files"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Descargar",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3000/images/download/EjemploBorrar.png",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "images",
+                "download",
+                "EjemploBorrar.png"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
