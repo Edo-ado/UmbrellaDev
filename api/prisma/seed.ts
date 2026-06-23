@@ -489,12 +489,8 @@ await prisma.$executeRaw`ALTER TABLE Imagenes AUTO_INCREMENT = 1`;
   //imgs
   await prisma.imagenes.createMany({
     data: [
-      { Url: "https://picsum.photos/seed/pro1/400/400" },
-      { Url: "https://picsum.photos/seed/pro2/400/400" },
-      { Url: "https://picsum.photos/seed/pro3/400/400" },
-      { Url: "https://picsum.photos/seed/pro4/400/400" },
-      { Url: "https://picsum.photos/seed/serv1/600/400" },
-      { Url: "https://picsum.photos/seed/serv2/600/400" },
+      { Url: "api/assets/uploads/EjemploBorrar.png" }
+      
     ],
   });
 
@@ -516,28 +512,14 @@ await prisma.$executeRaw`ALTER TABLE Imagenes AUTO_INCREMENT = 1`;
   //imagenservicio
   await prisma.imagenesServicio.createMany({
     data: [
-      {
-        idServicio: servicioMap["Desarrollo de API REST"],
-        idImagen: imagenMap["https://picsum.photos/seed/serv1/600/400"],
-      },
-      {
-        idServicio: servicioMap["Landing page en Angular"],
-        idImagen: imagenMap["https://picsum.photos/seed/serv2/600/400"],
-      },
+     
     ],
   });
 
   //img usuario
   await prisma.imagenesUsuario.createMany({
     data: [
-      {
-        idImagen: imagenMap["https://picsum.photos/seed/pro1/400/400"],
-        idUsuario: userMap["carlos@profesional.com"],
-      },
-      {
-        idImagen: imagenMap["https://picsum.photos/seed/pro2/400/400"],
-        idUsuario: userMap["maria@profesional.com"],
-      },
+
     ],
   });
 
