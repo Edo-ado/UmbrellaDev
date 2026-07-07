@@ -147,4 +147,24 @@ toggleStatus = async (request: Request,response: Response,next: NextFunction,) =
   }
 };
 
+
+toggleDisponibilidadByProfesional = async (
+  request: Request,
+  response: Response,
+  next: NextFunction,
+) => {
+  try {
+    const id = Number(request.params.id);
+    const usuario = await UsuarioService.toggleDisponibilidadByProfesional(id); 
+
+    return response.status(StatusCodes.OK).json(usuario);
+  } catch (error) {
+    next(error);
+  }
+};
+
+
+
+
+
 }

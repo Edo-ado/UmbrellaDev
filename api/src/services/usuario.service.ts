@@ -168,8 +168,34 @@ await this.getById(id)
 
 
 
+async toggleDisponibilidadByProfesional(id: number) {
+  const usuario = await this.getById(id);
 
+  if (!usuario) {
+    throw AppError.badRequest("El usuario indicado no existe");
+  }
 
+  if (usuario.Role !== Role.DESARROLLADOR) {
+    throw AppError.badRequest("El usuario indicado no es un desarrollador");
+  }
 
-};
+  return await prisma.usuario.update({
+    where: { Id: id },
+    data: {
+      Disponibilidad: !usuario.Disponibilidad,
+    },
+    include: {
+      especialidades: true,
+      servicios: true,
+      curriculum: true,
+      imagenesUsuario: {
+        include: {
+          imagen: true,
+        },
+      },
+    },
+  });
+}
+
+}
 
