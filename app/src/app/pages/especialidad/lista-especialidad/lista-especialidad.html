@@ -1,1 +1,86 @@
-<p>lista-especialidad works!</p>
+<section class="usuarios-page">
+  <div class="usuarios-hero">
+    <div>
+      <p class="eyebrow">Umbrella Corporation</p>
+      <h2>Control de especialidades</h2>
+      <p class="subtitle">
+        Administra especialidades, estados y organización técnica del sistema.
+      </p>
+    </div>
+  </div>
+
+  <div class="panel filtros">
+    <div class="campo">
+      <label for="buscar">Buscar</label>
+      <input
+        id="buscar"
+        type="text"
+        [(ngModel)]="termino"
+        placeholder="Buscar por nombre"
+      />
+    </div>
+
+    <div class="campo">
+      <label for="estado">Estado</label>
+      <select id="estado" [(ngModel)]="estadoSeleccionado">
+        <option value="">Todos</option>
+        <option value="ACTIVO">Activo</option>
+        <option value="INACTIVO">Inactivo</option>
+      </select>
+    </div>
+
+    <div class="acciones-filtro">
+      <button class="btn btn-secundario" (click)="limpiar()">Limpiar</button>
+      <button class="btn btn-primario" (click)="buscar()">Actualizar</button>
+    </div>
+  </div>
+
+  <div class="feedback ok" *ngIf="mensaje()">
+    {{ mensaje() }}
+  </div>
+
+  <div class="feedback error" *ngIf="error()">
+    {{ error() }}
+  </div>
+
+  <div class="panel estado" *ngIf="loading()">
+    Cargando especialidades...
+  </div>
+
+  <div class="panel tabla-wrap" *ngIf="!loading() && !error()">
+    <table *ngIf="especialidadesFiltradas().length > 0; else vacio">
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>Estado</th>
+          <th>Acción</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let especialidad of especialidadesFiltradas()">
+          <td>{{ especialidad.Nombre }}</td>
+          <td>
+            <span
+              class="tag"
+              [class.activo]="especialidad.Estado === 'ACTIVO'"
+              [class.inactivo]="especialidad.Estado === 'INACTIVO'"
+            >
+              {{ especialidad.Estado }}
+            </span>
+          </td>
+          <td>
+            <button class="btn btn-accion" (click)="toggleEstado(especialidad.Id)">
+              {{ especialidad.Estado === 'ACTIVO' ? 'Desactivar' : 'Activar' }}
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <ng-template #vacio>
+      <div class="estado-vacio">
+        No hay especialidades para mostrar con los filtros actuales.
+      </div>
+    </ng-template>
+  </div>
+</section>
