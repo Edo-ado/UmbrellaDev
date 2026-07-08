@@ -1,1 +1,65 @@
-<p>header works!</p>
+<header class="app-header-shell">
+  <div class="top-alert-bar">
+    <div class="top-alert-content">
+      <span class="alert-label">AUTHORIZED ACCESS ONLY</span>
+      <span class="alert-divider"></span>
+      <span class="alert-text">UMBRELLADEV NETWORK // SECURE DEVELOPER PROTOCOL ACTIVE</span>
+    </div>
+  </div>
+
+  <div class="app-header">
+    <div class="header-container">
+      <a href="#" class="header-brand" aria-label="UmbrellaDev - Inicio">
+        <img src="iconUmbrellaDev.ico" alt="UmbrellaDev logo" width="60" height="55" loading="lazy">
+        <span class="header-brand-name">UMBRELLA<span>DEV</span></span>
+      </a>
+
+<nav class="header-nav" aria-label="Navegación principal">
+  <ul role="list">
+    <li><a href="#">Usuarios</a></li>
+    <li><a href="#">Categorías</a></li>
+    <li><a href="#">Especialidades</a></li>
+    <li><a href="#">Profesionales</a></li>
+    <li><a href="#">Servicios</a></li>
+    <li><a href="#">Citas</a></li>
+
+
+  </ul>
+</nav>
+
+      <div class="header-actions">
+        <span class="status-pill">ONLINE</span>
+        <a href="#" class="btn btn-ghost">Iniciar sesión</a>
+        <a href="#" class="btn btn-primary">Registrarme</a>
+      </div>
+
+      <button
+        class="header-menu-toggle"
+        type="button"
+        (click)="toggleMenu()"
+        [attr.aria-expanded]="menuOpen()"
+        aria-label="Abrir menú">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+  </div>
+
+  @if (menuOpen()) {
+    <nav class="header-mobile-nav" aria-label="Navegación móvil">
+      <ul role="list">
+        <li><a href="#">Protocols</a></li>
+        <li><a href="#">Specialists</a></li>
+        <li><a href="#">Divisions</a></li>
+        <li><a href="#">Access Flow</a></li>
+      </ul>
+
+      <div class="header-mobile-actions">
+        <span class="status-pill">ONLINE</span>
+        <a href="#" class="btn btn-ghost">Iniciar sesión</a>
+        <a href="#" class="btn btn-primary">Registrarme</a>
+      </div>
+    </nav>
+  }
+</header>
