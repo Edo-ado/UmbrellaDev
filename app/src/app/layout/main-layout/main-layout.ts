@@ -1,12 +1,13 @@
 import { Component } from '@angular/core';
+import { RouterOutlet } from '@angular/router';
 import { Header } from '../header/header';
 import { Footer } from '../footer/footer';
 
 @Component({
   selector: 'app-main-layout',
   standalone: true,
-  imports: [Header, Footer],
+  imports: [RouterOutlet, Header, Footer],
   templateUrl: './main-layout.html',
-  styleUrl: './main-layout.css'
+  styleUrls: ['./main-layout.css'],
 })
 export class MainLayout {}

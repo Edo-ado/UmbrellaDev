@@ -1,1 +1,71 @@
-<p>home works!</p>
+<section class="hero">
+
+    <div class="hero-content">
+
+        <span class="hero-badge">
+            {{hero.badge}}
+        </span>
+
+        <h1>{{hero.title}}</h1>
+
+        <h2>{{hero.subtitle}}</h2>
+
+        <p>
+            {{hero.description}}
+        </p>
+
+        <div class="hero-buttons">
+
+            <button class="btn-primary">
+                {{hero.primaryButton}}
+            </button>
+
+            <button class="btn-secondary">
+                {{hero.secondaryButton}}
+            </button>
+
+        </div>
+
+    </div>
+
+    <div class="terminal">
+
+        <div class="terminal-header">
+
+            <span></span>
+            <span></span>
+            <span></span>
+
+        </div>
+
+        <div class="terminal-body">
+
+            <p>> Initializing UmbrellaDev...</p>
+
+            @for(protocol of protocols; track protocol){
+
+            <p>> {{protocol}}</p>
+
+            }
+
+            <br>
+
+            @for(item of status; track item.name){
+
+            <div class="status-row">
+
+                <span>{{item.name}}</span>
+
+                <span class="online">
+                    {{item.state}}
+                </span>
+
+            </div>
+
+            }
+
+        </div>
+
+    </div>
+
+</section>

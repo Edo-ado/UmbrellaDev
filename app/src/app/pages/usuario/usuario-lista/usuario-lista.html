@@ -1,1 +1,93 @@
-<p>usuario-lista works!</p>
+<section class="usuarios-page">
+  <div class="usuarios-hero">
+    <div>
+      <p class="eyebrow">Umbrella Corporation</p>
+      <h2>Control de usuarios</h2>
+      <p class="subtitle">
+        Supervisa cuentas, roles y estados operativos del sistema.
+      </p>
+    </div>
+  </div>
+
+  <div class="panel filtros">
+    <div class="campo">
+      <label for="buscar">Buscar</label>
+      <input
+        id="buscar"
+        type="text"
+        [(ngModel)]="termino"
+        placeholder="Buscar por nombre"
+      />
+    </div>
+
+    <div class="campo">
+      <label for="rol">Rol</label>
+      <select id="rol" [(ngModel)]="rolSeleccionado">
+        <option value="">Todos</option>
+        <option value="ADMIN">Administrador</option>
+        <option value="PROFESIONAL">Profesional</option>
+        <option value="USUARIO">Usuario</option>
+      </select>
+    </div>
+
+    <div class="acciones-filtro">
+      <button class="btn btn-secundario" (click)="limpiar()">Limpiar</button>
+      <button class="btn btn-primario" (click)="buscar()">Actualizar</button>
+    </div>
+  </div>
+
+  <div class="feedback ok" *ngIf="mensaje()">
+    {{ mensaje() }}
+  </div>
+
+  <div class="feedback error" *ngIf="error()">
+    {{ error() }}
+  </div>
+
+  <div class="panel estado" *ngIf="loading()">
+    Cargando usuarios...
+  </div>
+
+  <div class="panel tabla-wrap" *ngIf="!loading() && !error()">
+    <table *ngIf="usuariosFiltrados().length > 0; else vacio">
+      <thead>
+        <tr>
+          <th>Nombre completo</th>
+          <th>Correo</th>
+          <th>Rol</th>
+          <th>Estado</th>
+          <th>Acción</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let usuario of usuariosFiltrados()">
+          <td>{{ usuario.NombreCompleto }}</td>
+          <td>{{ usuario.Email }}</td>
+          <td>
+            <span class="tag rol">{{ usuario.Role }}</span>
+          </td>
+          <td>
+            <span
+              class="tag"
+              [class.activo]="usuario.Estado === 'ACTIVO'"
+              [class.inactivo]="usuario.Estado === 'INACTIVO'"
+            >
+              {{ usuario.Estado }}
+            </span>
+          </td>
+          <td>
+            <button class="btn btn-accion" (click)="toggleEstado(usuario.Id)">
+              {{ usuario.Estado === 'ACTIVO' ? 'Desactivar' : 'Activar' }}
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <ng-template #vacio>
+      <div class="estado-vacio">
+        No hay usuarios para mostrar con los filtros actuales.
+      </div>
+    </ng-template>
+  </div>
+</section>
