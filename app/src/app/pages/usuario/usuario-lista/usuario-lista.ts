@@ -12,7 +12,7 @@ import { HttpClient } from '@angular/common/http';
 })
 export class UsuarioLista implements OnInit {
   private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:3000/api/usuarios';
+private apiUrl = 'http://localhost:3000/usuarios';
 
   usuarios = signal<any[]>([]);
   loading = signal(false);
@@ -36,25 +36,49 @@ export class UsuarioLista implements OnInit {
     this.cargarUsuarios();
   }
 
-  cargarUsuarios() {
-    this.loading.set(true);
-    this.error.set('');
+ cargarUsuarios() {
+  this.loading.set(true);
+  this.error.set('');
 
-    this.http.get<any[]>(this.apiUrl).subscribe({
-      next: (data) => {
-        this.usuarios.set(data);
-        this.loading.set(false);
-      },
-      error: () => {
-        this.error.set('No se pudieron cargar los usuarios.');
-        this.loading.set(false);
-      },
-    });
-  }
+  this.http.get<any[]>(`${this.apiUrl}/lista`).subscribe({
+    next: (data) => {
+      this.usuarios.set(data);
+      this.loading.set(false);
+    },
+    error: () => {
+      this.error.set('No se pudieron cargar los usuarios.');
+      this.loading.set(false);
+    },
+  });
+}
 
-  buscar() {
+ buscar() {
+  this.loading.set(true);
+  this.error.set('');
+  this.mensaje.set('');
+
+  const termino = this.termino.trim();
+
+  if (!termino) {
     this.cargarUsuarios();
+    return;
   }
+
+  this.http.get<any[]>(`${this.apiUrl}/buscar?nombre=${encodeURIComponent(termino)}`).subscribe({
+    next: (data) => {
+      this.usuarios.set(data);
+      this.loading.set(false);
+
+      if (data.length === 0) {
+        this.mensaje.set(`No se encontró ningún usuario con el nombre "${termino}".`);
+      }
+    },
+    error: () => {
+      this.error.set('No se pudo realizar la búsqueda.');
+      this.loading.set(false);
+    },
+  });
+}
 
   limpiar() {
     this.termino = '';
@@ -65,7 +89,7 @@ export class UsuarioLista implements OnInit {
     const confirmar = confirm('¿Deseas cambiar el estado de este usuario?');
     if (!confirmar) return;
 
-    this.http.patch(`${this.apiUrl}/${id}/toggle-status`, {}).subscribe({
+  this.http.patch(`${this.apiUrl}/CambioEstado/${id}`, {}).subscribe({
       next: () => {
         this.mensaje.set('Estado actualizado correctamente.');
         this.cargarUsuarios();
