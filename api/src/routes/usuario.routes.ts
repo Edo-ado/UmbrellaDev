@@ -29,6 +29,10 @@ export class usuarioRoutes {
 
     router.get("/Id/:id", usuariosController.getById);
 
+    //toggle
+
+    router.patch("/CambioDisponibilidad/:id", usuariosController.toggleDisponibilidadByProfesional);
+
     return router;
   }
 }
