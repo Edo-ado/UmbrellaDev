@@ -1,0 +1,118 @@
+<section class="profesionales-page">
+  <div class="profesionales-hero">
+    <div>
+      <p class="eyebrow">Umbrella Corporation</p>
+      <h2>Listado de profesionales</h2>
+      <p class="subtitle">
+        Consulta el directorio de profesionales activos, su modalidad y disponibilidad.
+      </p>
+    </div>
+    <button class="btn btn-primario" (click)="irACrear()">+ Nuevo profesional</button>
+  </div>
+
+  <div class="panel filtros">
+    <div class="campo">
+      <label for="buscar">Buscar por nombre</label>
+      <input
+        id="buscar"
+        type="text"
+        [(ngModel)]="termino"
+        placeholder="Nombre del profesional"
+        (keyup.enter)="buscar()"
+      />
+    </div>
+
+    <div class="campo">
+      <label for="modalidad">Modalidad</label>
+      <select id="modalidad" [(ngModel)]="modalidadSeleccionada" (change)="filtrarPorModalidad()">
+        <option value="">Todas</option>
+        <option value="PRESENCIAL">Presencial</option>
+        <option value="VIRTUAL">Virtual</option>
+        <option value="HIBRIDA">Híbrida</option>
+      </select>
+    </div>
+
+    <div class="campo">
+      <label for="disponibilidad">Disponibilidad</label>
+      <select id="disponibilidad" [(ngModel)]="disponibilidadSeleccionada" (change)="filtrarPorDisponibilidad()">
+        <option value="">Todas</option>
+        <option value="true">Disponible</option>
+        <option value="false">No disponible</option>
+      </select>
+    </div>
+
+    <div class="acciones-filtro">
+      <button class="btn btn-secundario" (click)="limpiar()">Limpiar</button>
+      <button class="btn btn-primario" (click)="buscar()">Buscar</button>
+    </div>
+  </div>
+
+  @if (mensaje()) {
+    <div class="feedback ok">
+      {{ mensaje() }}
+    </div>
+  }
+
+  @if (error()) {
+    <div class="feedback error">
+      {{ error() }}
+    </div>
+  }
+
+  @if (loading()) {
+    <div class="panel estado">
+      Cargando profesionales...
+    </div>
+  }
+
+  @if (!loading() && !error()) {
+    <div class="panel tabla-wrap">
+      @if (profesionalesFiltrados().length > 0) {
+        <table>
+          <thead>
+            <tr>
+              <th>Nombre completo</th>
+              <th>Título profesional</th>
+              <th>Modalidad</th>
+              <th>Tarifa base</th>
+              <th>Disponibilidad</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (profesional of profesionalesFiltrados(); track profesional.Id) {
+              <tr>
+                <td>{{ profesional.NombreCompleto }}</td>
+                <td>{{ profesional.TituloProfesional }}</td>
+                <td>
+                  <span class="tag rol">{{ profesional.Modalidad }}</span>
+                </td>
+                <td>₡{{ profesional.TarifaBase | number }}</td>
+                <td>
+                  <span
+                    class="tag"
+                    [class.activo]="profesional.Disponibilidad"
+                    [class.inactivo]="!profesional.Disponibilidad"
+                  >
+                    {{ profesional.Disponibilidad ? 'Disponible' : 'No disponible' }}
+                  </span>
+                </td>
+                <td class="col-acciones">
+                  <button class="btn btn-accion" (click)="irAEditar(profesional.Id)">Editar</button>
+                  <button class="btn btn-accion" (click)="irADetalle(profesional.Id)">Ver detalle</button>
+                  <button class="btn btn-accion" (click)="toggleDisponibilidad(profesional.Id)">
+                    {{ profesional.Disponibilidad ? 'Marcar no disponible' : 'Marcar disponible' }}
+                  </button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      } @else {
+        <div class="estado-vacio">
+          No hay profesionales para mostrar con los filtros actuales.
+        </div>
+      }
+    </div>
+  }
+</section>

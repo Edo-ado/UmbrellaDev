@@ -1,0 +1,96 @@
+<section class="profesionales-page">
+  <div class="profesionales-hero">
+    <div>
+      <p class="eyebrow">Umbrella Corporation</p>
+      <h2>Detalle del profesional</h2>
+      <p class="subtitle">Información completa del profesional registrado.</p>
+    </div>
+  </div>
+
+  <div class="feedback error" *ngIf="error()">
+    {{ error() }}
+  </div>
+
+  <div class="panel estado" *ngIf="loading()">
+    Cargando información...
+  </div>
+
+  <div class="panel detalle-card" *ngIf="!loading() && profesional() as profesional">
+    <div class="detalle-header">
+      <div>
+        <h3>{{ profesional.NombreCompleto }}</h3>
+        <p class="detalle-subtitulo">{{ profesional.TituloProfesional }}</p>
+      </div>
+      <span
+        class="tag"
+        [class.activo]="profesional.Disponibilidad"
+        [class.inactivo]="!profesional.Disponibilidad"
+      >
+        {{ profesional.Disponibilidad ? 'Disponible' : 'No disponible' }}
+      </span>
+    </div>
+
+    <div class="grid-detalle">
+      <div class="campo-detalle">
+        <label>Correo</label>
+        <p>{{ profesional.Email }}</p>
+      </div>
+
+      <div class="campo-detalle">
+        <label>Teléfono</label>
+        <p>{{ profesional.Telefono || 'No registrado' }}</p>
+      </div>
+
+      <div class="campo-detalle">
+        <label>País</label>
+        <p>{{ profesional.Pais }}</p>
+      </div>
+
+      <div class="campo-detalle">
+        <label>Ubicación</label>
+        <p>{{ profesional.Ubicacion || 'No registrada' }}</p>
+      </div>
+
+      <div class="campo-detalle">
+        <label>Modalidad</label>
+        <p>
+          <span class="tag rol">{{ profesional.Modalidad }}</span>
+        </p>
+      </div>
+
+      <div class="campo-detalle">
+        <label>Tarifa base</label>
+        <p>₡{{ profesional.TarifaBase | number }}</p>
+      </div>
+
+      <div class="campo-detalle">
+        <label>Años de experiencia</label>
+        <p>{{ profesional.AnosExperiencia ?? 'No registrado' }}</p>
+      </div>
+
+      <div class="campo-detalle">
+        <label>Universidad</label>
+        <p>{{ profesional.Universidad || 'No registrada' }}</p>
+      </div>
+
+      <div class="campo-detalle campo-detalle-full">
+        <label>Descripción</label>
+        <p>{{ profesional.Descripcion || 'Sin descripción.' }}</p>
+      </div>
+    </div>
+
+    <div class="especialidades-box" *ngIf="profesional.especialidades && profesional.especialidades.length > 0">
+      <label>Especialidades</label>
+      <div class="tags-grid">
+        <span class="tag" *ngFor="let especialidad of profesional.especialidades">
+          {{ especialidad.Nombre }}
+        </span>
+      </div>
+    </div>
+
+    <div class="acciones-filtro">
+      <button class="btn btn-secundario" (click)="volver()">Volver</button>
+      <button class="btn btn-primario" (click)="irAEditar()">Editar</button>
+    </div>
+  </div>
+</section>
