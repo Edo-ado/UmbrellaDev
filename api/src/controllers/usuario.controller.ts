@@ -112,7 +112,7 @@ searchByName = async (
 
   crear = async (request: Request, response: Response, next: NextFunction) => {
     try {
-       console.log("body:", request.body);  // ← agregá esto
+       console.log("body:", request.body);  
       const usuario = await UsuarioService.crear(request.body);
       return response.status(StatusCodes.CREATED).json({
         message: "Usuario creado correctamente",

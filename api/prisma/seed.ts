@@ -141,7 +141,7 @@ await prisma.$executeRaw`ALTER TABLE Imagenes AUTO_INCREMENT = 1`;
       data: {
         NombreCompleto: "Carlos Méndez",
         Email: "carlos@profesional.com",
-        Contraseña: passwordHash,
+        Contrasena: passwordHash,
         Pais: "Costa Rica",
         Telefono: "8888-1111",
         Role: Role.DESARROLLADOR,
@@ -164,7 +164,7 @@ await prisma.$executeRaw`ALTER TABLE Imagenes AUTO_INCREMENT = 1`;
       data: {
         NombreCompleto: "María Solano",
         Email: "maria@profesional.com",
-        Contraseña: passwordHash,
+        Contrasena: passwordHash,
         Pais: "Costa Rica",
         Telefono: "8888-1112",
         Role: Role.DESARROLLADOR,
@@ -187,7 +187,7 @@ await prisma.$executeRaw`ALTER TABLE Imagenes AUTO_INCREMENT = 1`;
       data: {
         NombreCompleto: "Andrés Rojas",
         Email: "andres@profesional.com",
-        Contraseña: passwordHash,
+        Contrasena: passwordHash,
         Pais: "Costa Rica",
         Telefono: "8888-1113",
         Role: Role.DESARROLLADOR,
@@ -210,7 +210,7 @@ await prisma.$executeRaw`ALTER TABLE Imagenes AUTO_INCREMENT = 1`;
       data: {
         NombreCompleto: "Sofía Vargas",
         Email: "sofia@profesional.com",
-        Contraseña: passwordHash,
+        Contrasena: passwordHash,
         Pais: "Costa Rica",
         Telefono: "8888-1114",
         Role: Role.DESARROLLADOR,
@@ -233,7 +233,7 @@ await prisma.$executeRaw`ALTER TABLE Imagenes AUTO_INCREMENT = 1`;
       data: {
         NombreCompleto: "Daniela Castro",
         Email: "daniela@cliente.com",
-        Contraseña: passwordHash,
+        Contrasena: passwordHash,
         Pais: "Costa Rica",
         Telefono: "8888-2222",
         Role: Role.USUARIO,
@@ -245,7 +245,7 @@ await prisma.$executeRaw`ALTER TABLE Imagenes AUTO_INCREMENT = 1`;
       data: {
         NombreCompleto: "Eduardo Ulloa",
         Email: "eduardo@admin.com",
-        Contraseña: passwordHash,
+        Contrasena: passwordHash,
         Pais: "Costa Rica",
         Telefono: "8888-0001",
         Role: Role.ADMIN,
@@ -257,7 +257,7 @@ await prisma.$executeRaw`ALTER TABLE Imagenes AUTO_INCREMENT = 1`;
       data: {
         NombreCompleto: "Ashley Sibaja",
         Email: "ashley@admin.com",
-        Contraseña: passwordHash,
+        Contrasena: passwordHash,
         Pais: "Costa Rica",
         Telefono: "8888-0002",
         Role: Role.ADMIN,

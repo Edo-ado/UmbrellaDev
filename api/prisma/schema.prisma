@@ -21,6 +21,7 @@ datasource db {
     PRESENCIAL
     VIRTUAL
     HIBRIDA
+    NOCAP
   }
 
   enum ESTADOCITA {
@@ -45,7 +46,7 @@ datasource db {
     // Campos base (todos los usuarios)
     NombreCompleto String    @db.VarChar(150)
     Email String    @db.VarChar(150) @unique
-    Contraseña String    @db.VarChar(150)
+    Contrasena String    @db.VarChar(150)
     Pais String    @db.VarChar(100)
     Edad Int?
     Telefono String?   @db.VarChar(20)
@@ -53,7 +54,7 @@ datasource db {
     // Enums
     Role Role      @default(USUARIO)
     Estado Estado    @default(ACTIVO)
-    Modalidad MODALIDAD @default(PRESENCIAL)
+    Modalidad MODALIDAD? @default(NOCAP)
 
     // Campos exclusivos de profesional 
     Descripcion String?   @db.VarChar(500)
