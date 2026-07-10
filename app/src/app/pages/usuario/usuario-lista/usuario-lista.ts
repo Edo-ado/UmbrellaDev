@@ -2,102 +2,93 @@ import { Component, OnInit, signal, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
+import { Router } from '@angular/router';
 
 @Component({
-  selector: 'app-usuario-lista',
+  selector: 'app-cita-lista',
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './usuario-lista.html',
   styleUrls: ['./usuario-lista.css'],
 })
-export class UsuarioLista implements OnInit {
+export class CitaLista implements OnInit {
   private http = inject(HttpClient);
-private apiUrl = 'http://localhost:3000/usuarios';
+  private router = inject(Router);
+  private apiUrl = 'http://localhost:3000/api/citas';
 
-  usuarios = signal<any[]>([]);
+  citas = signal<any[]>([]);
   loading = signal(false);
   error = signal('');
-  termino = '';
-  rolSeleccionado = '';
   mensaje = signal('');
 
-  usuariosFiltrados = computed(() => {
-    const termino = this.termino.trim().toLowerCase();
-    const rol = this.rolSeleccionado;
+  // Filtros
+  estadoSeleccionado = '';
+  profesionalSeleccionado = '';
+  fechaInicial = '';
+  fechaFinal = '';
 
-    return this.usuarios().filter((u) => {
-      const coincideNombre = !termino || u.NombreCompleto?.toLowerCase().includes(termino);
-      const coincideRol = !rol || u.Role === rol;
-      return coincideNombre && coincideRol;
+  estados = ['PENDIENTE', 'CONFIRMADA', 'COMPLETADA', 'CANCELADA'];
+
+  // Lista de profesionales derivada de las citas cargadas
+  profesionales = computed(() => {
+    const map = new Map<number, string>();
+    this.citas().forEach((c) => {
+      if (c.profesional) {
+        map.set(c.profesional.id, `${c.profesional.nombre} ${c.profesional.apellido ?? ''}`.trim());
+      }
+    });
+    return Array.from(map.entries()).map(([id, nombre]) => ({ id, nombre }));
+  });
+
+  // Combina los 3 filtros sobre las citas ya cargadas
+  citasFiltradas = computed(() => {
+    const estado = this.estadoSeleccionado;
+    const profesionalId = this.profesionalSeleccionado;
+    const desde = this.fechaInicial ? new Date(this.fechaInicial) : null;
+    const hasta = this.fechaFinal ? new Date(this.fechaFinal) : null;
+
+    return this.citas().filter((c) => {
+      const coincideEstado = !estado || c.estado === estado;
+      const coincideProfesional = !profesionalId || c.profesionalId === Number(profesionalId);
+      const fechaCita = new Date(c.fecha);
+      const coincideDesde = !desde || fechaCita >= desde;
+      const coincideHasta = !hasta || fechaCita <= hasta;
+      return coincideEstado && coincideProfesional && coincideDesde && coincideHasta;
     });
   });
 
   ngOnInit(): void {
-    this.cargarUsuarios();
+    this.cargarCitas();
   }
 
- cargarUsuarios() {
-  this.loading.set(true);
-  this.error.set('');
+  cargarCitas() {
+    this.loading.set(true);
+    this.error.set('');
 
-  this.http.get<any[]>(`${this.apiUrl}/lista`).subscribe({
-    next: (data) => {
-      this.usuarios.set(data);
-      this.loading.set(false);
-    },
-    error: () => {
-      this.error.set('No se pudieron cargar los usuarios.');
-      this.loading.set(false);
-    },
-  });
-}
-
- buscar() {
-  this.loading.set(true);
-  this.error.set('');
-  this.mensaje.set('');
-
-  const termino = this.termino.trim();
-
-  if (!termino) {
-    this.cargarUsuarios();
-    return;
-  }
-
-  this.http.get<any[]>(`${this.apiUrl}/buscar?nombre=${encodeURIComponent(termino)}`).subscribe({
-    next: (data) => {
-      this.usuarios.set(data);
-      this.loading.set(false);
-
-      if (data.length === 0) {
-        this.mensaje.set(`No se encontró ningún usuario con el nombre "${termino}".`);
-      }
-    },
-    error: () => {
-      this.error.set('No se pudo realizar la búsqueda.');
-      this.loading.set(false);
-    },
-  });
-}
-
-  limpiar() {
-    this.termino = '';
-    this.rolSeleccionado = '';
-  }
-
-  toggleEstado(id: number) {
-    const confirmar = confirm('¿Deseas cambiar el estado de este usuario?');
-    if (!confirmar) return;
-
-  this.http.patch(`${this.apiUrl}/CambioEstado/${id}`, {}).subscribe({
-      next: () => {
-        this.mensaje.set('Estado actualizado correctamente.');
-        this.cargarUsuarios();
-        setTimeout(() => this.mensaje.set(''), 2500);
+    this.http.get<any[]>(`${this.apiUrl}`).subscribe({
+      next: (data) => {
+        this.citas.set(data);
+        this.loading.set(false);
       },
       error: () => {
-        this.error.set('No se pudo actualizar el estado del usuario.');
+        this.error.set('No se pudieron cargar las citas.');
+        this.loading.set(false);
       },
     });
+  }
+
+  limpiarFiltros() {
+    this.estadoSeleccionado = '';
+    this.profesionalSeleccionado = '';
+    this.fechaInicial = '';
+    this.fechaFinal = '';
+  }
+
+  irACrear() {
+    this.router.navigate(['/citasCrear']);
+  }
+
+  irADetalle(id: number) {
+    this.router.navigate(['/citasDetalle', id]);
   }
 }

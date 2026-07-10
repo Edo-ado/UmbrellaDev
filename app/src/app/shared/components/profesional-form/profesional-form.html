@@ -1,0 +1,130 @@
+<div class="panel formulario">
+  <h3>{{ isEdit() ? 'Editar profesional' : 'Nuevo profesional' }}</h3>
+
+  <form (submit)="$event.preventDefault(); submit()">
+    <div class="grid-formulario">
+      <div class="campo">
+        <label>Nombre completo</label>
+        <input type="text" [formField]="profesionalForm.nombreCompleto" />
+        @if (profesionalForm.nombreCompleto().touched() && profesionalForm.nombreCompleto().invalid()) {
+          <span class="campo-error">{{ profesionalForm.nombreCompleto().errors()[0].message }}</span>
+        }
+      </div>
+
+      <div class="campo">
+        <label>Correo</label>
+        <input type="email" [formField]="profesionalForm.email" />
+        @if (profesionalForm.email().touched() && profesionalForm.email().invalid()) {
+          <span class="campo-error">{{ profesionalForm.email().errors()[0].message }}</span>
+        }
+      </div>
+
+      @if (!isEdit()) {
+  <div class="campo">
+    <label>Contraseña</label>
+    <input type="password" [formField]="profesionalForm.contrasena" />
+    @if (profesionalForm.contrasena().touched() && profesionalForm.contrasena().invalid()) {
+      <span class="campo-error">{{ profesionalForm.contrasena().errors()[0].message }}</span>
+    }
+  </div>
+}
+
+      <div class="campo">
+        <label>País</label>
+        <input type="text" [formField]="profesionalForm.pais" />
+        @if (profesionalForm.pais().touched() && profesionalForm.pais().invalid()) {
+          <span class="campo-error">{{ profesionalForm.pais().errors()[0].message }}</span>
+        }
+      </div>
+
+      <div class="campo">
+        <label>Teléfono</label>
+        <input type="text" [formField]="profesionalForm.telefono" />
+      </div>
+
+      <div class="campo">
+        <label>Título profesional</label>
+        <input type="text" [formField]="profesionalForm.tituloProfesional" />
+        @if (profesionalForm.tituloProfesional().touched() && profesionalForm.tituloProfesional().invalid()) {
+          <span class="campo-error">{{ profesionalForm.tituloProfesional().errors()[0].message }}</span>
+        }
+      </div>
+
+      <div class="campo">
+        <label>Modalidad</label>
+        <select [formField]="profesionalForm.modalidad">
+          <option value="PRESENCIAL">Presencial</option>
+          <option value="VIRTUAL">Virtual</option>
+          <option value="HIBRIDA">Híbrida</option>
+        </select>
+        @if (profesionalForm.modalidad().touched() && profesionalForm.modalidad().invalid()) {
+          <span class="campo-error">{{ profesionalForm.modalidad().errors()[0].message }}</span>
+        }
+      </div>
+
+      <div class="campo">
+        <label>Tarifa base</label>
+        <input type="number" [formField]="profesionalForm.tarifaBase" />
+        @if (profesionalForm.tarifaBase().touched() && profesionalForm.tarifaBase().invalid()) {
+          <span class="campo-error">{{ profesionalForm.tarifaBase().errors()[0].message }}</span>
+        }
+      </div>
+
+      <div class="campo">
+        <label>Años de experiencia</label>
+        <input type="number" [formField]="profesionalForm.anosExperiencia" />
+        @if (profesionalForm.anosExperiencia().touched() && profesionalForm.anosExperiencia().invalid()) {
+          <span class="campo-error">{{ profesionalForm.anosExperiencia().errors()[0].message }}</span>
+        }
+      </div>
+
+      <div class="campo">
+        <label>Universidad</label>
+        <input type="text" [formField]="profesionalForm.universidad" />
+      </div>
+
+      <div class="campo">
+        <label>Ubicación</label>
+        <input type="text" [formField]="profesionalForm.ubicacion" />
+      </div>
+
+      <div class="campo campo-check">
+        <label>Disponibilidad</label>
+        <input type="checkbox" [formField]="profesionalForm.disponibilidad" />
+      </div>
+
+      <div class="campo campo-full">
+        <label>Descripción</label>
+        <textarea rows="4" [formField]="profesionalForm.descripcion"></textarea>
+        @if (profesionalForm.descripcion().touched() && profesionalForm.descripcion().invalid()) {
+          <span class="campo-error">{{ profesionalForm.descripcion().errors()[0].message }}</span>
+        }
+      </div>
+    </div>
+
+    @if (especialidades().length > 0) {
+      <div class="especialidades-box">
+        <label>Especialidades</label>
+        <div class="tags-grid">
+          @for (especialidad of especialidades(); track especialidad.Id) {
+            <label class="tag-check">
+              <input
+                type="checkbox"
+                [checked]="isEspecialidadSelected(especialidad.Id)"
+                (change)="toggleEspecialidad(especialidad.Id, $any($event.target).checked)"
+              />
+              {{ especialidad.Nombre }}
+            </label>
+          }
+        </div>
+      </div>
+    }
+
+    <div class="acciones-filtro">
+      <button class="btn btn-secundario" type="button" (click)="cancelar.emit()">Cancelar</button>
+      <button class="btn btn-primario" type="submit" [disabled]="isSubmitting()">
+        {{ isSubmitting() ? 'Guardando...' : (isEdit() ? 'Guardar cambios' : 'Crear profesional') }}
+      </button>
+    </div>
+  </form>
+</div>

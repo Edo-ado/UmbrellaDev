@@ -1,0 +1,154 @@
+:host{
+    display:block;
+    color:#f5f5f5;
+}
+
+.panel{
+    background:#121212;
+    border:1px solid #222;
+    border-radius:18px;
+    padding:28px;
+    box-shadow:0 0 30px rgba(255,0,0,.08);
+}
+
+.panel h3{
+    margin-top:0;
+    margin-bottom:22px;
+    color:#ff5b5b;
+}
+
+.grid-formulario{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:22px;
+    margin-bottom:22px;
+}
+
+.campo{
+    display:flex;
+    flex-direction:column;
+    position:relative;
+}
+
+.campo-full{
+    grid-column:1 / -1;
+}
+
+.campo-check{
+    flex-direction:row;
+    align-items:center;
+    gap:10px;
+}
+
+.campo-check input{
+    width:auto;
+    padding:0;
+}
+
+label{
+    margin-bottom:10px;
+    color:#9b9b9b;
+    font-size:.9rem;
+}
+
+input,
+select,
+textarea{
+    background:#191919;
+    color:white;
+    border:1px solid #2c2c2c;
+    border-radius:12px;
+    padding:15px;
+    outline:none;
+    transition:.25s;
+    font-family:inherit;
+}
+
+input:focus,
+select:focus,
+textarea:focus{
+    border-color:#c3001a;
+    box-shadow:0 0 15px rgba(255,0,0,.2);
+}
+
+textarea{
+    resize:vertical;
+}
+
+.campo-error{
+    color:#ff6a6a;
+    font-size:.8rem;
+    margin-top:8px;
+}
+
+.especialidades-box{
+    margin-bottom:22px;
+}
+
+.tags-grid{
+    display:flex;
+    flex-wrap:wrap;
+    gap:12px;
+    margin-top:12px;
+}
+
+.tag-check{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    background:#191919;
+    border:1px solid #2c2c2c;
+    border-radius:999px;
+    padding:10px 16px;
+    font-size:.85rem;
+    color:#dddddd;
+    cursor:pointer;
+}
+
+.tag-check input{
+    width:auto;
+    padding:0;
+}
+
+.acciones-filtro{
+    display:flex;
+    gap:15px;
+}
+
+.btn{
+    padding:15px 22px;
+    border:none;
+    border-radius:12px;
+    cursor:pointer;
+    transition:.25s;
+    font-weight:600;
+}
+
+.btn-primario{
+    background:#b00017;
+    color:white;
+}
+
+.btn-primario:hover{
+    background:#d3001e;
+}
+
+.btn-primario:disabled{
+    background:#5c0410;
+    cursor:not-allowed;
+}
+
+.btn-secundario{
+    background:#222;
+    color:white;
+}
+
+.btn-secundario:hover{
+    background:#333;
+}
+
+@media(max-width:900px){
+    .acciones-filtro{
+        flex-direction:column;
+    }
+}
