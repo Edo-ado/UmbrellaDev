@@ -72,7 +72,7 @@ return await prisma.usuario.update({
   data: {
     NombreCompleto: data.NombreCompleto,
     Email: data.Email,
-    Contraseña: data.Contraseña,
+    Contrasena: data.Contraseña,
     Pais: data.Pais,
     Edad: data.Edad,
     Telefono: data.Telefono ?? null,
@@ -124,7 +124,7 @@ await this.getById(id)
     data: {
    NombreCompleto: data.NombreCompleto,
       Email: data.Email,
-     Contraseña: data.Contraseña,
+     
       Telefono: data.Telefono,
       Pais: data.Pais,
       Edad: data.Edad,
