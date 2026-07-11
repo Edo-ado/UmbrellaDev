@@ -1,0 +1,146 @@
+<form class="panel form-servicio" #formServicio="ngForm" (ngSubmit)="enviarFormulario(formServicio)">
+  <div class="form-grid">
+    <div class="campo">
+      <label for="idprofesional">Profesional asociado</label>
+      <select
+        id="idprofesional"
+        name="idprofesional"
+        [(ngModel)]="form.idprofesional"
+        required
+      >
+        <option [ngValue]="null">Seleccione un profesional</option>
+        @for (profesional of profesionales; track profesional.Id) {
+          <option [ngValue]="profesional.Id">
+            {{ profesional.NombreCompleto }}
+          </option>
+        }
+      </select>
+    </div>
+
+    <div class="campo">
+      <label for="idcategoria">Categoría</label>
+      <select
+        id="idcategoria"
+        name="idcategoria"
+        [(ngModel)]="form.idcategoria"
+        required
+      >
+        <option [ngValue]="null">Seleccione una categoría</option>
+        @for (categoria of categorias; track categoria.Id) {
+          <option [ngValue]="categoria.Id">
+            {{ categoria.Nombre }}
+          </option>
+        }
+      </select>
+    </div>
+
+    <div class="campo campo-completo">
+      <label for="nombre">Nombre</label>
+      <input
+        id="nombre"
+        name="nombre"
+        type="text"
+        [(ngModel)]="form.Nombre"
+        required
+        placeholder="Ingrese el nombre del servicio"
+      />
+    </div>
+
+    <div class="campo campo-completo">
+      <label for="descripcion">Descripción</label>
+      <textarea
+        id="descripcion"
+        name="descripcion"
+        rows="4"
+        [(ngModel)]="form.Descripcion"
+        placeholder="Describe el servicio"
+      ></textarea>
+    </div>
+
+    <div class="campo">
+      <label for="precio">Precio</label>
+      <input
+        id="precio"
+        name="precio"
+        type="number"
+        [(ngModel)]="form.Precio"
+        required
+        min="1"
+        placeholder="0"
+      />
+    </div>
+
+    <div class="campo">
+      <label for="duracion">Duración (minutos)</label>
+      <input
+        id="duracion"
+        name="duracion"
+        type="number"
+        [(ngModel)]="form.Duracion"
+        required
+        min="1"
+        placeholder="0"
+      />
+    </div>
+
+    <div class="campo">
+      <label for="modalidad">Modalidad</label>
+      <select
+        id="modalidad"
+        name="modalidad"
+        [(ngModel)]="form.Modalidad"
+        required
+      >
+        <option value="PRESENCIAL">Presencial</option>
+        <option value="VIRTUAL">Virtual</option>
+        <option value="HIBRIDA">Híbrida</option>
+        <option value="NOCAP">No cap</option>
+      </select>
+    </div>
+
+    <div class="campo">
+      <label for="estado">Estado</label>
+      <select
+        id="estado"
+        name="estado"
+        [(ngModel)]="form.Estado"
+        required
+      >
+        <option value="ACTIVO">Activo</option>
+        <option value="INACTIVO">Inactivo</option>
+      </select>
+    </div>
+
+    <div class="campo campo-completo">
+      <label>Especialidades asociadas</label>
+      <div class="check-grid">
+        @for (especialidad of especialidades; track especialidad.Id) {
+          <label class="check-item">
+            <input
+              type="checkbox"
+              [checked]="form.especialidadesIds.includes(especialidad.Id)"
+              (change)="toggleEspecialidad(especialidad.Id, $any($event.target).checked)"
+            />
+            <span>{{ especialidad.Nombre }}</span>
+          </label>
+        }
+      </div>
+    </div>
+  </div>
+
+  @if (formError) {
+    <div class="feedback error">
+      {{ formError }}
+    </div>
+  }
+
+  <div class="acciones-form">
+    <button type="button" class="btn btn-secundario" (click)="cancelar.emit()">
+      Cancelar
+    </button>
+
+    <button type="submit" class="btn btn-primario" [disabled]="saving">
+      {{ saving ? 'Guardando...' : 'Guardar servicio' }}
+    </button>
+  </div>
+</form>

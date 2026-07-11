@@ -9,6 +9,10 @@ import { ProfesionalLista } from './pages/profesionales/profesionales-lista/prof
 import { ProfesionalesDetalle } from './pages/profesionales/profesionales-detalle/profesionales-detalle';
 import { ProfesionalesCrear } from './pages/profesionales/profesionales-crear/profesionales-crear';
 import { ProfesionalesEditar } from './pages/profesionales/profesionales-editar/profesionales-editar';
+import { ServiciosLista } from './pages/servicios/servicios-lista/servicios-lista';
+import { ServiciosDetail } from './pages/servicios/servicios-detail/servicios-detail';
+import { ServiciosEdit } from './pages/servicios/servicios-edit/servicios-edit';
+import { ServiciosCreate } from './pages/servicios/servicios-create/servicios-create';
 
 export const routes: Routes = [
   {
@@ -25,6 +29,12 @@ export const routes: Routes = [
       { path: 'profesionalescrear', component: ProfesionalesCrear },
       { path: 'profesionalesEditar/:id', component: ProfesionalesEditar },
       { path: 'profesionalesDetalle/:id', component: ProfesionalesDetalle },
+
+      //servicios
+      { path: 'servicios', component: ServiciosLista },
+   { path: 'servicios/detail/:id', component: ServiciosDetail },
+  { path: 'servicios/create', component: ServiciosCreate },
+  { path: 'servicios/edit/:id', component: ServiciosEdit },
     ],
   },
 ];

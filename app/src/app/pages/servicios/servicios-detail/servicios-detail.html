@@ -1,0 +1,121 @@
+<section class="servicios-page">
+  <div class="servicios-hero hero-servicios">
+    <div>
+      <p class="eyebrow">Umbrella Corporation</p>
+      <h2>Detalle del servicio</h2>
+      <p class="subtitle">Información completa del servicio registrado.</p>
+    </div>
+  </div>
+
+  <div class="feedback error" *ngIf="error()">
+    {{ error() }}
+  </div>
+
+  <div class="panel estado" *ngIf="loading()">
+    Cargando información...
+  </div>
+
+  <div class="panel detalle-card" *ngIf="!loading() && servicio() as servicio">
+    <div class="detalle-header">
+      <div>
+        <h3>{{ servicio.Nombre }}</h3>
+        <p class="detalle-subtitulo">{{ servicio.categoria?.Nombre || 'Sin categoría' }}</p>
+      </div>
+  
+    </div>
+
+    <div class="grid-detalle">
+      <div class="campo-detalle campo-detalle-full">
+        <label>Descripción</label>
+        <p>{{ servicio.Descripcion || 'Sin descripción.' }}</p>
+      </div>
+
+      <div class="campo-detalle">
+        <label>Categoría</label>
+        <p>{{ servicio.categoria?.Nombre || 'Sin categoría' }}</p>
+      </div>
+
+      <div class="campo-detalle">
+        <label>Modalidad</label>
+        <p>
+          <span class="tag rol">{{ servicio.Modalidad }}</span>
+        </p>
+      </div>
+
+      <div class="campo-detalle">
+        <label>Precio</label>
+        <p>₡{{ servicio.Precio | number }}</p>
+      </div>
+
+      <div class="campo-detalle">
+        <label>Estado</label>
+        <p>
+          <span
+            class="tag"
+            [class.activo]="servicio.Estado === 'ACTIVO'"
+            [class.inactivo]="servicio.Estado === 'INACTIVO'"
+          >
+            {{ servicio.Estado }}
+          </span>
+        </p>
+      </div>
+    </div>
+
+    <div class="detalle-header" style="margin-top: 1.5rem;">
+      <h3>Profesional</h3>
+    </div>
+
+    <div class="grid-detalle" *ngIf="servicio.profesional as profesional; else sinProfesional">
+      <div class="campo-detalle">
+        <label>Nombre completo</label>
+        <p>{{ profesional.NombreCompleto }}</p>
+      </div>
+
+      <div class="campo-detalle">
+        <label>Título profesional</label>
+        <p>{{ profesional.TituloProfesional || 'No registrado' }}</p>
+      </div>
+
+      <div class="campo-detalle">
+        <label>Correo</label>
+        <p>{{ profesional.Email || 'No registrado' }}</p>
+      </div>
+
+      <div class="campo-detalle">
+        <label>Teléfono</label>
+        <p>{{ profesional.Telefono || 'No registrado' }}</p>
+      </div>
+
+      <div class="campo-detalle">
+        <label>Disponibilidad</label>
+        <p>
+          <span
+            class="tag"
+            [class.activo]="profesional.Disponibilidad"
+            [class.inactivo]="!profesional.Disponibilidad"
+          >
+            {{ profesional.Disponibilidad ? 'Disponible' : 'No disponible' }}
+          </span>
+        </p>
+      </div>
+    </div>
+
+    <ng-template #sinProfesional>
+      <p class="estado-vacio">Este servicio no tiene un profesional asignado.</p>
+    </ng-template>
+
+    <div class="especialidades-box" *ngIf="servicio.especialidades && servicio.especialidades.length > 0">
+      <label>Especialidades</label>
+      <div class="tags-grid">
+        <span class="tag" *ngFor="let especialidad of servicio.especialidades">
+          {{ especialidad.Nombre }}
+        </span>
+      </div>
+    </div>
+
+    <div class="acciones-filtro">
+      <button class="btn btn-secundario" (click)="volver()">Volver</button>
+      <button class="btn btn-primario" (click)="irAEditar()">Editar</button>
+    </div>
+  </div>
+</section>

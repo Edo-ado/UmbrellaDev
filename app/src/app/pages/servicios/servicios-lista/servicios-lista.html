@@ -1,1 +1,141 @@
-<p>servicios-lista works!</p>
+<section class="servicios-page">
+  <div class="servicios-hero hero-servicios">
+    <div>
+      <p class="eyebrow">Umbrella Corporation</p>
+      <h2>Control de servicios</h2>
+      <p class="subtitle">
+        Administra servicios, modalidad, tarifas y estado operativo del sistema.
+      </p>
+    </div>
+    <button class="btn btn-primario" (click)="irACrear()">+ Crear servicio</button>
+  </div>
+
+  <div class="panel filtros filtros-servicios">
+    <div class="campo">
+      <label for="buscar">Buscar por nombre</label>
+      <input
+        id="buscar"
+        type="text"
+        [(ngModel)]="termino"
+        placeholder="Buscar por nombre"
+        (keyup.enter)="buscar()"
+      />
+    </div>
+
+    <div class="campo">
+      <label for="categoria">Categoría</label>
+      <select id="categoria" [(ngModel)]="categoriaSeleccionada" (change)="filtrarPorCategoria()">
+        <option value="">Todas</option>
+        @for (categoria of categorias; track categoria.Id) {
+          <option [value]="categoria.Id">{{ categoria.Nombre }}</option>
+        }
+      </select>
+    </div>
+
+    <div class="campo">
+      <label for="modalidad">Modalidad</label>
+      <select id="modalidad" [(ngModel)]="modalidadSeleccionada" (change)="filtrarPorModalidad()">
+        <option value="">Todas</option>
+        <option value="VIRTUAL">Virtual</option>
+        <option value="PRESENCIAL">Presencial</option>
+        <option value="HIBRIDA">Híbrida</option>
+      </select>
+    </div>
+
+    <div class="campo">
+      <label for="precioMin">Precio mínimo</label>
+      <input
+        id="precioMin"
+        type="number"
+        [(ngModel)]="precioMin"
+        placeholder="Ej: 5000"
+      />
+    </div>
+
+    <div class="campo">
+      <label for="precioMax">Precio máximo</label>
+      <input
+        id="precioMax"
+        type="number"
+        [(ngModel)]="precioMax"
+        placeholder="Ej: 50000"
+      />
+    </div>
+
+    <div class="acciones-filtro">
+      <button class="btn btn-secundario" (click)="limpiar()">Limpiar</button>
+      <button class="btn btn-primario" (click)="buscar()">Buscar</button>
+    </div>
+  </div>
+
+  @if (mensaje) {
+    <div class="feedback ok">
+      {{ mensaje }}
+    </div>
+  }
+
+  @if (error) {
+    <div class="feedback error">
+      {{ error }}
+    </div>
+  }
+
+  @if (loading) {
+    <div class="panel estado">
+      Cargando servicios...
+    </div>
+  }
+
+  @if (!loading && !error) {
+    <div class="panel tabla-wrap">
+   @if (serviciosFiltrados.length > 0) {
+        <table>
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Profesional</th>
+              <th>Categoría</th>
+              <th>Precio</th>
+              <th>Modalidad</th>
+              <th>Estado</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (servicio of serviciosFiltrados; track servicio.Id) {
+              <tr>
+                <td>{{ servicio.Nombre }}</td>
+                <td>{{ servicio.profesional?.NombreCompleto || 'Sin asignar' }}</td>
+                <td>{{ servicio.categoria?.Nombre || 'Sin categoría' }}</td>
+                <td>₡{{ servicio.Precio | number }}</td>
+                <td>
+                  <span class="tag rol">{{ servicio.Modalidad }}</span>
+                </td>
+                <td>
+                  <span
+                    class="tag"
+                    [class.activo]="servicio.Estado === 'ACTIVO'"
+                    [class.inactivo]="servicio.Estado === 'INACTIVO'"
+                  >
+                    {{ servicio.Estado }}
+                  </span>
+                </td>
+                <td class="col-acciones">
+                  <button class="btn btn-accion" (click)="irAEditar(servicio.Id)">Editar</button>
+                  <button class="btn btn-accion" (click)="irADetalle(servicio.Id)">Ver detalle</button>
+                  <button class="btn btn-accion" (click)="toggleEstado(servicio.Id)">
+                    {{ servicio.Estado === 'ACTIVO' ? 'Desactivar' : 'Activar' }}
+                  </button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      } @else {
+        <div class="estado-vacio">
+          No hay servicios para mostrar con los filtros actuales.
+        </div>
+      }
+    </div>
+  }
+</section>
