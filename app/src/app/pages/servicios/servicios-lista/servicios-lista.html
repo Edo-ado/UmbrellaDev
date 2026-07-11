@@ -26,7 +26,7 @@
       <label for="categoria">Categoría</label>
       <select id="categoria" [(ngModel)]="categoriaSeleccionada" (change)="filtrarPorCategoria()">
         <option value="">Todas</option>
-        @for (categoria of categorias; track categoria.Id) {
+        @for (categoria of categorias(); track categoria.Id) {
           <option [value]="categoria.Id">{{ categoria.Nombre }}</option>
         }
       </select>
@@ -36,9 +36,9 @@
       <label for="modalidad">Modalidad</label>
       <select id="modalidad" [(ngModel)]="modalidadSeleccionada" (change)="filtrarPorModalidad()">
         <option value="">Todas</option>
-        <option value="VIRTUAL">Virtual</option>
+        <option value="REMOTO">Remoto</option>
         <option value="PRESENCIAL">Presencial</option>
-        <option value="HIBRIDA">Híbrida</option>
+        <option value="HIBRIDO">Híbrido</option>
       </select>
     </div>
 
@@ -64,31 +64,32 @@
 
     <div class="acciones-filtro">
       <button class="btn btn-secundario" (click)="limpiar()">Limpiar</button>
+      <button class="btn btn-primario" (click)="filtrarPorRangoPrecio()">Buscar por precio</button>
       <button class="btn btn-primario" (click)="buscar()">Buscar</button>
     </div>
   </div>
 
-  @if (mensaje) {
+  @if (mensaje()) {
     <div class="feedback ok">
-      {{ mensaje }}
+      {{ mensaje() }}
     </div>
   }
 
-  @if (error) {
+  @if (error()) {
     <div class="feedback error">
-      {{ error }}
+      {{ error() }}
     </div>
   }
 
-  @if (loading) {
+  @if (loading()) {
     <div class="panel estado">
       Cargando servicios...
     </div>
   }
 
-  @if (!loading && !error) {
+  @if (!loading() && !error()) {
     <div class="panel tabla-wrap">
-   @if (serviciosFiltrados.length > 0) {
+      @if (serviciosFiltrados().length > 0) {
         <table>
           <thead>
             <tr>
@@ -102,7 +103,7 @@
             </tr>
           </thead>
           <tbody>
-            @for (servicio of serviciosFiltrados; track servicio.Id) {
+            @for (servicio of serviciosFiltrados(); track servicio.Id) {
               <tr>
                 <td>{{ servicio.Nombre }}</td>
                 <td>{{ servicio.profesional?.NombreCompleto || 'Sin asignar' }}</td>

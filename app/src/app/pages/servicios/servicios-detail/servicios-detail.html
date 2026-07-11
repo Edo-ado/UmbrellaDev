@@ -35,6 +35,17 @@
         <p>{{ servicio.categoria?.Nombre || 'Sin categoría' }}</p>
       </div>
 
+
+<div class="especialidades-box" *ngIf="servicio.servicioEspecialidades && servicio.servicioEspecialidades.length > 0">
+  <label>Especialidades</label>
+  <div class="tags-grid">
+    <span class="tag" *ngFor="let especialidad of servicio.servicioEspecialidades">
+      {{ especialidad.Nombre }}
+    </span>
+  </div>
+</div>
+
+
       <div class="campo-detalle">
         <label>Modalidad</label>
         <p>

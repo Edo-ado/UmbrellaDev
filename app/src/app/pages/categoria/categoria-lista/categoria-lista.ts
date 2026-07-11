@@ -1,7 +1,8 @@
 import { Component, OnInit, signal, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { HttpClient } from '@angular/common/http';
+import { CategoriaService } from '../../../core/services/categoria.service'; // ajusta el path real
+import { Categoria } from '../../../core/models/categoria.model'; // ajusta el path real
 
 @Component({
   selector: 'app-categoria-lista',
@@ -11,10 +12,9 @@ import { HttpClient } from '@angular/common/http';
   styleUrls: ['./categoria-lista.css'],
 })
 export class CategoriaLista implements OnInit {
-  private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:3000/categorias';
+  private categoriaService = inject(CategoriaService);
 
-  categorias = signal<any[]>([]);
+  categorias = signal<Categoria[]>([]);
   loading = signal(false);
   error = signal('');
   mensaje = signal('');
@@ -43,7 +43,7 @@ export class CategoriaLista implements OnInit {
     this.error.set('');
     this.mensaje.set('');
 
-    this.http.get<any[]>(this.apiUrl).subscribe({
+    this.categoriaService.listar().subscribe({
       next: (data) => {
         this.categorias.set(data);
         this.loading.set(false);
@@ -67,22 +67,20 @@ export class CategoriaLista implements OnInit {
     this.error.set('');
     this.mensaje.set('');
 
-    this.http
-      .get<any[]>(`${this.apiUrl}/buscar?nombre=${encodeURIComponent(termino)}`)
-      .subscribe({
-        next: (data) => {
-          this.categorias.set(data);
-          this.loading.set(false);
+    this.categoriaService.buscarPorNombre(termino).subscribe({
+      next: (data) => {
+        this.categorias.set(data);
+        this.loading.set(false);
 
-          if (data.length === 0) {
-            this.mensaje.set(`No se encontró ninguna categoría con el nombre "${termino}".`);
-          }
-        },
-        error: () => {
-          this.error.set('No se pudo realizar la búsqueda.');
-          this.loading.set(false);
-        },
-      });
+        if (data.length === 0) {
+          this.mensaje.set(`No se encontró ninguna categoría con el nombre "${termino}".`);
+        }
+      },
+      error: () => {
+        this.error.set('No se pudo realizar la búsqueda.');
+        this.loading.set(false);
+      },
+    });
   }
 
   limpiar() {
@@ -97,7 +95,7 @@ export class CategoriaLista implements OnInit {
     const confirmar = confirm('¿Deseas cambiar el estado de esta categoría?');
     if (!confirmar) return;
 
-    this.http.patch(`${this.apiUrl}/CambioEstado/${id}`, {}).subscribe({
+    this.categoriaService.toggleEstado(id).subscribe({
       next: () => {
         this.mensaje.set('Estado actualizado correctamente.');
         this.cargarCategorias();
