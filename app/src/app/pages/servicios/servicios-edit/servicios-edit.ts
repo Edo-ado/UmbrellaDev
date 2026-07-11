@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, signal, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ServicioForm } from '../../../shared/components/servicio-form/servicio-form';
 import { UsuarioService } from '../../../core/services/usuario.service';
@@ -9,9 +9,7 @@ import { ServicioService } from '../../../core/services/servicio.service';
 import { Profesional } from '../../../core/models/profesional.model';
 import { Categoria } from '../../../core/models/categoria.model';
 import { Especialidad } from '../../../core/models/especialidad.model';
-import { Servicio, ServicioUpdateDto } from '../../../core/models/servicio.model';
-import { ChangeDetectorRef } from '@angular/core';
-
+import { Servicio, ServicioCreateDto, ServicioUpdateDto } from '../../../core/models/servicio.model';
 
 @Component({
   selector: 'app-servicios-edit',
@@ -28,16 +26,14 @@ export class ServiciosEdit implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
 
-private cdr = inject(ChangeDetectorRef);
+  saving = signal(false);
+  loading = signal(false);
+  error = signal('');
 
-  saving: boolean = false;
-  loading: boolean = false;
-  error: string = '';
-
-  profesionales: Profesional[] = [];
-  categorias: Categoria[] = [];
-  especialidades: Especialidad[] = [];
-  servicio: Servicio | null = null;
+  profesionales = signal<Profesional[]>([]);
+  categorias = signal<Categoria[]>([]);
+  especialidades = signal<Especialidad[]>([]);
+  servicio = signal<Servicio | null>(null);
 
   private servicioId!: number;
 
@@ -50,62 +46,54 @@ private cdr = inject(ChangeDetectorRef);
   }
 
   cargarServicio(): void {
-    this.loading = true;
-    this.error = '';
+    this.loading.set(true);
+    this.error.set('');
 
     this.servicioService.obtenerPorId(this.servicioId).subscribe({
-    next: (data) => {
-  console.log("NEXT");
-
-  this.servicio = data;
-  this.loading = false;
-
-  this.cdr.detectChanges();   
-
-  console.log("loading:", this.loading);
-  console.log("servicio:", this.servicio);
-
+      next: (data) => {
+        this.servicio.set(data);
+        this.loading.set(false);
       },
       error: () => {
-        this.error = 'No se pudo cargar el servicio a editar.';
-        this.loading = false;
+        this.error.set('No se pudo cargar el servicio a editar.');
+        this.loading.set(false);
       }
     });
   }
 
   cargarProfesionales(): void {
     this.usuarioService.obtenerDesarrolladores().subscribe({
-      next: (data) => { this.profesionales = data; },
-      error: () => { this.error = 'No se pudieron cargar los profesionales.'; }
+      next: (data) => { this.profesionales.set(data); },
+      error: () => { this.error.set('No se pudieron cargar los profesionales.'); }
     });
   }
 
   cargarCategorias(): void {
     this.categoriaService.listar().subscribe({
-      next: (data) => { this.categorias = data; },
-      error: () => { this.error = 'No se pudieron cargar las categorías.'; }
+      next: (data) => { this.categorias.set(data); },
+      error: () => { this.error.set('No se pudieron cargar las categorías.'); }
     });
   }
 
   cargarEspecialidades(): void {
     this.especialidadService.listar().subscribe({
-      next: (data) => { this.especialidades = data; },
-      error: () => { this.error = 'No se pudieron cargar las especialidades.'; }
+      next: (data) => { this.especialidades.set(data); },
+      error: () => { this.error.set('No se pudieron cargar las especialidades.'); }
     });
   }
 
-  guardar(data: ServicioUpdateDto): void {
-    this.saving = true;
-    this.error = '';
+  guardar(data: ServicioCreateDto | ServicioUpdateDto): void {
+    this.saving.set(true);
+    this.error.set('');
 
-    this.servicioService.actualizar(this.servicioId, data).subscribe({
+    this.servicioService.actualizar(this.servicioId, data as ServicioUpdateDto).subscribe({
       next: () => {
-        this.saving = false;
+        this.saving.set(false);
         this.router.navigate(['/servicios']);
       },
       error: () => {
-        this.saving = false;
-        this.error = 'No se pudo actualizar el servicio.';
+        this.saving.set(false);
+        this.error.set('No se pudo actualizar el servicio.');
       }
     });
   }

@@ -237,4 +237,36 @@ font-size:2.1rem;
 flex-direction:column;
 }
 
+
+.btn-volver {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1.2rem;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 0, 0, 0.35);
+  background: transparent;
+  color: #e5e5e5;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-volver:hover {
+  background: rgba(255, 0, 0, 0.12);
+  border-color: rgba(255, 0, 0, 0.6);
+  color: #ffffff;
+  transform: translateX(-2px);
+}
+
+.btn-volver svg {
+  transition: transform 0.2s ease;
+}
+
+.btn-volver:hover svg {
+  transform: translateX(-3px);
+}
+
+
 }
