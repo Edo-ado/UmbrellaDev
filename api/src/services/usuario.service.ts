@@ -5,15 +5,17 @@ import { AppError } from "../utils/app-error";
 
 export const UsuarioService = {
   async getAll() {
-    return await prisma.usuario.findMany({ include: { especialidades: true } });
-  },
+  return await prisma.usuario.findMany({
+    include: { especialidades: true},
+  });
+},
 
-  async getById(id: number) {
-    return await prisma.usuario.findUnique({
-      where: { Id: id },
-      include: { especialidades: true },
-    });
-  },
+async getById(id: number) {
+  return await prisma.usuario.findUnique({
+    where: { Id: id },
+    include: { especialidades: true },
+  });
+},
 
   async getByRol(Role: Role) {
     return await prisma.usuario.findMany({

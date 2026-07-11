@@ -6,25 +6,26 @@ export enum EstadoCita {
 }
 
 export interface Cita {
-  id: number;
-  fecha: string;       
-  hora: string;
-  estado: EstadoCita;
-  clienteId: number;
-  profesionalId: number;
-  servicioId: number;
+  Id: number;
+  Fecha: string;
+  Hora: string;
+  Modalidad: string;
+  Descripcion: string;
+  Comentarios?: string;
+  Estado: EstadoCita;
+  idcliente: number;
+  idprofesional: number;
+  idservicio: number;
   cliente?: {
-    id: number;
-    nombre: string;
-    apellido?: string;
+    Id: number;
+    NombreCompleto: string;
   };
   profesional?: {
-    id: number;
-    nombre: string;
-    apellido?: string;
+    Id: number;
+    NombreCompleto: string;
   };
   servicio?: {
-    id: number;
-    nombre: string;
+    Id: number;
+    Nombre: string;
   };
 }

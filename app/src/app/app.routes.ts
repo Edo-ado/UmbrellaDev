@@ -14,6 +14,11 @@ import { ServiciosDetail } from './pages/servicios/servicios-detail/servicios-de
 import { ServiciosEdit } from './pages/servicios/servicios-edit/servicios-edit';
 import { ServiciosCreate } from './pages/servicios/servicios-create/servicios-create';
 
+import { CitasListadoComponent } from './pages/citas/listado/listado';
+import { CitasCrear } from './pages/citas/registro/registro';
+import { CitasDetalle } from './pages/citas/detalle/detalle';
+
+
 export const routes: Routes = [
   {
     path: '',
@@ -35,6 +40,11 @@ export const routes: Routes = [
    { path: 'servicios/detail/:id', component: ServiciosDetail },
   { path: 'servicios/create', component: ServiciosCreate },
   { path: 'servicios/edit/:id', component: ServiciosEdit },
+
+      //citas
+      {path: 'citas', component: CitasListadoComponent},
+     {path: 'citas/crear', component: CitasCrear},
+      {path: 'citas/detalle/:id', component: CitasDetalle},
     ],
   },
 ];

@@ -1,5 +1,6 @@
 import { Component, inject, signal, computed, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { CitaService } from '../../../core/services/cita.service';
 import { Cita, EstadoCita } from '../../../core/models/cita.model';
@@ -7,7 +8,7 @@ import { Cita, EstadoCita } from '../../../core/models/cita.model';
 @Component({
   selector: 'app-citas-listado',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './listado.html',
   styleUrl: './listado.css',
 })
@@ -16,53 +17,41 @@ export class CitasListadoComponent implements OnInit {
   private router = inject(Router);
 
   citas = signal<Cita[]>([]);
-  cargando = signal<boolean>(true);
-  error = signal<string | null>(null);
+  loading = signal<boolean>(false);
+  error = signal<string>('');
+  mensaje = signal<string>('');
 
-  // Filtros
-  filtroEstado = signal<string>('TODOS');
-  filtroProfesionalId = signal<string>('TODOS');
-  filtroFechaInicial = signal<string>('');
-  filtroFechaFinal = signal<string>('');
+  estadoSeleccionado = signal<string>('');
+  profesionalSeleccionado = signal<string>('');
+  fechaInicial = signal<string>('');
+  fechaFinal = signal<string>('');
 
   estados = Object.values(EstadoCita);
 
-  // Lista de profesionales únicos derivada de las citas cargadas
   profesionales = computed(() => {
     const map = new Map<number, string>();
     this.citas().forEach((c) => {
       if (c.profesional) {
-        map.set(c.profesional.id, `${c.profesional.nombre} ${c.profesional.apellido ?? ''}`.trim());
+        map.set(c.profesional.Id, c.profesional.NombreCompleto);
       }
     });
     return Array.from(map.entries()).map(([id, nombre]) => ({ id, nombre }));
   });
 
-  // Citas filtradas combinando los 3 filtros
   citasFiltradas = computed(() => {
-    let resultado = this.citas();
+    const estado = this.estadoSeleccionado();
+    const profesionalId = this.profesionalSeleccionado();
+    const desde = this.fechaInicial() ? new Date(this.fechaInicial()) : null;
+    const hasta = this.fechaFinal() ? new Date(this.fechaFinal()) : null;
 
-    if (this.filtroEstado() !== 'TODOS') {
-      resultado = resultado.filter((c) => c.estado === this.filtroEstado());
-    }
-
-    if (this.filtroProfesionalId() !== 'TODOS') {
-      resultado = resultado.filter(
-        (c) => c.profesionalId === Number(this.filtroProfesionalId()),
-      );
-    }
-
-    if (this.filtroFechaInicial()) {
-      const min = new Date(this.filtroFechaInicial());
-      resultado = resultado.filter((c) => new Date(c.fecha) >= min);
-    }
-
-    if (this.filtroFechaFinal()) {
-      const max = new Date(this.filtroFechaFinal());
-      resultado = resultado.filter((c) => new Date(c.fecha) <= max);
-    }
-
-    return resultado;
+    return this.citas().filter((c) => {
+      const coincideEstado = !estado || c.Estado === estado;
+      const coincideProfesional = !profesionalId || c.idprofesional === Number(profesionalId);
+      const fechaCita = new Date(c.Fecha);
+      const coincideDesde = !desde || fechaCita >= desde;
+      const coincideHasta = !hasta || fechaCita <= hasta;
+      return coincideEstado && coincideProfesional && coincideDesde && coincideHasta;
+    });
   });
 
   ngOnInit(): void {
@@ -70,49 +59,34 @@ export class CitasListadoComponent implements OnInit {
   }
 
   cargarCitas(): void {
-    this.cargando.set(true);
-    this.error.set(null);
+    this.loading.set(true);
+    this.error.set('');
+
     this.citaService.getAll().subscribe({
       next: (data) => {
         this.citas.set(data);
-        this.cargando.set(false);
+        this.loading.set(false);
       },
       error: (err) => {
         console.error(err);
-        this.error.set('Error al cargar las citas');
-        this.cargando.set(false);
+        this.error.set('No se pudieron cargar las citas.');
+        this.loading.set(false);
       },
     });
   }
 
-  onFiltroEstadoChange(event: Event): void {
-    this.filtroEstado.set((event.target as HTMLSelectElement).value);
-  }
-
-  onFiltroProfesionalChange(event: Event): void {
-    this.filtroProfesionalId.set((event.target as HTMLSelectElement).value);
-  }
-
-  onFiltroFechaInicialChange(event: Event): void {
-    this.filtroFechaInicial.set((event.target as HTMLInputElement).value);
-  }
-
-  onFiltroFechaFinalChange(event: Event): void {
-    this.filtroFechaFinal.set((event.target as HTMLInputElement).value);
-  }
-
   limpiarFiltros(): void {
-    this.filtroEstado.set('TODOS');
-    this.filtroProfesionalId.set('TODOS');
-    this.filtroFechaInicial.set('');
-    this.filtroFechaFinal.set('');
+    this.estadoSeleccionado.set('');
+    this.profesionalSeleccionado.set('');
+    this.fechaInicial.set('');
+    this.fechaFinal.set('');
   }
 
   irACrearCita(): void {
-    this.router.navigate(['/citasCrear']);
+    this.router.navigate(['/citas/crear']);
   }
 
   irADetalle(id: number): void {
-    this.router.navigate(['/citasDetalle', id]);
+    this.router.navigate(['/citas/detalle', id]);
   }
 }

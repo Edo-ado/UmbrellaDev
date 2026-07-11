@@ -1,1 +1,83 @@
-<p>detalle works!</p>
+<section class="usuarios-page">
+  <div class="usuarios-hero">
+    <div>
+      <p class="eyebrow">Umbrella Corporation</p>
+      <h2>Detalle de Cita</h2>
+      <p class="subtitle">
+        Información completa del registro de la cita seleccionada.
+      </p>
+    </div>
+    <button class="btn btn-secundario" (click)="volver()">← Volver al listado</button>
+  </div>
+
+  @if (loading()) {
+    <div class="panel estado">
+      Cargando cita...
+    </div>
+  }
+
+  @if (error()) {
+    <div class="feedback error">
+      {{ error() }}
+    </div>
+  }
+
+  @if (!loading() && !error() && cita()) {
+    <div class="panel detalle-grid">
+      <div class="campo-detalle">
+        <label>Cliente</label>
+        <p>{{ cita()?.cliente?.NombreCompleto }}</p>
+      </div>
+
+      <div class="campo-detalle">
+        <label>Profesional</label>
+        <p>{{ cita()?.profesional?.NombreCompleto }}</p>
+      </div>
+
+      <div class="campo-detalle">
+        <label>Servicio</label>
+        <p>{{ cita()?.servicio?.Nombre }}</p>
+      </div>
+
+      <div class="campo-detalle">
+        <label>Fecha</label>
+        <p>{{ cita()?.Fecha | date: 'dd/MM/yyyy' }}</p>
+      </div>
+
+      <div class="campo-detalle">
+        <label>Hora</label>
+        <p>{{ cita()?.Hora }}</p>
+      </div>
+
+      <div class="campo-detalle">
+        <label>Modalidad</label>
+        <p>{{ cita()?.Modalidad }}</p>
+      </div>
+
+      <div class="campo-detalle">
+        <label>Estado</label>
+        <span
+          class="tag"
+          [class.pendiente]="cita()?.Estado === 'PENDIENTE'"
+          [class.confirmada]="cita()?.Estado === 'CONFIRMADA'"
+          [class.completada]="cita()?.Estado === 'COMPLETADA'"
+          [class.cancelada]="cita()?.Estado === 'CANCELADA'"
+        >
+          {{ cita()?.Estado }}
+        </span>
+      </div>
+
+      <div class="campo-detalle full">
+        <label>Descripción</label>
+        <p>{{ cita()?.Descripcion || 'Sin descripción registrada.' }}</p>
+      </div>
+
+      @if (cita()?.Comentarios) {
+        <div class="campo-detalle full">
+          <label>Comentarios</label>
+          <p>{{ cita()?.Comentarios }}</p>
+        </div>
+      }
+    </div>
+  }
+</section>
