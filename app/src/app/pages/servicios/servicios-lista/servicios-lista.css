@@ -8,12 +8,12 @@
     padding:60px;
 }
 
-.profesionales-page{
+.servicios-page{
     max-width:1400px;
     margin:auto;
 }
 
-.profesionales-hero{
+.servicios-hero{
     display:flex;
     justify-content:space-between;
     align-items:center;
@@ -28,7 +28,7 @@
     margin-bottom:15px;
 }
 
-.profesionales-hero h2{
+.servicios-hero h2{
     font-size:3rem;
     margin:0;
 }
@@ -219,7 +219,7 @@ tbody tr:hover{
 
 @media(max-width:900px){
 
-.profesionales-hero{
+.servicios-hero{
     flex-direction:column;
     align-items:flex-start;
     gap:20px;
@@ -229,66 +229,12 @@ tbody tr:hover{
 padding:25px;
 }
 
-.profesionales-hero h2{
+.servicios-hero h2{
 font-size:2.1rem;
 }
 
 .acciones-filtro{
 flex-direction:column;
 }
-
-
-.hero-servicios {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  gap: 1rem;
-  flex-wrap: wrap;
-}
-
-.hero-acciones {
-  display: flex;
-  gap: 0.75rem;
-  flex-wrap: wrap;
-}
-
-.filtros-servicios {
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-}
-
-.tabla-acciones {
-  display: flex;
-  gap: 0.5rem;
-  flex-wrap: wrap;
-}
-
-.btn-tabla {
-  min-width: 110px;
-  text-align: center;
-}
-
-@media (max-width: 768px) {
-  .hero-servicios {
-    align-items: stretch;
-  }
-
-  .hero-acciones {
-    width: 100%;
-  }
-
-  .hero-acciones .btn {
-    width: 100%;
-  }
-
-  .tabla-acciones {
-    flex-direction: column;
-  }
-
-  .btn-tabla {
-    width: 100%;
-  }
-}
-
-
 
 }
