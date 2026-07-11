@@ -64,6 +64,7 @@ datasource db {
     TarifaBase Float?
     Disponibilidad Boolean?   
     Universidad String?   @db.VarChar(150)
+    Foto String?   @db.VarChar(500)
 
     // logins
     LastLogin DateTime  @default(now())

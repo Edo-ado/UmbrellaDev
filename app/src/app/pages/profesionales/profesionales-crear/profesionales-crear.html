@@ -5,16 +5,16 @@
       <h2>Nuevo profesional</h2>
       <p class="subtitle">Registra un nuevo profesional en el sistema.</p>
     </div>
+    <button class="btn btn-secundario" (click)="cancelar()">← Volver al listado</button>
   </div>
 
-  <div class="feedback error" >
-    {{ error() }}
-  </div>
-
-
+  @if (error()) {
+    <div class="feedback error">
+      {{ error() }}
+    </div>
+  }
 
   <app-profesional-form
-   
     [saving]="saving()"
     [especialidades]="especialidades()"
     (guardar)="guardar($event)"

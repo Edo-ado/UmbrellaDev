@@ -2,6 +2,16 @@
   <h3>{{ isEdit() ? 'Editar profesional' : 'Nuevo profesional' }}</h3>
 
   <form (submit)="$event.preventDefault(); submit()">
+    <div class="campo campo-foto">
+      <label>Foto de perfil</label>
+      @if (fotoPreview()) {
+        <img [src]="fotoPreview()" class="foto-preview" alt="Vista previa" />
+      } @else if (fotoActualUrl()) {
+        <img [src]="fotoActualUrl()" class="foto-preview" alt="Foto actual" />
+      }
+      <input type="file" accept="image/png,image/jpeg,image/webp" (change)="seleccionarFoto($event)" />
+    </div>
+
     <div class="grid-formulario">
       <div class="campo">
         <label>Nombre completo</label>

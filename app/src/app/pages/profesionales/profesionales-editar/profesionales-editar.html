@@ -5,22 +5,28 @@
       <h2>Editar profesional</h2>
       <p class="subtitle">Actualiza la información del profesional.</p>
     </div>
+    <button class="btn btn-secundario" (click)="cancelar()">← Volver al listado</button>
   </div>
 
-  <div class="feedback error" *ngIf="error()">
-    {{ error() }}
-  </div>
+  @if (error()) {
+    <div class="feedback error">
+      {{ error() }}
+    </div>
+  }
 
-  <div class="panel estado" *ngIf="loading()">
-    Cargando información del profesional...
-  </div>
+  @if (loading()) {
+    <div class="panel estado">
+      Cargando información del profesional...
+    </div>
+  }
 
-  <app-profesional-form
-    *ngIf="!loading() && profesional()"
-    [profesional]="profesional()"
-    [saving]="saving()"
-    [especialidades]="especialidades()"
-    (guardar)="guardar($event)"
-    (cancelar)="cancelar()"
-  ></app-profesional-form>
+  @if (!loading() && profesional()) {
+    <app-profesional-form
+      [profesional]="profesional()"
+      [saving]="saving()"
+      [especialidades]="especialidades()"
+      (guardar)="guardar($event)"
+      (cancelar)="cancelar()"
+    ></app-profesional-form>
+  }
 </section>

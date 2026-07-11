@@ -2,6 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UsuarioService } from '../../../core/services/usuario.service';
+import { ImageService } from '../../../core/services/imagen.service';
 import { Profesional } from '../../../core/models/profesional.model';
 
 @Component({
@@ -15,6 +16,7 @@ export class ProfesionalesDetalle {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly usuarioService = inject(UsuarioService);
+  private readonly imageService = inject(ImageService);
 
   profesional = signal<Profesional | null>(null);
   loading = signal(true);
@@ -46,6 +48,10 @@ export class ProfesionalesDetalle {
         this.loading.set(false);
       },
     });
+  }
+
+  fotoUrl(fileName: string): string {
+    return this.imageService.getUrl(fileName);
   }
 
   irAEditar() {

@@ -82,10 +82,17 @@ Edad: z.coerce
     .positive("La tarifa debe ser mayor que cero"),
   Disponibilidad: z.boolean().optional(),
 
+ 
   Universidad: z
     .string()
     .trim()
     .max(150, "La universidad no puede superar 150 caracteres")
+    .optional(),
+
+  Foto: z
+    .string()
+    .trim()
+    .max(255, "El nombre de archivo de la foto no puede superar 255 caracteres")
     .optional(),
 
   especialidadIds: z

@@ -9,6 +9,7 @@ export interface Profesional {
   Email: string;
   Pais: string;
   Telefono?: string | null;
+  Foto?: string;
   Modalidad: string;
   Descripcion?: string | null;
   AnosExperiencia?: number | null;
@@ -27,6 +28,7 @@ export interface ProfesionalFormModel {
   pais: string;
   telefono: string;
   modalidad: string;
+  Foto?: string;
   descripcion: string;
   anosExperiencia: number;
   ubicacion: string;
@@ -46,6 +48,7 @@ export interface ProfesionalCreateDto {
   Modalidad: string;
   Descripcion?: string;
   AnosExperiencia?: number;
+  Foto?: string;
   Ubicacion?: string;
   TituloProfesional: string;
   TarifaBase: number;
@@ -63,6 +66,7 @@ export interface ProfesionalUpdateDto {
   Modalidad: string;
   Descripcion?: string;
   AnosExperiencia?: number;
+  Foto?: string;
   Ubicacion?: string;
   TituloProfesional: string;
   TarifaBase: number;

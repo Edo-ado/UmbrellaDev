@@ -55,7 +55,7 @@ export class ImageController {
                 });
             }
             const filePath = imageService.getImagePath(fileNameParam);
-            return response.download(filePath, fileNameParam);
+            return response.sendFile(filePath);
         } catch (error) {
             next(error);
         }

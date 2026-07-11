@@ -180,6 +180,15 @@
     background:#333;
 }
 
+  .detalle-foto{
+    width:90px;
+    height:90px;
+    object-fit:cover;
+    border-radius:12px;
+    border:1px solid #2c2c2c;
+    flex-shrink:0;
+}
+
 @media(max-width:900px){
     :host{
         padding:25px;
@@ -197,4 +206,8 @@
     .acciones-filtro{
         flex-direction:column;
     }
+
+ 
 }
+
+

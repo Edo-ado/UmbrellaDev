@@ -1,4 +1,4 @@
-import { Component, computed, effect, input, output, signal } from '@angular/core';
+import { Component, computed, effect, inject, input, output, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   FormField,
@@ -16,6 +16,7 @@ import {
   ProfesionalUpdateDto,
   Especialidad,
 } from '../../../core/models/profesional.model';
+import { ImageService } from '../../../core/services/imagen.service';
 
 @Component({
   selector: 'app-profesional-form',
@@ -25,17 +26,25 @@ import {
   styleUrls: ['./profesional-form.css'],
 })
 export class ProfesionalForm {
+  private readonly imageService = inject(ImageService);
+
   profesional = input<Profesional | null>(null);
   especialidades = input<Especialidad[]>([]);
   saving = input<boolean>(false);
 
-  guardar = output<ProfesionalCreateDto | ProfesionalUpdateDto>();
+  guardar = output<{ dto: ProfesionalCreateDto | ProfesionalUpdateDto; foto: File | null }>();
   cancelar = output<void>();
 
   isEdit = computed(() => this.profesional() !== null);
   isSubmitting = computed(() => this.saving());
+  fotoActualUrl = computed(() => {
+    const foto = this.profesional()?.Foto;
+    return foto ? this.imageService.getUrl(foto) : null;
+  });
 
   profesionalModel = signal<ProfesionalFormModel>(this.modeloVacio());
+  foto = signal<File | null>(null);
+  fotoPreview = signal<string | null>(null);
 
   profesionalForm = form(this.profesionalModel, (path) => {
     required(path.nombreCompleto, { message: 'El nombre es obligatorio' });
@@ -189,12 +198,19 @@ export class ProfesionalForm {
     return base as ProfesionalUpdateDto;
   }
 
+  seleccionarFoto(event: Event) {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0] ?? null;
+    this.foto.set(file);
+    this.fotoPreview.set(file ? URL.createObjectURL(file) : null);
+  }
+
   submit() {
     if (this.isSubmitting()) return;
     this.marcarCamposComoTocados();
     if (this.formularioInvalido()) return;
 
     const dto = this.buildDto();
-    this.guardar.emit(dto);
+    this.guardar.emit({ dto, foto: this.foto() });
   }
 }
