@@ -1,1 +1,167 @@
-<p>registro works!</p>
+<section class="usuarios-page">
+  <div class="usuarios-hero">
+    <div>
+      <p class="eyebrow">Umbrella Corporation</p>
+      <h2>Nueva Cita</h2>
+      <p class="subtitle">
+        Registrá una nueva cita entre un cliente y un profesional. El estado
+        se asigna automáticamente como <strong>Pendiente</strong>.
+      </p>
+    </div>
+    <button class="btn btn-secundario" (click)="cancelar()">← Volver al listado</button>
+  </div>
+
+  @if (mensaje()) {
+    <div class="feedback ok">
+      {{ mensaje() }}
+    </div>
+  }
+
+  @if (error()) {
+    <div class="feedback error">
+      {{ error() }}
+    </div>
+  }
+
+  @if (loading()) {
+    <div class="panel estado">
+      Cargando datos...
+    </div>
+  }
+
+  @if (!loading()) {
+    <div class="panel formulario">
+      <div class="campo">
+        <label for="cliente">Cliente *</label>
+        <select
+          id="cliente"
+          [ngModel]="idcliente()"
+          (ngModelChange)="idcliente.set($event)"
+        >
+          <option value="">Seleccioná un cliente</option>
+          @for (cliente of clientes(); track cliente.Id) {
+            <option [value]="cliente.Id">{{ cliente.NombreCompleto }}</option>
+          }
+        </select>
+        @if (errores()['cliente']) {
+          <small class="hint">{{ errores()['cliente'] }}</small>
+        }
+      </div>
+
+      <div class="campo">
+        <label for="profesional">Profesional *</label>
+        <select
+          id="profesional"
+          [ngModel]="idprofesional()"
+          (ngModelChange)="idprofesional.set($event); onProfesionalChange()"
+        >
+          <option value="">Seleccioná un profesional</option>
+          @for (prof of profesionales(); track prof.Id) {
+            <option [value]="prof.Id">{{ prof.NombreCompleto }}</option>
+          }
+        </select>
+        @if (errores()['profesional']) {
+          <small class="hint">{{ errores()['profesional'] }}</small>
+        }
+      </div>
+
+      <div class="campo">
+        <label for="servicio">Servicio *</label>
+        <select
+          id="servicio"
+          [ngModel]="idservicio()"
+          (ngModelChange)="idservicio.set($event)"
+        >
+          <option value="">Seleccioná un servicio</option>
+          @for (serv of serviciosDisponibles(); track serv.Id) {
+            <option [value]="serv.Id">{{ serv.Nombre }}</option>
+          }
+        </select>
+        @if (idprofesional() && serviciosDisponibles().length === 0) {
+          <small class="hint">Este profesional no tiene servicios registrados.</small>
+        }
+        @if (errores()['servicio']) {
+          <small class="hint">{{ errores()['servicio'] }}</small>
+        }
+      </div>
+
+      <div class="campo">
+        <label for="fecha">Fecha *</label>
+        <input
+          id="fecha"
+          type="date"
+          [ngModel]="fecha()"
+          (ngModelChange)="fecha.set($event)"
+        />
+        @if (errores()['fecha']) {
+          <small class="hint">{{ errores()['fecha'] }}</small>
+        }
+      </div>
+
+      <div class="campo">
+        <label for="hora">Hora *</label>
+        <input
+          id="hora"
+          type="time"
+          [ngModel]="hora()"
+          (ngModelChange)="hora.set($event)"
+        />
+        @if (errores()['hora']) {
+          <small class="hint">{{ errores()['hora'] }}</small>
+        }
+      </div>
+
+      <div class="campo">
+        <label for="modalidad">Modalidad *</label>
+        <select
+          id="modalidad"
+          [ngModel]="modalidad()"
+          (ngModelChange)="modalidad.set($event)"
+        >
+          <option value="">Seleccioná una modalidad</option>
+          @for (mod of modalidades; track mod) {
+            <option [value]="mod">{{ mod }}</option>
+          }
+        </select>
+        @if (errores()['modalidad']) {
+          <small class="hint">{{ errores()['modalidad'] }}</small>
+        }
+      </div>
+
+      <div class="campo full">
+        <label for="descripcion">Descripción *</label>
+        <textarea
+          id="descripcion"
+          rows="3"
+          placeholder="Describí brevemente lo que necesitás (mínimo 10 caracteres)"
+          [ngModel]="descripcion()"
+          (ngModelChange)="descripcion.set($event)"
+        ></textarea>
+        @if (errores()['descripcion']) {
+          <small class="hint">{{ errores()['descripcion'] }}</small>
+        }
+      </div>
+
+      <div class="campo full">
+        <label for="comentarios">Comentarios (opcional)</label>
+        <textarea
+          id="comentarios"
+          rows="3"
+          [ngModel]="comentarios()"
+          (ngModelChange)="comentarios.set($event)"
+        ></textarea>
+      </div>
+
+      <div class="acciones-formulario">
+        <button class="btn btn-secundario" (click)="cancelar()">Cancelar</button>
+        <button
+          class="btn btn-primario"
+          [disabled]="guardando()"
+          (click)="guardar()"
+        >
+          {{ guardando() ? 'Guardando...' : 'Crear Cita' }}
+        </button>
+      </div>
+    </div>
+  }
+</section>
