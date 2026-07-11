@@ -100,6 +100,7 @@ async getAllDesarrolladores() {
     TarifaBase: data.TarifaBase ?? null,
     Disponibilidad: data.Disponibilidad ?? true,
     Universidad: data.Universidad ?? null,
+    Foto: data.Foto ?? null,
     especialidades: data.especialidadIds
       ? {
           connect: data.especialidadIds.map((Id) => ({ Id })),
@@ -152,6 +153,7 @@ await this.getById(id)
       TarifaBase: data.TarifaBase,
       Disponibilidad: data.Disponibilidad,
       Universidad: data.Universidad,
+      Foto: data.Foto,
       especialidades: data.especialidadIds
         ? {  set: data.especialidadIds.map((Id) => ({ Id })),
           }
@@ -212,4 +214,3 @@ async toggleDisponibilidadByProfesional(id: number) {
 }
 
 }
-

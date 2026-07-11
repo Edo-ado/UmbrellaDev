@@ -5,6 +5,7 @@ import { forkJoin } from 'rxjs';
 import { ProfesionalForm } from '../../../shared/components/profesional-form/profesional-form';
 import { UsuarioService } from '../../../core/services/usuario.service';
 import { EspecialidadService } from '../../../core/services/especialidad.service';
+import { ImageService } from '../../../core/services/imagen.service';
 import {
   Especialidad,
   Profesional,
@@ -17,12 +18,14 @@ import {
   standalone: true,
   imports: [CommonModule, ProfesionalForm],
   templateUrl: './profesionales-editar.html',
+  styleUrls: ['./profesionales-editar.css'],
 })
 export class ProfesionalesEditar {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly usuarioService = inject(UsuarioService);
   private readonly especialidadService = inject(EspecialidadService);
+  private readonly imageService = inject(ImageService);
 
   profesional = signal<Profesional | null>(null);
   especialidades = signal<Especialidad[]>([]);
@@ -63,13 +66,32 @@ export class ProfesionalesEditar {
     });
   }
 
-  guardar(data: ProfesionalCreateDto | ProfesionalUpdateDto) {
+  guardar({ dto, foto }: { dto: ProfesionalCreateDto | ProfesionalUpdateDto; foto: File | null }) {
     if (!this.id) return;
 
     this.saving.set(true);
     this.error.set(null);
 
-    this.usuarioService.actualizar(this.id, data as ProfesionalUpdateDto).subscribe({
+    if (!foto) {
+      this.actualizar(dto as ProfesionalUpdateDto);
+      return;
+    }
+
+    const previousFileName = this.profesional()?.Foto;
+
+    this.imageService.upload(foto, previousFileName).subscribe({
+      next: (res) => {
+        this.actualizar({ ...dto, Foto: res.fileName } as ProfesionalUpdateDto);
+      },
+      error: () => {
+        this.error.set('No se pudo subir la foto.');
+        this.saving.set(false);
+      },
+    });
+  }
+
+  private actualizar(data: ProfesionalUpdateDto) {
+    this.usuarioService.actualizar(this.id, data).subscribe({
       next: () => {
         this.router.navigate(['/profesionales']);
       },

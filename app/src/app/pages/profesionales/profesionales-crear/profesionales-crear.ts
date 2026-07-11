@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { ProfesionalForm } from '../../../shared/components/profesional-form/profesional-form';
 import { UsuarioService } from '../../../core/services/usuario.service';
 import { EspecialidadService } from '../../../core/services/especialidad.service';
+import { ImageService } from '../../../core/services/imagen.service';
 import { Especialidad, ProfesionalCreateDto, ProfesionalUpdateDto } from '../../../core/models/profesional.model';
 
 @Component({
@@ -11,9 +12,11 @@ import { Especialidad, ProfesionalCreateDto, ProfesionalUpdateDto } from '../../
   standalone: true,
   imports: [CommonModule, ProfesionalForm],
   templateUrl: './profesionales-crear.html',
+  styleUrls: ['./profesionales-crear.css'],
 })
 export class ProfesionalesCrear {
   private readonly router = inject(Router);
+  private readonly imageService = inject(ImageService);
   private readonly usuarioService = inject(UsuarioService);
   private readonly especialidadService = inject(EspecialidadService);
 
@@ -43,11 +46,28 @@ export class ProfesionalesCrear {
     });
   }
 
-  guardar(data: ProfesionalCreateDto | ProfesionalUpdateDto) {
+  guardar({ dto, foto }: { dto: ProfesionalCreateDto | ProfesionalUpdateDto; foto: File | null }) {
     this.saving.set(true);
     this.error.set(null);
 
-    this.usuarioService.crear(data as ProfesionalCreateDto).subscribe({
+    if (!foto) {
+      this.crear(dto as ProfesionalCreateDto);
+      return;
+    }
+
+    this.imageService.upload(foto).subscribe({
+      next: (res) => {
+        this.crear({ ...dto, Foto: res.fileName } as ProfesionalCreateDto);
+      },
+      error: () => {
+        this.error.set('No se pudo subir la foto.');
+        this.saving.set(false);
+      },
+    });
+  }
+
+  private crear(data: ProfesionalCreateDto) {
+    this.usuarioService.crear(data).subscribe({
       next: () => {
         this.router.navigate(['/profesionales']);
       },
