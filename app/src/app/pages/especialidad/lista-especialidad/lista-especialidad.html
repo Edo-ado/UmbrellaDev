@@ -35,52 +35,62 @@
     </div>
   </div>
 
-  <div class="feedback ok" *ngIf="mensaje()">
-    {{ mensaje() }}
-  </div>
+  @if (mensaje()) {
+    <div class="feedback ok">
+      {{ mensaje() }}
+    </div>
+  }
 
-  <div class="feedback error" *ngIf="error()">
-    {{ error() }}
-  </div>
+  @if (error()) {
+    <div class="feedback error">
+      {{ error() }}
+    </div>
+  }
 
-  <div class="panel estado" *ngIf="loading()">
-    Cargando especialidades...
-  </div>
+  @if (loading()) {
+    <div class="panel estado">
+      Cargando especialidades...
+    </div>
+  }
 
-  <div class="panel tabla-wrap" *ngIf="!loading() && !error()">
-    <table *ngIf="especialidadesFiltradas().length > 0; else vacio">
-      <thead>
-        <tr>
-          <th>Nombre</th>
-          <th>Estado</th>
-          <th>Acción</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let especialidad of especialidadesFiltradas()">
-          <td>{{ especialidad.Nombre }}</td>
-          <td>
-            <span
-              class="tag"
-              [class.activo]="especialidad.Estado === 'ACTIVO'"
-              [class.inactivo]="especialidad.Estado === 'INACTIVO'"
-            >
-              {{ especialidad.Estado }}
-            </span>
-          </td>
-          <td>
-            <button class="btn btn-accion" (click)="toggleEstado(especialidad.Id)">
-              {{ especialidad.Estado === 'ACTIVO' ? 'Desactivar' : 'Activar' }}
-            </button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-
-    <ng-template #vacio>
-      <div class="estado-vacio">
-        No hay especialidades para mostrar con los filtros actuales.
-      </div>
-    </ng-template>
-  </div>
+  @if (!loading() && !error()) {
+    <div class="panel tabla-wrap">
+      @if (especialidadesFiltradas().length > 0) {
+        <table>
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Estado</th>
+              <th>Acción</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (especialidad of especialidadesFiltradas(); track especialidad.Id) {
+              <tr>
+                <td>{{ especialidad.Nombre }}</td>
+                <td>
+                  <span
+                    class="tag"
+                    [class.activo]="especialidad.Estado === 'ACTIVO'"
+                    [class.inactivo]="especialidad.Estado === 'INACTIVO'"
+                  >
+                    {{ especialidad.Estado }}
+                  </span>
+                </td>
+                <td>
+                  <button class="btn btn-accion" (click)="toggleEstado(especialidad.Id)">
+                    {{ especialidad.Estado === 'ACTIVO' ? 'Desactivar' : 'Activar' }}
+                  </button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      } @else {
+        <div class="estado-vacio">
+          No hay especialidades para mostrar con los filtros actuales.
+        </div>
+      }
+    </div>
+  }
 </section>

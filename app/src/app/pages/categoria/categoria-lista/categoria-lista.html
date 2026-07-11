@@ -35,54 +35,64 @@
     </div>
   </div>
 
-  <div class="feedback ok" *ngIf="mensaje()">
-    {{ mensaje() }}
-  </div>
+  @if (mensaje()) {
+    <div class="feedback ok">
+      {{ mensaje() }}
+    </div>
+  }
 
-  <div class="feedback error" *ngIf="error()">
-    {{ error() }}
-  </div>
+  @if (error()) {
+    <div class="feedback error">
+      {{ error() }}
+    </div>
+  }
 
-  <div class="panel estado" *ngIf="loading()">
-    Cargando categorías...
-  </div>
+  @if (loading()) {
+    <div class="panel estado">
+      Cargando categorías...
+    </div>
+  }
 
-  <div class="panel tabla-wrap" *ngIf="!loading() && !error()">
-    <table *ngIf="categoriasFiltradas().length > 0; else vacio">
-      <thead>
-        <tr>
-          <th>Nombre</th>
-          <th>Descripción</th>
-          <th>Estado</th>
-          <th>Acción</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let categoria of categoriasFiltradas()">
-          <td>{{ categoria.Nombre }}</td>
-          <td>{{ categoria.Descripcion }}</td>
-          <td>
-            <span
-              class="tag"
-              [class.activo]="categoria.Estado === 'ACTIVO'"
-              [class.inactivo]="categoria.Estado === 'INACTIVO'"
-            >
-              {{ categoria.Estado }}
-            </span>
-          </td>
-          <td>
-            <button class="btn btn-accion" (click)="toggleEstado(categoria.Id)">
-              {{ categoria.Estado === 'ACTIVO' ? 'Desactivar' : 'Activar' }}
-            </button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-
-    <ng-template #vacio>
-      <div class="estado-vacio">
-        No hay categorías para mostrar con los filtros actuales.
-      </div>
-    </ng-template>
-  </div>
+  @if (!loading() && !error()) {
+    <div class="panel tabla-wrap">
+      @if (categoriasFiltradas().length > 0) {
+        <table>
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Descripción</th>
+              <th>Estado</th>
+              <th>Acción</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (categoria of categoriasFiltradas(); track categoria.Id) {
+              <tr>
+                <td>{{ categoria.Nombre }}</td>
+                <td>{{ categoria.Descripcion }}</td>
+                <td>
+                  <span
+                    class="tag"
+                    [class.activo]="categoria.Estado === 'ACTIVO'"
+                    [class.inactivo]="categoria.Estado === 'INACTIVO'"
+                  >
+                    {{ categoria.Estado }}
+                  </span>
+                </td>
+                <td>
+                  <button class="btn btn-accion" (click)="toggleEstado(categoria.Id)">
+                    {{ categoria.Estado === 'ACTIVO' ? 'Desactivar' : 'Activar' }}
+                  </button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      } @else {
+        <div class="estado-vacio">
+          No hay categorías para mostrar con los filtros actuales.
+        </div>
+      }
+    </div>
+  }
 </section>

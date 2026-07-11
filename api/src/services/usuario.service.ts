@@ -69,6 +69,18 @@ return await prisma.usuario.update({
   
   }, 
 
+async getAllDesarrolladores() {
+  return await prisma.usuario.findMany({
+    where: { Role: "DESARROLLADOR" }, 
+    include: {
+      especialidades: true, 
+    },
+  });
+},
+
+
+
+
   async crear(data: CreateUsuarioDto) {
    return prisma.usuario.create({
   data: {

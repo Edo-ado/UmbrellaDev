@@ -28,6 +28,7 @@ export class usuarioRoutes {
     //Metodos para conseguir datos especificos
 
     router.get("/Id/:id", usuariosController.getById);
+    router.get("/desarrolladores", usuariosController.getAllDesarrolladores);
 
     //toggle
 
