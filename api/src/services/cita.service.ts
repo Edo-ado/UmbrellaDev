@@ -13,11 +13,16 @@ export const CitaServices = {
     });
   },
 
-  async getById(id: number) {
-    return await prisma.cita.findUnique({
-      where: { Id: id },
-    });
-  },
+   async getById(id: number) {
+  return prisma.cita.findUnique({
+    where: { Id: id },
+    include: {
+      cliente: true,
+      profesional: true,
+      servicio: true,
+    },
+  });
+},
 
   async getByProfesional(profesionalId: number) {
     return await prisma.cita.findMany({

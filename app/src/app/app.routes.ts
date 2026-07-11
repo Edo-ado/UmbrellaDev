@@ -10,6 +10,11 @@ import { ProfesionalesDetalle } from './pages/profesionales/profesionales-detall
 import { ProfesionalesCrear } from './pages/profesionales/profesionales-crear/profesionales-crear';
 import { ProfesionalesEditar } from './pages/profesionales/profesionales-editar/profesionales-editar';
 
+import { CitasListadoComponent } from './pages/citas/listado/listado';
+import { CitasCrear } from './pages/citas/registro/registro';
+import { CitasDetalle } from './pages/citas/detalle/detalle';
+
+
 export const routes: Routes = [
   {
     path: '',
@@ -25,6 +30,12 @@ export const routes: Routes = [
       { path: 'profesionalescrear', component: ProfesionalesCrear },
       { path: 'profesionalesEditar/:id', component: ProfesionalesEditar },
       { path: 'profesionalesDetalle/:id', component: ProfesionalesDetalle },
+
+
+      //citas
+      {path: 'citas', component: CitasListadoComponent},
+     {path: 'citas/crear', component: CitasCrear},
+      {path: 'citas/detalle/:id', component: CitasDetalle},
     ],
   },
 ];
