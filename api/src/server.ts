@@ -43,6 +43,7 @@ app.get("/", (req, res) => {
       ],
       usuarios: [
         "GET /usuarios",
+        "GET /usuarios/desarrolladores",
         "GET /usuarios/id/:id",
         "GET /usuarios/rol/:rol",
         "GET /usuarios/buscar?nombre=Carlos",

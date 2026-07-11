@@ -1,1 +1,30 @@
-<p>servicios-edit works!</p>
+<section class="servicios-page">
+  <div class="servicios-hero hero-servicios">
+    <div>
+      <p class="eyebrow">Umbrella Corporation</p>
+      <h2>Editar servicio</h2>
+      <p class="subtitle">Actualiza la información del servicio seleccionado.</p>
+    </div>
+  </div>
+
+
+ @if (
+  !loading &&
+  servicio &&
+  profesionales.length > 0 &&
+  categorias.length > 0 &&
+  especialidades.length > 0
+) {
+  <app-servicio-form
+    [saving]="saving"
+    [profesionales]="profesionales"
+    [categorias]="categorias"
+    [especialidades]="especialidades"
+    [servicio]="servicio"
+    (guardar)="guardar($event)"
+    (cancelar)="cancelar()"
+  />
+}
+
+
+</section>

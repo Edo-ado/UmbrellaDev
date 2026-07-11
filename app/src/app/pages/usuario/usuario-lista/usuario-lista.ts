@@ -1,7 +1,8 @@
 import { Component, OnInit, signal, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { HttpClient } from '@angular/common/http';
+import { UsuarioService } from '../../../core/services/usuario.service';
+import { Profesional } from '../../../core/models/profesional.model';
 
 @Component({
   selector: 'app-usuario-lista',
@@ -11,10 +12,9 @@ import { HttpClient } from '@angular/common/http';
   styleUrls: ['./usuario-lista.css'],
 })
 export class UsuarioLista implements OnInit {
-  private http = inject(HttpClient);
-private apiUrl = 'http://localhost:3000/usuarios';
+  private usuarioService = inject(UsuarioService);
 
-  usuarios = signal<any[]>([]);
+  usuarios = signal<Profesional[]>([]);
   loading = signal(false);
   error = signal('');
   termino = '';
@@ -27,7 +27,7 @@ private apiUrl = 'http://localhost:3000/usuarios';
 
     return this.usuarios().filter((u) => {
       const coincideNombre = !termino || u.NombreCompleto?.toLowerCase().includes(termino);
-      const coincideRol = !rol || u.Role === rol;
+  const coincideRol = !rol || u.Role === rol;
       return coincideNombre && coincideRol;
     });
   });
@@ -36,60 +36,63 @@ private apiUrl = 'http://localhost:3000/usuarios';
     this.cargarUsuarios();
   }
 
- cargarUsuarios() {
-  this.loading.set(true);
-  this.error.set('');
+  cargarUsuarios() {
+    this.loading.set(true);
+    this.error.set('');
 
-  this.http.get<any[]>(`${this.apiUrl}/lista`).subscribe({
-    next: (data) => {
-      this.usuarios.set(data);
-      this.loading.set(false);
-    },
-    error: () => {
-      this.error.set('No se pudieron cargar los usuarios.');
-      this.loading.set(false);
-    },
-  });
-}
-
- buscar() {
-  this.loading.set(true);
-  this.error.set('');
-  this.mensaje.set('');
-
-  const termino = this.termino.trim();
-
-  if (!termino) {
-    this.cargarUsuarios();
-    return;
+  this.usuarioService.listar().subscribe({
+  next: (data: Profesional[]) => {
+    this.usuarios.set(data);
+    this.loading.set(false);
+  },
+  error: () => {
+    this.error.set('No se pudieron cargar los usuarios.');
+    this.loading.set(false);
+  },
+});
   }
 
-  this.http.get<any[]>(`${this.apiUrl}/buscar?nombre=${encodeURIComponent(termino)}`).subscribe({
-    next: (data) => {
-      this.usuarios.set(data);
-      this.loading.set(false);
+  buscar() {
+    this.loading.set(true);
+    this.error.set('');
+    this.mensaje.set('');
 
-      if (data.length === 0) {
-        this.mensaje.set(`No se encontró ningún usuario con el nombre "${termino}".`);
-      }
-    },
-    error: () => {
-      this.error.set('No se pudo realizar la búsqueda.');
-      this.loading.set(false);
-    },
-  });
-}
+    const termino = this.termino.trim();
+
+    if (!termino) {
+      this.cargarUsuarios();
+      return;
+    }
+
+    this.usuarioService.buscarPorNombre(termino).subscribe({
+      next: (data) => {
+        this.usuarios.set(data);
+        this.loading.set(false);
+
+        if (data.length === 0) {
+          this.mensaje.set(`No se encontró ningún usuario con el nombre "${termino}".`);
+        }
+      },
+      error: () => {
+        this.error.set('No se pudo realizar la búsqueda.');
+        this.loading.set(false);
+      },
+    });
+  }
 
   limpiar() {
     this.termino = '';
     this.rolSeleccionado = '';
+    this.mensaje.set('');
+    this.error.set('');
+    this.cargarUsuarios();
   }
 
   toggleEstado(id: number) {
     const confirmar = confirm('¿Deseas cambiar el estado de este usuario?');
     if (!confirmar) return;
 
-  this.http.patch(`${this.apiUrl}/CambioEstado/${id}`, {}).subscribe({
+    this.usuarioService.toggleEstado(id).subscribe({
       next: () => {
         this.mensaje.set('Estado actualizado correctamente.');
         this.cargarUsuarios();

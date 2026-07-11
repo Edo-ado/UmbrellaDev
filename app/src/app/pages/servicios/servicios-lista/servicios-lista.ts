@@ -1,146 +1,212 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule, CurrencyPipe } from '@angular/common';
+import { Component, OnInit, signal, computed, inject } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
+import { ServicioService } from '../../../core/services/servicio.service';
+import { CategoriaService } from '../../../core/services/categoria.service';
+import { Servicio } from '../../../core/models/servicio.model';
+import { Categoria } from '../../../core/models/categoria.model';
 
 @Component({
   selector: 'app-servicios-lista',
   standalone: true,
-  imports: [CommonModule, FormsModule, CurrencyPipe],
+  imports: [CommonModule, FormsModule],
   templateUrl: './servicios-lista.html',
-  styleUrls: ['./servicios-lista.css']
+  styleUrls: ['./servicios-lista.css'],
 })
 export class ServiciosLista implements OnInit {
-  apiUrl = 'http://localhost:3000/servicios';
-  categoriasUrl = 'http://localhost:3000/categorias';
+  private servicioService = inject(ServicioService);
+  private categoriaService = inject(CategoriaService);
+  private router = inject(Router);
 
-  servicios: any[] = [];
-  serviciosFiltrados: any[] = [];
+  servicios = signal<Servicio[]>([]);
+  categorias = signal<Categoria[]>([]);
+  loading = signal(false);
+  error = signal('');
+  mensaje = signal('');
 
-  termino: string = '';
-  modalidadSeleccionada: string = '';
-  categoriaSeleccionada: string = '';
-
+  termino = '';
+  categoriaSeleccionada = '';
+  modalidadSeleccionada = '';
   precioMin: number | null = null;
   precioMax: number | null = null;
 
-  categorias: any[] = [];
+  serviciosFiltrados = computed(() => {
+    const termino = this.termino.trim().toLowerCase();
+    const categoria = this.categoriaSeleccionada;
+    const modalidad = this.modalidadSeleccionada;
 
-  mensaje: string = '';
-  error: string = '';
-  loading: boolean = false;
-
-  constructor(private http: HttpClient, private router: Router) {}
+    return this.servicios().filter((s) => {
+      const coincideNombre = !termino || s.Nombre?.toLowerCase().includes(termino);
+      const coincideCategoria = !categoria || s.idcategoria?.toString() === categoria;
+      const coincideModalidad = !modalidad || s.Modalidad === modalidad;
+      return coincideNombre && coincideCategoria && coincideModalidad;
+    });
+  });
 
   ngOnInit(): void {
     this.cargarServicios();
     this.cargarCategorias();
   }
 
-  cargarServicios(): void {
-    this.loading = true;
-    this.error = '';
-    this.mensaje = '';
+  cargarServicios() {
+    this.loading.set(true);
+    this.error.set('');
 
-    this.http.get<any[]>(this.apiUrl).subscribe({
+    this.servicioService.listar().subscribe({
       next: (data) => {
-        this.servicios = data;
-        this.serviciosFiltrados = data;
-        this.loading = false;
+        this.servicios.set(data);
+        this.loading.set(false);
       },
       error: () => {
-        this.error = 'No se pudieron cargar los servicios.';
-        this.loading = false;
-      }
+        this.error.set('No se pudieron cargar los servicios.');
+        this.loading.set(false);
+      },
     });
   }
 
-  cargarCategorias(): void {
-    this.http.get<any[]>(this.categoriasUrl).subscribe({
+  cargarCategorias() {
+    this.categoriaService.listar().subscribe({
       next: (data) => {
-        this.categorias = data;
+        this.categorias.set(data);
       },
       error: () => {
-        this.error = 'No se pudieron cargar las categorías.';
-      }
+        this.error.set('No se pudieron cargar las categorías.');
+      },
     });
   }
 
-  buscar(): void {
-    const terminoLimpio = this.termino.trim().toLowerCase();
+  buscar() {
+    this.loading.set(true);
+    this.error.set('');
+    this.mensaje.set('');
 
-    this.serviciosFiltrados = this.servicios.filter((servicio) => {
-      const coincideNombre = !terminoLimpio ||
-        servicio.Nombre?.toLowerCase().includes(terminoLimpio);
+    const termino = this.termino.trim();
 
-      const coincideModalidad = !this.modalidadSeleccionada ||
-        servicio.Modalidad === this.modalidadSeleccionada;
+    if (!termino) {
+      this.cargarServicios();
+      return;
+    }
 
-      const coincideCategoria = !this.categoriaSeleccionada ||
-        servicio.categoria?.Id?.toString() === this.categoriaSeleccionada;
+    this.servicioService.buscarPorNombre(termino).subscribe({
+      next: (data) => {
+        this.servicios.set(data);
+        this.loading.set(false);
 
-      const coincidePrecioMin = this.precioMin == null ||
-        servicio.Precio >= this.precioMin;
-
-      const coincidePrecioMax = this.precioMax == null ||
-        servicio.Precio <= this.precioMax;
-
-      return coincideNombre && coincideModalidad && coincideCategoria &&
-             coincidePrecioMin && coincidePrecioMax;
+        if (data.length === 0) {
+          this.mensaje.set(`No se encontró ningún servicio con el nombre "${termino}".`);
+        }
+      },
+      error: () => {
+        this.error.set('No se pudo realizar la búsqueda.');
+        this.loading.set(false);
+      },
     });
-
-    this.mensaje = this.serviciosFiltrados.length === 0
-      ? 'No se encontraron servicios con los filtros aplicados.'
-      : '';
   }
 
-  filtrarPorModalidad(): void {
-    this.buscar();
+  filtrarPorModalidad() {
+    if (!this.modalidadSeleccionada) {
+      this.cargarServicios();
+      return;
+    }
+
+    this.loading.set(true);
+    this.error.set('');
+
+    this.servicioService.obtenerPorModalidad(this.modalidadSeleccionada).subscribe({
+      next: (data) => {
+        this.servicios.set(data);
+        this.loading.set(false);
+      },
+      error: () => {
+        this.error.set('No se pudo filtrar por modalidad.');
+        this.loading.set(false);
+      },
+    });
   }
 
-  filtrarPorCategoria(): void {
-    this.buscar();
+  filtrarPorCategoria() {
+    if (!this.categoriaSeleccionada) {
+      this.cargarServicios();
+      return;
+    }
+
+    this.loading.set(true);
+    this.error.set('');
+
+    this.servicioService.obtenerPorCategoria(Number(this.categoriaSeleccionada)).subscribe({
+      next: (data) => {
+        this.servicios.set(data);
+        this.loading.set(false);
+      },
+      error: () => {
+        this.error.set('No se pudo filtrar por categoría.');
+        this.loading.set(false);
+      },
+    });
   }
 
-  limpiar(): void {
+  filtrarPorRangoPrecio() {
+    if (this.precioMin == null || this.precioMax == null) {
+      this.cargarServicios();
+      return;
+    }
+
+    this.loading.set(true);
+    this.error.set('');
+
+    this.servicioService.obtenerPorRangoPrecio(this.precioMin, this.precioMax).subscribe({
+      next: (data) => {
+        this.servicios.set(data);
+        this.loading.set(false);
+      },
+      error: () => {
+        this.error.set('No se pudo filtrar por rango de precio.');
+        this.loading.set(false);
+      },
+    });
+  }
+
+  limpiar() {
     this.termino = '';
-    this.modalidadSeleccionada = '';
     this.categoriaSeleccionada = '';
+    this.modalidadSeleccionada = '';
     this.precioMin = null;
     this.precioMax = null;
-    this.mensaje = '';
-    this.error = '';
-    this.serviciosFiltrados = [...this.servicios];
+    this.mensaje.set('');
+    this.error.set('');
+    this.cargarServicios();
   }
 
- toggleEstado(id: number): void {
-  this.http.patch<any>(`${this.apiUrl}/CambioEstado/${id}`, {}).subscribe({
-    next: (servicioActualizado) => {
-      // Actualiza solo el servicio afectado, sin recargar ni reordenar todo
-      const actualizar = (lista: any[]) =>
-        lista.map(s => s.Id === id ? { ...s, ...servicioActualizado } : s);
+  // ------- Navegación -------
 
-      this.servicios = actualizar(this.servicios);
-      this.serviciosFiltrados = actualizar(this.serviciosFiltrados);
-
-      this.mensaje = 'Estado del servicio actualizado correctamente.';
-    },
-    error: () => {
-      this.error = 'No se pudo actualizar el estado del servicio.';
-    }
-  });
-}
-
-  irACrear(): void {
+  irACrear() {
     this.router.navigate(['/servicios/create']);
   }
 
-  irAEditar(id: number): void {
+  irAEditar(id: number) {
     this.router.navigate(['/servicios/edit', id]);
   }
 
-  irADetalle(id: number): void {
+  irADetalle(id: number) {
     this.router.navigate(['/servicios/detail', id]);
+  }
+
+  // ------- Estado -------
+
+  toggleEstado(id: number) {
+    const confirmar = confirm('¿Deseas cambiar el estado de este servicio?');
+    if (!confirmar) return;
+
+    this.servicioService.toggleEstado(id).subscribe({
+      next: () => {
+        this.mensaje.set('Estado actualizado correctamente.');
+        this.cargarServicios();
+        setTimeout(() => this.mensaje.set(''), 2500);
+      },
+      error: () => {
+        this.error.set('No se pudo actualizar el estado del servicio.');
+      },
+    });
   }
 }

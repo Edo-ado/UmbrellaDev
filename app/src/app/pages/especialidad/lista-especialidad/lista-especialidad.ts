@@ -1,7 +1,8 @@
 import { Component, OnInit, signal, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { HttpClient } from '@angular/common/http';
+import { EspecialidadService } from '../../../core/services/especialidad.service'; 
+import { Especialidad } from '../../../core/models/especialidad.model'; 
 
 @Component({
   selector: 'app-especialidad-lista',
@@ -11,10 +12,9 @@ import { HttpClient } from '@angular/common/http';
   styleUrls: ['./lista-especialidad.css'],
 })
 export class EspecialidadLista implements OnInit {
-  private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:3000/especialidades';
+  private especialidadService = inject(EspecialidadService);
 
-  especialidades = signal<any[]>([]);
+  especialidades = signal<Especialidad[]>([]);
   loading = signal(false);
   error = signal('');
   mensaje = signal('');
@@ -43,7 +43,7 @@ export class EspecialidadLista implements OnInit {
     this.error.set('');
     this.mensaje.set('');
 
-    this.http.get<any[]>(this.apiUrl).subscribe({
+    this.especialidadService.listar().subscribe({
       next: (data) => {
         this.especialidades.set(data);
         this.loading.set(false);
@@ -67,22 +67,20 @@ export class EspecialidadLista implements OnInit {
     this.error.set('');
     this.mensaje.set('');
 
-    this.http
-      .get<any[]>(`${this.apiUrl}/buscar?nombre=${encodeURIComponent(termino)}`)
-      .subscribe({
-        next: (data) => {
-          this.especialidades.set(data);
-          this.loading.set(false);
+    this.especialidadService.buscarPorNombre(termino).subscribe({
+      next: (data) => {
+        this.especialidades.set(data);
+        this.loading.set(false);
 
-          if (data.length === 0) {
-            this.mensaje.set(`No se encontró ninguna especialidad con el nombre "${termino}".`);
-          }
-        },
-        error: () => {
-          this.error.set('No se pudo realizar la búsqueda.');
-          this.loading.set(false);
-        },
-      });
+        if (data.length === 0) {
+          this.mensaje.set(`No se encontró ninguna especialidad con el nombre "${termino}".`);
+        }
+      },
+      error: () => {
+        this.error.set('No se pudo realizar la búsqueda.');
+        this.loading.set(false);
+      },
+    });
   }
 
   limpiar() {
@@ -97,7 +95,7 @@ export class EspecialidadLista implements OnInit {
     const confirmar = confirm('¿Deseas cambiar el estado de esta especialidad?');
     if (!confirmar) return;
 
-    this.http.patch(`${this.apiUrl}/CambioEstado/${id}`, {}).subscribe({
+    this.especialidadService.toggleEstado(id).subscribe({
       next: () => {
         this.mensaje.set('Estado actualizado correctamente.');
         this.cargarEspecialidades();

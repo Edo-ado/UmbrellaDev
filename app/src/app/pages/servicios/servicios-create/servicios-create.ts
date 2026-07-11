@@ -3,6 +3,8 @@ import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { ServicioForm } from '../../../shared/components/servicio-form/servicio-form';
+import { UsuarioService } from '../../../core/services/usuario.service';
+import { ServicioService } from '../../../core/services/servicio.service';
 
 @Component({
   selector: 'app-servicios-create',
@@ -11,7 +13,6 @@ import { ServicioForm } from '../../../shared/components/servicio-form/servicio-
   templateUrl: './servicios-create.html',
   styleUrls: ['./servicios-create.css']
 })
-
 export class ServiciosCreate implements OnInit {
   saving: boolean = false;
   error: string = '';
@@ -20,14 +21,14 @@ export class ServiciosCreate implements OnInit {
   categorias: any[] = [];
   especialidades: any[] = [];
 
-  private apiServicios = 'http://localhost:3000/servicios';
-  private apiUsuarios = 'http://localhost:3000/usuarios';
   private apiCategorias = 'http://localhost:3000/categorias';
   private apiEspecialidades = 'http://localhost:3000/especialidades';
 
   constructor(
     private http: HttpClient,
-    private router: Router
+    private router: Router,
+    private usuarioService: UsuarioService,
+    private servicioService: ServicioService
   ) {}
 
   ngOnInit(): void {
@@ -36,16 +37,17 @@ export class ServiciosCreate implements OnInit {
     this.cargarEspecialidades();
   }
 
- cargarProfesionales(): void {
-  this.http.get<any[]>(`${this.apiUsuarios}/desarrolladores`).subscribe({
-    next: (data) => {
-      this.profesionales = data;
-    },
-    error: () => {
-      this.error = 'No se pudieron cargar los profesionales.';
-    }
-  });
-}
+  cargarProfesionales(): void {
+    this.usuarioService.obtenerDesarrolladores().subscribe({
+      next: (data) => {
+        this.profesionales = data;
+      },
+      error: (err) => {
+        console.error(err);
+        this.error = 'No se pudieron cargar los profesionales.';
+      }
+    });
+  }
 
   cargarCategorias(): void {
     this.http.get<any[]>(this.apiCategorias).subscribe({
@@ -73,7 +75,7 @@ export class ServiciosCreate implements OnInit {
     this.saving = true;
     this.error = '';
 
-    this.http.post(this.apiServicios, data).subscribe({
+    this.servicioService.crear(data).subscribe({
       next: () => {
         this.saving = false;
         this.router.navigate(['/servicios']);

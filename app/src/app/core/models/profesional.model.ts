@@ -18,9 +18,10 @@ export interface Profesional {
   TarifaBase?: number | null;
   Disponibilidad?: boolean | null;
   Universidad?: string | null;
+  Estado: 'ACTIVO' | 'INACTIVO';   
+  Role: 'DESARROLLADOR' | 'ADMIN' | string;
   especialidades?: Especialidad[];
 }
-
 export interface ProfesionalFormModel {
   nombreCompleto: string;
   email: string;

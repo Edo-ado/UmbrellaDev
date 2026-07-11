@@ -1,6 +1,11 @@
 <section class="profesionales-page">
   <div class="profesionales-hero">
+
+    
     <div>
+
+
+      
       <p class="eyebrow">Umbrella Corporation</p>
       <h2>Crear servicio</h2>
       <p class="subtitle">Registra un nuevo servicio en el sistema.</p>
@@ -13,12 +18,12 @@
     </div>
   }
 
-  <app-servicio-form
-    [saving]="saving"
-    [profesionales]="profesionales"
-    [categorias]="categorias"
-    [especialidades]="especialidades"
-    (guardar)="guardar($event)"
-    (cancelar)="cancelar()"
-  ></app-servicio-form>
+<app-servicio-form
+  [saving]="saving"
+  [profesionales]="profesionales"
+  [categorias]="categorias"
+  [especialidades]="especialidades"
+  (guardar)="guardar($event)"
+  (cancelar)="cancelar()"
+/>
 </section>
