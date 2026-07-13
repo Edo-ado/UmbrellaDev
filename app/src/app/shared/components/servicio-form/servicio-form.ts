@@ -1,4 +1,4 @@
-import { Component, computed, effect, input, output, signal } from '@angular/core';
+import { Component, effect, input, output, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   FormField,
@@ -7,7 +7,6 @@ import {
   minLength,
   maxLength,
   min,
-  validate,
 } from '@angular/forms/signals';
 import {
   Servicio,
@@ -36,9 +35,6 @@ export class ServicioForm {
   guardar = output<ServicioCreateDto | ServicioUpdateDto>();
   cancelar = output<void>();
 
-  isEdit = computed(() => this.servicio() !== null);
-  isSubmitting = computed(() => this.saving());
-
   servicioModel = signal<ServicioFormModel>(this.modeloVacio());
 
   servicioForm = form(this.servicioModel, (path) => {
@@ -63,28 +59,26 @@ export class ServicioForm {
   });
 
   constructor() {
-effect(() => {
-  const servicio = this.servicio();
+    effect(() => {
+      const servicio = this.servicio();
 
-  console.log("Servicio recibido en el formulario:", servicio);
+      if (!servicio) {
+        this.resetForm();
+        return;
+      }
 
-  if (!servicio) {
-    this.resetForm();
-    return;
-  }
-
-  this.servicioModel.set({
-    idprofesional: String(servicio.idprofesional ?? ''),
-    idcategoria: String(servicio.idcategoria ?? ''),
-    nombre: servicio.Nombre ?? '',
-    descripcion: servicio.Descripcion ?? '',
-    precio: servicio.Precio ?? 0,
-    duracion: servicio.Duracion ?? 0,
-    modalidad: servicio.Modalidad ?? 'PRESENCIAL',
-    estado: servicio.Estado ?? 'ACTIVO',
-    especialidadIds: servicio.servicioEspecialidades?.map((item: any) => item.Id) ?? [],
-  });
-});
+      this.servicioModel.set({
+        idprofesional: String(servicio.idprofesional ?? ''),
+        idcategoria: String(servicio.idcategoria ?? ''),
+        nombre: servicio.Nombre ?? '',
+        descripcion: servicio.Descripcion ?? '',
+        precio: servicio.Precio ?? 0,
+        duracion: servicio.Duracion ?? 0,
+        modalidad: servicio.Modalidad ?? 'PRESENCIAL',
+        estado: servicio.Estado ?? 'ACTIVO',
+        especialidadIds: servicio.servicioEspecialidades?.map((item: any) => item.Id) ?? [],
+      });
+    });
   }
 
   private modeloVacio(): ServicioFormModel {
@@ -105,14 +99,25 @@ effect(() => {
     this.servicioModel.set(this.modeloVacio());
   }
 
-  toggleEspecialidad(id: number, checked: boolean) {
-    this.servicioModel.update((valor) => ({
-      ...valor,
-      especialidadIds: checked
-        ? Array.from(new Set([...valor.especialidadIds, id]))
-        : valor.especialidadIds.filter((item) => item !== id),
-    }));
+ toggleEspecialidad(id: number, checked: boolean) {
+  const valorActual = this.servicioModel();
+  let nuevasEspecialidades = [...valorActual.especialidadIds];
+
+  if (checked) {
+    if (!nuevasEspecialidades.includes(id)) {
+      nuevasEspecialidades.push(id);
+    }
+  } else {
+    nuevasEspecialidades = nuevasEspecialidades.filter(function(item) {
+      return item !== id;
+    });
   }
+
+  this.servicioModel.set({
+    ...valorActual,
+    especialidadIds: nuevasEspecialidades,
+  });
+}
 
   isEspecialidadSelected(id: number): boolean {
     return this.servicioModel().especialidadIds.includes(id);
@@ -157,8 +162,10 @@ effect(() => {
   }
 
   submit() {
-    if (this.isSubmitting()) return;
+    if (this.saving()) return;
+
     this.marcarCamposComoTocados();
+
     if (this.formularioInvalido()) return;
 
     const dto = this.buildDto();
