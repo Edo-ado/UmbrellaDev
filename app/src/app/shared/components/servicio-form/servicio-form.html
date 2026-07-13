@@ -1,11 +1,15 @@
 <div class="panel formulario">
-  <h3>{{ isEdit() ? 'Editar servicio' : 'Nuevo servicio' }}</h3>
+  <h3>{{ servicio() ? 'Editar servicio' : 'Nuevo servicio' }}</h3>
 
   <form (submit)="$event.preventDefault(); submit()">
     <div class="grid-formulario">
       <div class="campo">
         <label>Nombre del servicio</label>
-        <input type="text" [formField]="servicioForm.nombre" placeholder="Ej: Desarrollo de API REST" />
+        <input
+          type="text"
+          [formField]="servicioForm.nombre"
+          placeholder="Ej: Desarrollo de API REST"
+        />
         @if (servicioForm.nombre().touched() && servicioForm.nombre().invalid()) {
           <span class="campo-error">{{ servicioForm.nombre().errors()[0].message }}</span>
         }
@@ -62,7 +66,11 @@
 
       <div class="campo">
         <label>Precio (₡)</label>
-        <input type="number" [formField]="servicioForm.precio" placeholder="Ej: 50000" />
+        <input
+          type="number"
+          [formField]="servicioForm.precio"
+          placeholder="Ej: 50000"
+        />
         @if (servicioForm.precio().touched() && servicioForm.precio().invalid()) {
           <span class="campo-error">{{ servicioForm.precio().errors()[0].message }}</span>
         }
@@ -70,7 +78,11 @@
 
       <div class="campo">
         <label>Duración (minutos)</label>
-        <input type="number" [formField]="servicioForm.duracion" placeholder="Ej: 60" />
+        <input
+          type="number"
+          [formField]="servicioForm.duracion"
+          placeholder="Ej: 60"
+        />
         @if (servicioForm.duracion().touched() && servicioForm.duracion().invalid()) {
           <span class="campo-error">{{ servicioForm.duracion().errors()[0].message }}</span>
         }
@@ -78,7 +90,11 @@
 
       <div class="campo campo-full">
         <label>Descripción</label>
-        <textarea rows="4" [formField]="servicioForm.descripcion" placeholder="Describe brevemente el servicio"></textarea>
+        <textarea
+          rows="4"
+          [formField]="servicioForm.descripcion"
+          placeholder="Describe brevemente el servicio"
+        ></textarea>
         @if (servicioForm.descripcion().touched() && servicioForm.descripcion().invalid()) {
           <span class="campo-error">{{ servicioForm.descripcion().errors()[0].message }}</span>
         }
@@ -104,9 +120,12 @@
     }
 
     <div class="acciones-filtro">
-      <button class="btn btn-secundario" type="button" (click)="cancelar.emit()">Cancelar</button>
-      <button class="btn btn-primario" type="submit" [disabled]="isSubmitting()">
-        {{ isSubmitting() ? 'Guardando...' : (isEdit() ? 'Guardar cambios' : 'Crear servicio') }}
+      <button class="btn btn-secundario" type="button" (click)="cancelar.emit()">
+        Cancelar
+      </button>
+
+      <button class="btn btn-primario" type="submit" [disabled]="saving()">
+        {{ saving() ? 'Guardando...' : (servicio() ? 'Guardar cambios' : 'Crear servicio') }}
       </button>
     </div>
   </form>
