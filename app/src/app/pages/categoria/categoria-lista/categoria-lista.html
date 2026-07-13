@@ -55,7 +55,7 @@
 
   @if (!loading() && !error()) {
     <div class="panel tabla-wrap">
-      @if (categoriasFiltradas().length > 0) {
+      @if (categorias().length > 0) {
         <table>
           <thead>
             <tr>
@@ -66,7 +66,7 @@
             </tr>
           </thead>
           <tbody>
-            @for (categoria of categoriasFiltradas(); track categoria.Id) {
+            @for (categoria of categorias(); track categoria.Id) {
               <tr>
                 <td>{{ categoria.Nombre }}</td>
                 <td>{{ categoria.Descripcion }}</td>
