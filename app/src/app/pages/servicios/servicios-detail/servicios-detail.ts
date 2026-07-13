@@ -49,7 +49,5 @@ export class ServiciosDetail implements OnInit {
     this.router.navigate(['/servicios']);
   }
 
-  irAEditar(): void {
-    this.router.navigate(['/servicios/edit', this.servicioId]);
-  }
+
 }

@@ -36,9 +36,9 @@
       <label for="modalidad">Modalidad</label>
       <select id="modalidad" [(ngModel)]="modalidadSeleccionada" (change)="filtrarPorModalidad()">
         <option value="">Todas</option>
-        <option value="REMOTO">Remoto</option>
+        <option value="VIRTUAL">Remoto</option>
         <option value="PRESENCIAL">Presencial</option>
-        <option value="HIBRIDO">Híbrido</option>
+        <option value="HIBRIDA">Híbrido</option>
       </select>
     </div>
 
@@ -89,7 +89,7 @@
 
   @if (!loading() && !error()) {
     <div class="panel tabla-wrap">
-      @if (serviciosFiltrados().length > 0) {
+      @if (servicios().length > 0) {
         <table>
           <thead>
             <tr>
@@ -103,7 +103,7 @@
             </tr>
           </thead>
           <tbody>
-            @for (servicio of serviciosFiltrados(); track servicio.Id) {
+            @for (servicio of servicios(); track servicio.Id) {
               <tr>
                 <td>{{ servicio.Nombre }}</td>
                 <td>{{ servicio.profesional?.NombreCompleto || 'Sin asignar' }}</td>

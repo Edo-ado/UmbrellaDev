@@ -55,7 +55,7 @@
 
   @if (!loading() && !error()) {
     <div class="panel tabla-wrap">
-      @if (especialidadesFiltradas().length > 0) {
+      @if (especialidades().length > 0) {
         <table>
           <thead>
             <tr>
@@ -65,7 +65,7 @@
             </tr>
           </thead>
           <tbody>
-            @for (especialidad of especialidadesFiltradas(); track especialidad.Id) {
+            @for (especialidad of especialidades(); track especialidad.Id) {
               <tr>
                 <td>{{ especialidad.Nombre }}</td>
                 <td>

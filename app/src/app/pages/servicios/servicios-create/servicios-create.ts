@@ -1,10 +1,15 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { Component, OnInit, signal, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { ServicioForm } from '../../../shared/components/servicio-form/servicio-form';
 import { UsuarioService } from '../../../core/services/usuario.service';
+import { CategoriaService } from '../../../core/services/categoria.service';
+import { EspecialidadService } from '../../../core/services/especialidad.service';
 import { ServicioService } from '../../../core/services/servicio.service';
+import { Profesional } from '../../../core/models/profesional.model';
+import { Categoria } from '../../../core/models/categoria.model';
+import { Especialidad } from '../../../core/models/especialidad.model';
+import { ServicioCreateDto } from '../../../core/models/servicio.model';
 
 @Component({
   selector: 'app-servicios-create',
@@ -14,22 +19,18 @@ import { ServicioService } from '../../../core/services/servicio.service';
   styleUrls: ['./servicios-create.css']
 })
 export class ServiciosCreate implements OnInit {
-  saving: boolean = false;
-  error: string = '';
+  private router = inject(Router);
+  private usuarioService = inject(UsuarioService);
+  private categoriaService = inject(CategoriaService);
+  private especialidadService = inject(EspecialidadService);
+  private servicioService = inject(ServicioService);
 
-  profesionales: any[] = [];
-  categorias: any[] = [];
-  especialidades: any[] = [];
+  saving = signal(false);
+  error = signal('');
 
-  private apiCategorias = 'http://localhost:3000/categorias';
-  private apiEspecialidades = 'http://localhost:3000/especialidades';
-
-  constructor(
-    private http: HttpClient,
-    private router: Router,
-    private usuarioService: UsuarioService,
-    private servicioService: ServicioService
-  ) {}
+  profesionales = signal<Profesional[]>([]);
+  categorias = signal<Categoria[]>([]);
+  especialidades = signal<Especialidad[]>([]);
 
   ngOnInit(): void {
     this.cargarProfesionales();
@@ -39,51 +40,38 @@ export class ServiciosCreate implements OnInit {
 
   cargarProfesionales(): void {
     this.usuarioService.obtenerDesarrolladores().subscribe({
-      next: (data) => {
-        this.profesionales = data;
-      },
-      error: (err) => {
-        console.error(err);
-        this.error = 'No se pudieron cargar los profesionales.';
-      }
+      next: (data) => this.profesionales.set(data),
+      error: () => this.error.set('No se pudieron cargar los profesionales.'),
     });
   }
 
   cargarCategorias(): void {
-    this.http.get<any[]>(this.apiCategorias).subscribe({
-      next: (data) => {
-        this.categorias = data;
-      },
-      error: () => {
-        this.error = 'No se pudieron cargar las categorías.';
-      }
+    this.categoriaService.listar().subscribe({
+      next: (data) => this.categorias.set(data),
+      error: () => this.error.set('No se pudieron cargar las categorías.'),
     });
   }
 
   cargarEspecialidades(): void {
-    this.http.get<any[]>(this.apiEspecialidades).subscribe({
-      next: (data) => {
-        this.especialidades = data;
-      },
-      error: () => {
-        this.error = 'No se pudieron cargar las especialidades.';
-      }
+    this.especialidadService.listar().subscribe({
+      next: (data) => this.especialidades.set(data),
+      error: () => this.error.set('No se pudieron cargar las especialidades.'),
     });
   }
 
-  guardar(data: any): void {
-    this.saving = true;
-    this.error = '';
+  guardar(data: ServicioCreateDto): void {
+    this.saving.set(true);
+    this.error.set('');
 
     this.servicioService.crear(data).subscribe({
       next: () => {
-        this.saving = false;
+        this.saving.set(false);
         this.router.navigate(['/servicios']);
       },
       error: () => {
-        this.saving = false;
-        this.error = 'No se pudo registrar el servicio.';
-      }
+        this.saving.set(false);
+        this.error.set('No se pudo registrar el servicio.');
+      },
     });
   }
 

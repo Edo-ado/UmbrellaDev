@@ -1,4 +1,4 @@
-import { Component, OnInit, signal, computed, inject } from '@angular/core';
+import { Component, OnInit, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { UsuarioService } from '../../../core/services/usuario.service';
@@ -21,17 +21,6 @@ export class UsuarioLista implements OnInit {
   rolSeleccionado = '';
   mensaje = signal('');
 
-  usuariosFiltrados = computed(() => {
-    const termino = this.termino.trim().toLowerCase();
-    const rol = this.rolSeleccionado;
-
-    return this.usuarios().filter((u) => {
-      const coincideNombre = !termino || u.NombreCompleto?.toLowerCase().includes(termino);
-  const coincideRol = !rol || u.Role === rol;
-      return coincideNombre && coincideRol;
-    });
-  });
-
   ngOnInit(): void {
     this.cargarUsuarios();
   }
@@ -40,16 +29,16 @@ export class UsuarioLista implements OnInit {
     this.loading.set(true);
     this.error.set('');
 
-  this.usuarioService.listar().subscribe({
-  next: (data: Profesional[]) => {
-    this.usuarios.set(data);
-    this.loading.set(false);
-  },
-  error: () => {
-    this.error.set('No se pudieron cargar los usuarios.');
-    this.loading.set(false);
-  },
-});
+    this.usuarioService.listar().subscribe({
+      next: (data) => {
+        this.usuarios.set(data);
+        this.loading.set(false);
+      },
+      error: () => {
+        this.error.set('No se pudieron cargar los usuarios.');
+        this.loading.set(false);
+      },
+    });
   }
 
   buscar() {
@@ -77,6 +66,20 @@ export class UsuarioLista implements OnInit {
         this.error.set('No se pudo realizar la búsqueda.');
         this.loading.set(false);
       },
+    });
+  }
+
+  filtrarPorRol(rol: string) {
+    this.rolSeleccionado = rol;
+
+    if (!rol) {
+      this.cargarUsuarios();
+      return;
+    }
+
+    this.usuarioService.obtenerPorRol(rol).subscribe({
+      next: (data) => this.usuarios.set(data),
+      error: () => this.error.set('No se pudo filtrar por rol.'),
     });
   }
 

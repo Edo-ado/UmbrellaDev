@@ -22,10 +22,14 @@
 
     <div class="campo">
       <label for="rol">Rol</label>
-      <select id="rol" [(ngModel)]="rolSeleccionado">
+      <select
+        id="rol"
+        [(ngModel)]="rolSeleccionado"
+        (ngModelChange)="filtrarPorRol($event)"
+      >
         <option value="">Todos</option>
         <option value="ADMIN">Administrador</option>
-    <option value="DESARROLLADOR">Desarrollador</option>
+        <option value="DESARROLLADOR">Desarrollador</option>
         <option value="USUARIO">Usuario</option>
       </select>
     </div>
@@ -49,7 +53,7 @@
   </div>
 
   <div class="panel tabla-wrap" *ngIf="!loading() && !error()">
-    <table *ngIf="usuariosFiltrados().length > 0; else vacio">
+    <table *ngIf="usuarios().length > 0; else vacio">
       <thead>
         <tr>
           <th>Nombre completo</th>
@@ -60,7 +64,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let usuario of usuariosFiltrados()">
+        <tr *ngFor="let usuario of usuarios()">
           <td>{{ usuario.NombreCompleto }}</td>
           <td>{{ usuario.Email }}</td>
           <td>

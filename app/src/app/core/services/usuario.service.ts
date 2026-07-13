@@ -30,6 +30,10 @@ export class UsuarioService {
     });
   }
 
+  obtenerPorRol(rol: string): Observable<Profesional[]> {
+  return this.http.get<Profesional[]>(`${this.apiUrl}/rol/${rol}`);
+}
+
   actualizar(id: number, data: ProfesionalUpdateDto): Observable<any> {
     return this.http.put(`${this.apiUrl}/update/${id}`, data);
   }

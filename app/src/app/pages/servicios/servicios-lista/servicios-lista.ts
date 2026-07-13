@@ -1,4 +1,4 @@
-import { Component, OnInit, signal, computed, inject } from '@angular/core';
+import { Component, OnInit, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -30,19 +30,6 @@ export class ServiciosLista implements OnInit {
   modalidadSeleccionada = '';
   precioMin: number | null = null;
   precioMax: number | null = null;
-
-  serviciosFiltrados = computed(() => {
-    const termino = this.termino.trim().toLowerCase();
-    const categoria = this.categoriaSeleccionada;
-    const modalidad = this.modalidadSeleccionada;
-
-    return this.servicios().filter((s) => {
-      const coincideNombre = !termino || s.Nombre?.toLowerCase().includes(termino);
-      const coincideCategoria = !categoria || s.idcategoria?.toString() === categoria;
-      const coincideModalidad = !modalidad || s.Modalidad === modalidad;
-      return coincideNombre && coincideCategoria && coincideModalidad;
-    });
-  });
 
   ngOnInit(): void {
     this.cargarServicios();
@@ -178,7 +165,7 @@ export class ServiciosLista implements OnInit {
     this.cargarServicios();
   }
 
-  // ------- Navegación -------
+
 
   irACrear() {
     this.router.navigate(['/servicios/create']);
@@ -192,7 +179,6 @@ export class ServiciosLista implements OnInit {
     this.router.navigate(['/servicios/detail', id]);
   }
 
-  // ------- Estado -------
 
   toggleEstado(id: number) {
     const confirmar = confirm('¿Deseas cambiar el estado de este servicio?');

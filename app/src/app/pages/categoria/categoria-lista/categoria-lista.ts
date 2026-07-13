@@ -1,8 +1,8 @@
-import { Component, OnInit, signal, computed, inject } from '@angular/core';
+import { Component, OnInit, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { CategoriaService } from '../../../core/services/categoria.service'; // ajusta el path real
-import { Categoria } from '../../../core/models/categoria.model'; // ajusta el path real
+import { CategoriaService } from '../../../core/services/categoria.service';
+import { Categoria } from '../../../core/models/categoria.model';
 
 @Component({
   selector: 'app-categoria-lista',
@@ -21,18 +21,6 @@ export class CategoriaLista implements OnInit {
 
   termino = '';
   estadoSeleccionado = '';
-
-  categoriasFiltradas = computed(() => {
-    const termino = this.termino.trim().toLowerCase();
-    const estado = this.estadoSeleccionado;
-
-    return this.categorias().filter((c) => {
-      const coincideNombre =
-        !termino || c.Nombre?.toLowerCase().includes(termino);
-      const coincideEstado = !estado || c.Estado === estado;
-      return coincideNombre && coincideEstado;
-    });
-  });
 
   ngOnInit(): void {
     this.cargarCategorias();
@@ -57,30 +45,49 @@ export class CategoriaLista implements OnInit {
 
   buscar() {
     const termino = this.termino.trim();
-
-    if (!termino) {
-      this.cargarCategorias();
-      return;
-    }
+    const estado = this.estadoSeleccionado as 'ACTIVO' | 'INACTIVO' | '';
 
     this.loading.set(true);
     this.error.set('');
     this.mensaje.set('');
 
-    this.categoriaService.buscarPorNombre(termino).subscribe({
-      next: (data) => {
-        this.categorias.set(data);
-        this.loading.set(false);
+    if (!termino && !estado) {
+      this.cargarCategorias();
+      return;
+    }
 
-        if (data.length === 0) {
-          this.mensaje.set(`No se encontró ninguna categoría con el nombre "${termino}".`);
-        }
-      },
-      error: () => {
-        this.error.set('No se pudo realizar la búsqueda.');
-        this.loading.set(false);
-      },
-    });
+    if (termino) {
+      this.categoriaService.buscarPorNombre(termino).subscribe({
+        next: (data) => {
+          this.categorias.set(data);
+          this.loading.set(false);
+          if (data.length === 0) {
+            this.mensaje.set(`No se encontró ninguna categoría con el nombre "${termino}".`);
+          }
+        },
+        error: () => {
+          this.error.set('No se pudo realizar la búsqueda.');
+          this.loading.set(false);
+        },
+      });
+      return;
+    }
+
+    if (estado) {
+      this.categoriaService.obtenerPorEstado(estado).subscribe({
+        next: (data) => {
+          this.categorias.set(data);
+          this.loading.set(false);
+          if (data.length === 0) {
+            this.mensaje.set(`No se encontraron categorías con estado "${estado}".`);
+          }
+        },
+        error: () => {
+          this.error.set('No se pudo filtrar por estado.');
+          this.loading.set(false);
+        },
+      });
+    }
   }
 
   limpiar() {
