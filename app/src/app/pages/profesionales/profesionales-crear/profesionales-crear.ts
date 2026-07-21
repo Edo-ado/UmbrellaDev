@@ -12,7 +12,7 @@ import { Especialidad, ProfesionalCreateDto, ProfesionalUpdateDto } from '../../
   standalone: true,
   imports: [CommonModule, ProfesionalForm],
   templateUrl: './profesionales-crear.html',
-  styleUrls: ['./profesionales-crear.css'],
+  styleUrls: ['./profesionales-crear.css'], 
 })
 export class ProfesionalesCrear {
   private readonly router = inject(Router);

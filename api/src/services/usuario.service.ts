@@ -61,7 +61,7 @@ const usuario = await this.getById(id);
 
 return await prisma.usuario.update({
     where: { Id: id },
-    data: {
+    data: { 
       Estado: nuevoEstado
     }
   });
