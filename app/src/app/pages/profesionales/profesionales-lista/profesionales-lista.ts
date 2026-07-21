@@ -166,4 +166,7 @@ irADetalle(id: number) {
       },
     });
   }
+
+
+  
 }
