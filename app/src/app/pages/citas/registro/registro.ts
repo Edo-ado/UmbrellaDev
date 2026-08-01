@@ -152,10 +152,10 @@ export class CitasCrear implements OnInit {
     this.mensaje.set('');
     this.error.set('');
 
-    if (!this.validar()) {
-      this.error.set('Revisá los campos marcados antes de continuar.');
-      return;
-    }
+    // if (!this.validar()) {
+    //   this.error.set('Revisá los campos marcados antes de continuar.');
+    //   return;
+    // }
 
     this.guardando.set(true);
 

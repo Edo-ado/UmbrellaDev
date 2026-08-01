@@ -1,7 +1,10 @@
+import bcrypt from "bcryptjs";
 import {  MODALIDAD, Role, Estado } from "../../generated/prisma/enums";
 import { prisma } from "../config/prisma";
 import { CreateUsuarioDto, UpdateUsuarioDto } from "../dtos/usuario.dto";
 import { AppError } from "../utils/app-error";
+import { Secret, SignOptions } from "jsonwebtoken";
+
 
 export const UsuarioService = {
   async getAll() {
@@ -37,7 +40,6 @@ async getById(id: number) {
       include: { especialidades: true },
     });
   },
-
 
   async searchByNombre(Nombre :string){
 
@@ -182,8 +184,6 @@ await this.getById(id)
 },
 
 
-
-
 async toggleDisponibilidadByProfesional(id: number) {
   const usuario = await this.getById(id);
 
@@ -211,6 +211,77 @@ async toggleDisponibilidadByProfesional(id: number) {
       },
     },
   });
-}
+},
+
+
+
+
+
+  async registrar(data: {
+        email: string;
+        Contrasena: string;
+        nombre: string;
+        role?: Role;
+        pais?: string;
+    }) {
+        const usuarioExists = await prisma.usuario.findUnique({
+            where: { Email: data.email }
+        });
+        if (usuarioExists) {
+            throw new Error("El correo ya está registrado");
+        }
+        const hashedPassword = await bcrypt.hash(data.Contrasena, 10);
+        const usuario = await prisma.usuario.create({
+            data: {
+                Email: data.email,
+                Contrasena: hashedPassword,
+                NombreCompleto: data.nombre,
+                Role: data.role ?? Role.USUARIO,
+              
+            },
+        });
+        const { Contrasena, ...usuarioWithoutPassword } = usuario;
+        return usuarioWithoutPassword;
+    },
+
+
+    async login(data: { email: string; contrasena: string }) {
+        const usuario = await prisma.usuario.findUnique({
+            where: { Email: data.email }
+        });
+        if (!usuario) {
+            throw new Error("Correo o contraseña incorrectos");
+        }
+        const isPasswordValid = await bcrypt.compare(data.contrasena, usuario.Contrasena);
+        if (!isPasswordValid) {
+            throw new Error("Correo o contraseña incorrectos");
+        }
+        const payload = {
+            id: usuario.Id,
+            email: usuario.Email,
+            role: usuario.Role,
+        };
+        const secret: Secret = process.env.JWT_SECRET || "vj_utn_2026";
+        const options: SignOptions = {
+            expiresIn: "2h",
+        };
+        const token = jwt.sign(payload, secret, options);
+        return {
+            token
+        };
+    },
+    async perfil(usuarioId: number) {
+    const usuario = await prisma.usuario.findUnique({
+        where: { Id: usuarioId },
+    });
+    if (!usuario) {
+        throw new Error("El usuario no existe");
+    }
+    const { Contrasena, ...usuarioSinPassword } = usuario;
+
+    return usuarioSinPassword;
+},
+
+
 
 }
