@@ -19,6 +19,9 @@ import { CitasCrear } from './pages/citas/registro/registro';
 import { CitasDetalle } from './pages/citas/detalle/detalle';
 
 
+import { Graficos } from './pages/panel-control/graficos/graficos';
+
+
 export const routes: Routes = [
   {
     path: '',
@@ -45,6 +48,9 @@ export const routes: Routes = [
       {path: 'citas', component: CitasListadoComponent},
      {path: 'citas/crear', component: CitasCrear},
       {path: 'citas/detalle/:id', component: CitasDetalle},
+
+      // panel de control
+      { path: 'panel-control', component: Graficos },
     ],
   },
 ];

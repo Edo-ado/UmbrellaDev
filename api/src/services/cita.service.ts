@@ -4,14 +4,14 @@ import { AppError } from "../utils/app-error";
 
 export const CitaServices = {
   async getAll() {
-    return await prisma.cita.findMany({
-      include: {
-        cliente: true,
-        profesional: true,
-        servicio: true,
-      },
-    });
-  },
+  return await prisma.cita.findMany({
+    include: {
+      cliente: true,
+      profesional: true,
+      servicio: { include: { categoria: true } },
+    },
+  });
+},
 
    async getById(id: number) {
   return prisma.cita.findUnique({
@@ -58,6 +58,7 @@ async getByFechas(DiaInicial: Date, DiaFinal: Date) {
       cliente: true,
       profesional: true,
       servicio: true,
+      categoria: true,
     }
   });
 },
