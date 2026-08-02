@@ -33,22 +33,7 @@ export class EstadisticasService {
     );
   }
 
-  // Trae todas las citas y las agrupa por categoría del servicio
-  getCategorias(): Observable<{ categoria: string; total: number }[]> {
-    return this.http.get<any[]>(`${this.baseUrl}/citas`).pipe(
-      map(citas => {
-        const conteo: Record<string, number> = {};
-        citas.forEach(c => {
-          const nombreCategoria = c.servicio?.categoria?.Nombre ?? 'Sin categoría';
-          conteo[nombreCategoria] = (conteo[nombreCategoria] || 0) + 1;
-        });
-        return Object.entries(conteo)
-          .map(([categoria, total]) => ({ categoria, total }))
-          .sort((a, b) => b.total - a.total);
-      })
-    );
-  }
-
+  // Trae todos los usuarios y los agrupa por estado
   private etiquetaRol(rol: string): string {
     const mapa: Record<string, string> = {
       ADMIN: 'Administradores',
