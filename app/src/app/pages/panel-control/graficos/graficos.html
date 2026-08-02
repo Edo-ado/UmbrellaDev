@@ -1,1 +1,55 @@
-<p>graficos works!</p>
+<section class="profesionales-page">
+  <div class="profesionales-hero">
+    <div>
+      <p class="eyebrow">Umbrella Corporation</p>
+      <h2>Estadísticas</h2>
+      <p class="subtitle">Resumen general de citas y usuarios.</p>
+    </div>
+  </div>
+
+  @if (error()) {
+    <div class="feedback error">
+      {{ error() }}
+    </div>
+  }
+
+  <div class="panel">
+    <p class="eyebrow">Gráfica 01</p>
+    <h2>Citas por estado</h2>
+
+    @if (cargando()) {
+      <div class="estado">Cargando gráfica...</div>
+    } @else if (citasEstadoData().length === 0) {
+      <div class="estado-vacio">No hay datos disponibles.</div>
+    } @else {
+      <apx-chart
+        [series]="citasEstadoChart.series"
+        [chart]="citasEstadoChart.chart"
+        [labels]="citasEstadoChart.labels"
+        [legend]="citasEstadoChart.legend"
+        [colors]="citasEstadoChart.colors"
+        [dataLabels]="citasEstadoChart.dataLabels">
+      </apx-chart>
+    }
+  </div>
+
+  <div class="panel">
+    <p class="eyebrow">Gráfica 02</p>
+    <h2>Usuarios por rol</h2>
+
+    @if (cargando()) {
+      <div class="estado">Cargando gráfica...</div>
+    } @else if (usuariosRolData().length === 0) {
+      <div class="estado-vacio">No hay usuarios disponibles.</div>
+    } @else {
+      <apx-chart
+        [series]="usuariosRolChart.series"
+        [chart]="usuariosRolChart.chart"
+        [xaxis]="usuariosRolChart.xaxis"
+        [plotOptions]="usuariosRolChart.plotOptions"
+        [dataLabels]="usuariosRolChart.dataLabels"
+        [colors]="usuariosRolChart.colors">
+      </apx-chart>
+    }
+  </div>
+</section>

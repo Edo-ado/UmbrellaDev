@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { HttpClient } from '@angular/common/http';
+import { Observable, map } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class EstadisticasService {
@@ -9,13 +8,9 @@ export class EstadisticasService {
 
   constructor(private http: HttpClient) {}
 
- 
-  getCitasPorEstado(fechaInicial: string, fechaFinal: string): Observable<{ estado: string; total: number }[]> {
-    const params = new HttpParams()
-      .set('fechaInicial', fechaInicial)
-      .set('fechaFinal', fechaFinal);
-
-    return this.http.get<any[]>(`${this.baseUrl}/citas/fechas`, { params }).pipe(
+  // Trae todas las citas y las agrupa por estado
+  getCitasPorEstado(): Observable<{ estado: string; total: number }[]> {
+    return this.http.get<any[]>(`${this.baseUrl}/citas`).pipe(
       map(citas => {
         const conteo: Record<string, number> = {};
         citas.forEach(c => { conteo[c.Estado] = (conteo[c.Estado] || 0) + 1; });
@@ -24,26 +19,23 @@ export class EstadisticasService {
     );
   }
 
- 
- getUsuariosPorRol(fechaInicial: string, fechaFinal: string): Observable<{ rol: string; total: number }[]> {
-  const params = new HttpParams()
-    .set('fechaInicial', fechaInicial)
-    .set('fechaFinal', fechaFinal);
+  // Trae todos los usuarios y los agrupa por rol
+  getUsuariosPorRol(): Observable<{ rol: string; total: number }[]> {
+    return this.http.get<any[]>(`${this.baseUrl}/usuarios/lista`).pipe(
+      map(usuarios => {
+        const conteo: Record<string, number> = {};
+        usuarios.forEach(u => { conteo[u.Role] = (conteo[u.Role] || 0) + 1; });
+        return Object.entries(conteo).map(([rol, total]) => ({
+          rol: this.etiquetaRol(rol),
+          total
+        }));
+      })
+    );
+  }
 
-  return this.http.get<any[]>(`${this.baseUrl}/usuarios/fechas`, { params }).pipe(
-    map(usuarios => {
-      const conteo: Record<string, number> = {};
-      usuarios.forEach(u => { conteo[u.Role] = (conteo[u.Role] || 0) + 1; });
-      return Object.entries(conteo).map(([rol, total]) => ({
-        rol: this.etiquetaRol(rol),
-        total
-      }));
-    })
-  );
-}
-
+  // Trae todas las citas y las agrupa por categoría del servicio
   getCategorias(): Observable<{ categoria: string; total: number }[]> {
-    return this.http.get<any[]>(`${this.baseUrl}/citas/categorias`).pipe(
+    return this.http.get<any[]>(`${this.baseUrl}/citas`).pipe(
       map(citas => {
         const conteo: Record<string, number> = {};
         citas.forEach(c => {

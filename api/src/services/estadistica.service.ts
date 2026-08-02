@@ -1,8 +1,16 @@
+import { Injectable } from '@angular/core';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { Observable, map } from 'rxjs';
 
 
-export const EstadisticaService = {
- 
-    getCitasPorEstado(fechaInicial: string, fechaFinal: string): Observable<{ estado: string; total: number }[]> {
+@Injectable({ providedIn: 'root' })
+export class EstadisticaService {
+  private baseUrl = 'http://localhost:3000';
+
+  constructor(private http: HttpClient) {}
+
+  // Trae las citas del rango de fechas y las agrupa por estado
+  getCitasPorEstado(fechaInicial: string, fechaFinal: string): Observable<{ estado: string; total: number }[]> {
     const params = new HttpParams()
       .set('fechaInicial', fechaInicial)
       .set('fechaFinal', fechaFinal);
@@ -16,9 +24,8 @@ export const EstadisticaService = {
     );
   }
 
- 
-
-  //medio weba hacerle un metodo en el backend
+  // Trae todos los usuarios y filtra por fecha en el frontend
+  // (mientras no exista un endpoint /usuarios/fechas en el backend)
   getUsuariosPorRol(fechaInicial: string, fechaFinal: string): Observable<{ rol: string; total: number }[]> {
     return this.http.get<any[]>(`${this.baseUrl}/usuarios`).pipe(
       map(usuarios => {
@@ -34,15 +41,15 @@ export const EstadisticaService = {
         filtrados.forEach(u => { conteo[u.Role] = (conteo[u.Role] || 0) + 1; });
 
         return Object.entries(conteo).map(([rol, total]) => ({
-          rol: this.Rol(rol),
+          rol: this.etiquetaRol(rol),
           total
         }));
       })
     );
   }
 
-
-  getcategorias(): Observable<{ categoria: string; total: number }[]> {
+  // Trae todas las citas y las agrupa por categoría del servicio
+  getCategorias(): Observable<{ categoria: string; total: number }[]> {
     return this.http.get<any[]>(`${this.baseUrl}/citas`).pipe(
       map(citas => {
         const conteo: Record<string, number> = {};
@@ -57,8 +64,7 @@ export const EstadisticaService = {
     );
   }
 
-  
-  private Rol(rol: string): string {
+  private etiquetaRol(rol: string): string {
     const mapa: Record<string, string> = {
       ADMIN: 'Administradores',
       USUARIO: 'Clientes',
@@ -66,6 +72,4 @@ export const EstadisticaService = {
     };
     return mapa[rol] ?? rol;
   }
-
 }
-  

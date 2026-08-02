@@ -68,30 +68,28 @@ export class citaController {
     }
   };
 
-  getByFechas = async (request: Request, response: Response, next: NextFunction) => {
-      const  { fechaInicial, fechaFinal } = request.query;
-  
+getByFechas = async (request: Request, response: Response, next: NextFunction) => {
+  try {
+    const { fechaInicial, fechaFinal } = request.query;
 
+    if (!fechaInicial || !fechaFinal) {
+      return response.status(400).json({ error: "Se necesitan valores minimos y maximos validos" });
+    }
 
-      if (!fechaInicial || !fechaFinal) {
-        return response
-          .status(400)
-          .json({ error: "Se necesitan valores minimos y maximos validos" });
-      }
-  
-      const min = new Date(fechaInicial as string);
-      const max = new  Date(fechaFinal as string);
-  
-      if (isNaN(min.getTime()) || isNaN(max.getTime())) {
-        return response
-          .status(400)
-          .json({ error: "Los precios deben ser números válidos" });
-      }
-  
-      const citas = await CitaServices.getByFechas(min, max);
-      response.json(citas);
-    };
+    const min = new Date(fechaInicial as string);
+    const max = new Date(fechaFinal as string);
 
+    if (isNaN(min.getTime()) || isNaN(max.getTime())) {
+      return response.status(400).json({ error: "Las fechas deben ser válidas" });
+    }
+
+    const citas = await CitaServices.getByFechas(min, max);
+    return response.json(citas);
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+};
 
 
   create = async (
