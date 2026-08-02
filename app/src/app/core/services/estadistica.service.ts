@@ -1,4 +1,3 @@
-// estadisticas.service.ts
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
@@ -10,7 +9,7 @@ export class EstadisticasService {
 
   constructor(private http: HttpClient) {}
 
-  
+ 
   getCitasPorEstado(fechaInicial: string, fechaFinal: string): Observable<{ estado: string; total: number }[]> {
     const params = new HttpParams()
       .set('fechaInicial', fechaInicial)
@@ -26,33 +25,25 @@ export class EstadisticasService {
   }
 
  
+ getUsuariosPorRol(fechaInicial: string, fechaFinal: string): Observable<{ rol: string; total: number }[]> {
+  const params = new HttpParams()
+    .set('fechaInicial', fechaInicial)
+    .set('fechaFinal', fechaFinal);
 
-  //medio weba hacerle un metodo en el backend
-  getUsuariosPorRol(fechaInicial: string, fechaFinal: string): Observable<{ rol: string; total: number }[]> {
-    return this.http.get<any[]>(`${this.baseUrl}/usuarios`).pipe(
-      map(usuarios => {
-        const min = new Date(fechaInicial);
-        const max = new Date(fechaFinal);
+  return this.http.get<any[]>(`${this.baseUrl}/usuarios/fechas`, { params }).pipe(
+    map(usuarios => {
+      const conteo: Record<string, number> = {};
+      usuarios.forEach(u => { conteo[u.Role] = (conteo[u.Role] || 0) + 1; });
+      return Object.entries(conteo).map(([rol, total]) => ({
+        rol: this.etiquetaRol(rol),
+        total
+      }));
+    })
+  );
+}
 
-        const filtrados = usuarios.filter(u => {
-          const fecha = new Date(u.CreatedAt);
-          return fecha >= min && fecha <= max;
-        });
-
-        const conteo: Record<string, number> = {};
-        filtrados.forEach(u => { conteo[u.Role] = (conteo[u.Role] || 0) + 1; });
-
-        return Object.entries(conteo).map(([rol, total]) => ({
-          rol: this.Rol(rol),
-          total
-        }));
-      })
-    );
-  }
-
-
-  getcategorias(): Observable<{ categoria: string; total: number }[]> {
-    return this.http.get<any[]>(`${this.baseUrl}/citas`).pipe(
+  getCategorias(): Observable<{ categoria: string; total: number }[]> {
+    return this.http.get<any[]>(`${this.baseUrl}/citas/categorias`).pipe(
       map(citas => {
         const conteo: Record<string, number> = {};
         citas.forEach(c => {
@@ -66,8 +57,7 @@ export class EstadisticasService {
     );
   }
 
-  
-  private Rol(rol: string): string {
+  private etiquetaRol(rol: string): string {
     const mapa: Record<string, string> = {
       ADMIN: 'Administradores',
       USUARIO: 'Clientes',

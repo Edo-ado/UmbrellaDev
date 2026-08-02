@@ -3,7 +3,7 @@ import { prisma } from "../config/prisma";
 import { AppError } from "../utils/app-error";
 
 export const CitaServices = {
-  async getAll() {
+ async getAll() {
   return await prisma.cita.findMany({
     include: {
       cliente: true,
@@ -57,9 +57,10 @@ async getByFechas(DiaInicial: Date, DiaFinal: Date) {
     include: {
       cliente: true,
       profesional: true,
-      servicio: true,
+      servicio: { include: { categoria: true } },
       categoria: true,
     }
+    
   });
 },
 
@@ -158,4 +159,14 @@ async create(data: any) {
       },
     });
   },
+
+
+  async getCategorias() {
+  return await prisma.cita.findMany({
+    include: {
+      servicio: { include: { categoria: true } },
+    },
+  });
+},
+
 };
