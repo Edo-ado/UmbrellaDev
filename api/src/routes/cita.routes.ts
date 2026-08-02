@@ -27,6 +27,8 @@ export class citasRoutes {
 
     router.patch("/CambioEstado/:id", citaControlleer.toggleStatus);
 
+    router.get("/categorias", citaControlleer.getCategorias);
+
     return router;
   }
 }

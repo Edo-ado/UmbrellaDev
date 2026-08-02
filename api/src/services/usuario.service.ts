@@ -213,10 +213,6 @@ async toggleDisponibilidadByProfesional(id: number) {
   });
 },
 
-
-
-
-
   async registrar(data: {
         email: string;
         Contrasena: string;
@@ -282,6 +278,17 @@ async toggleDisponibilidadByProfesional(id: number) {
     return usuarioSinPassword;
 },
 
+async getByFechas(DiaInicial: Date, DiaFinal: Date) {
+  return await prisma.usuario.findMany({
+    where: {
+      CreatedAt: {
+        gte: DiaInicial,
+        lte: DiaFinal,
+      },
+    },
+    include: { especialidades: true },
+  });
+},
 
 
 }

@@ -34,6 +34,10 @@ export class usuarioRoutes {
 
     router.patch("/CambioDisponibilidad/:id", usuariosController.toggleDisponibilidadByProfesional);
 
+
+router.get("/fechas", usuariosController.getByFechas);
+
+
     return router;
   }
 }

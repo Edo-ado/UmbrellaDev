@@ -126,5 +126,15 @@ export class citaController {
   }
 };
 
+getCategorias = async (request: Request, response: Response, next: NextFunction) => {
+  try {
+    const citas = await CitaServices.getCategorias();
+    return response.status(StatusCodes.OK).json(citas);
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+};
+
 
 }

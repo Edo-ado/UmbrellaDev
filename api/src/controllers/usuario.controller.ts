@@ -179,7 +179,36 @@ toggleDisponibilidadByProfesional = async (
   }
 };
 
+getByFechas = async (
+  request: Request,
+  response: Response,
+  next: NextFunction,
+) => {
+  try {
+    const { fechaInicial, fechaFinal } = request.query;
 
+    if (!fechaInicial || !fechaFinal) {
+      return response
+        .status(StatusCodes.BAD_REQUEST)
+        .json({ error: "Se necesitan fechaInicial y fechaFinal" });
+    }
+
+    const min = new Date(fechaInicial as string);
+    const max = new Date(fechaFinal as string);
+
+    if (isNaN(min.getTime()) || isNaN(max.getTime())) {
+      return response
+        .status(StatusCodes.BAD_REQUEST)
+        .json({ error: "Las fechas deben ser válidas" });
+    }
+
+    const usuarios = await UsuarioService.getByFechas(min, max);
+    return response.status(StatusCodes.OK).json(usuarios);
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+};
 
 
 
