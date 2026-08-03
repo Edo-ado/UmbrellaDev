@@ -19,7 +19,7 @@ export class EstadisticasService {
     );
   }
 
-  // Trae todos los usuarios y los agrupa por rol
+  // rae todos los usuarios y los agrupa por rol
   getUsuariosPorRol(): Observable<{ rol: string; total: number }[]> {
     return this.http.get<any[]>(`${this.baseUrl}/usuarios/lista`).pipe(
       map(usuarios => {
