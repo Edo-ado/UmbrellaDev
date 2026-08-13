@@ -3,7 +3,10 @@ import {  MODALIDAD, Role, Estado } from "../../generated/prisma/enums";
 import { prisma } from "../config/prisma";
 import { CreateUsuarioDto, UpdateUsuarioDto } from "../dtos/usuario.dto";
 import { AppError } from "../utils/app-error";
-import { Secret, SignOptions } from "jsonwebtoken";
+import jwt, {
+    Secret,
+    SignOptions
+} from "jsonwebtoken"
 
 
 export const UsuarioService = {
@@ -252,11 +255,11 @@ async toggleDisponibilidadByProfesional(id: number) {
         if (!isPasswordValid) {
             throw new Error("Correo o contraseña incorrectos");
         }
-        const payload = {
-            id: usuario.Id,
-            email: usuario.Email,
-            role: usuario.Role,
-        };
+const payload = {
+    Id: usuario.Id,
+    Email: usuario.Email,
+    Role: usuario.Role,
+}
         const secret: Secret = process.env.JWT_SECRET || "vj_utn_2026";
         const options: SignOptions = {
             expiresIn: "2h",
@@ -289,6 +292,14 @@ async getByFechas(DiaInicial: Date, DiaFinal: Date) {
     include: { especialidades: true },
   });
 },
+
+
+
+
+
+
+
+
 
 
 }

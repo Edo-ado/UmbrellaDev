@@ -35,7 +35,25 @@ export class usuarioRoutes {
     router.patch("/CambioDisponibilidad/:id", usuariosController.toggleDisponibilidadByProfesional);
 
 
+
 router.get("/fechas", usuariosController.getByFechas);
+
+router.post(
+    "/login",
+    usuariosController.login
+)
+
+router.post(
+    "/register",
+    usuariosController.register
+)
+
+router.get(
+    "/perfil",
+    usuariosController.perfil
+)
+
+
 
 
     return router;
