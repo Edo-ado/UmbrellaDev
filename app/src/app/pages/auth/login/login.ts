@@ -91,10 +91,10 @@ readonly loginForm = this.formBuilder.group({
                 Contrasena: contrasena ,
             })
             .subscribe({
-                next: (profesional) => {
+                next: (usuario) => {
                     this.cargando.set(false)
 
-                    if (profesional.Role === 'ADMIN') {
+                    if (usuario.Role === 'ADMIN') {
                         void this.router.navigate(['/usuarios'])
 
                         return
