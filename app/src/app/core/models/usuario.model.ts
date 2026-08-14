@@ -5,6 +5,7 @@ export interface Profesional {
   Telefono?: string;
   Pais: string;
   Ubicacion?: string;
+  Contrasena: string;
   TituloProfesional: string;
   Descripcion?: string;
   Modalidad: 'PRESENCIAL' | 'VIRTUAL' | 'HIBRIDA';
@@ -20,4 +21,25 @@ export interface Profesional {
 export interface Especialidad {
   Id: number;
   Nombre: string;
+}
+
+
+export interface LoginRequest {
+    Email: string;
+    Contrasena: string;
+}
+export interface LoginResult {
+    token: string;
+}
+
+export interface RegisterRequest {
+    NombreCompleto: string;
+    Email: string;
+    Contrasena: string;
+}
+
+export enum Role {
+    ADMIN = 'ADMIN',
+    USUARIO = 'USUARIO',
+    DESARROLLADOR = 'DESARROLLADOR',
 }

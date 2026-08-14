@@ -45,23 +45,28 @@ export const CitaServices = {
       },
     });
   },
-
+  
 async getByFechas(DiaInicial: Date, DiaFinal: Date) {
+    console.log('👉 EJECUTANDO VERSION NUEVA');
   return await prisma.cita.findMany({
     where: {
       Fecha: {
         gte: DiaInicial,
-        lte: DiaFinal,
-      },
+        lte: DiaFinal
+      }
     },
     include: {
       cliente: true,
       profesional: true,
-      servicio: { include: { categoria: true } },
-      categoria: true,
+      servicio: {
+        include: {
+          categoria: true
+        }
+      },
+      resenas: true
+  
     }
-    
-  });
+  })
 },
 
 async toggleStatus(id: number) {

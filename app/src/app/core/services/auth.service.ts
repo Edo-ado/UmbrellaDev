@@ -4,11 +4,14 @@ import {
     Injectable,
     signal,
 } from '@angular/core'
+
 import {
     HttpClient,
     HttpErrorResponse,
 } from '@angular/common/http'
+
 import { Router } from '@angular/router'
+
 import {
     catchError,
     finalize,
@@ -20,15 +23,19 @@ import {
     tap,
     throwError,
 } from 'rxjs'
-import { environment } from '../../../environments/environment.development'
+
+import { environment } from '../../../environments/environment'
+
 import { ApiResponse } from '../models/api-response.model'
+
 import {
     LoginRequest,
     LoginResult,
     RegisterRequest,
-    Usuario,
+    Profesional,
 } from '../models/usuario.model'
-import { Role } from '../models/role.model'
+
+import { Role } from '../models/usuario.model'
 
 
 @Injectable({
@@ -36,51 +43,65 @@ import { Role } from '../models/role.model'
 })
 export class AuthService {
     private readonly http = inject(HttpClient)
+
     private readonly router = inject(Router)
+
     private readonly apiUrl =
-        `${environment.apiUrl}/usuario`
+        `${environment.apiUrl}/usuarios`
+
     private readonly tokenKey = 'access_token'
+
     private readonly _token = signal<string | null>(
         this.leerTokenAlmacenado()
     )
-    private readonly _usuario =
-        signal<Usuario | null>(null)
+
+    private readonly _profesional =
+        signal<Profesional | null>(null)
+
     private readonly _cargandoSesion =
         signal(false)
+
     private readonly _sesionInicializada =
         signal(false)
+
     private solicitudPerfilActual:
-        Observable<Usuario | null> | null = null
+        Observable<Profesional | null> | null = null
+
 
     readonly token = this._token.asReadonly()
-    readonly usuario = this._usuario.asReadonly()
+
+    readonly profesional =
+        this._profesional.asReadonly()
+
     readonly cargandoSesion =
         this._cargandoSesion.asReadonly()
+
     readonly sesionInicializada =
         this._sesionInicializada.asReadonly()
 
-    /**
-     * El usuario se considera autenticado cuando:
-     *
-     * 1. existe un token
-     * 2. el perfil fue recuperado correctamente.
-     */
+
     readonly autenticado = computed(
         () =>
             this._token() !== null &&
-            this._usuario() !== null
+            this._profesional() !== null
     )
+
     readonly rol = computed(
-        () => this._usuario()?.role ?? null
+        () => this._profesional()?.Role ?? null
     )
+
     readonly esAdmin = computed(() => {
         const rol = this.rol()
+
         return rol !== null && rol === Role.ADMIN
     })
+
+
     login(
         credenciales: LoginRequest
-    ): Observable<Usuario> {
+    ): Observable<Profesional> {
         this._cargandoSesion.set(true)
+
         return this.http
             .post<ApiResponse<LoginResult>>(
                 `${this.apiUrl}/login`,
@@ -89,23 +110,31 @@ export class AuthService {
             .pipe(
                 map((response) => {
                     const resultado = response.data
+
                     if (!resultado?.token) {
                         throw new Error(
                             'El API no devolvió el token de autenticación'
                         )
                     }
+
                     return resultado
                 }),
+
                 tap(({ token }) => {
                     this.guardarToken(token)
                 }),
+
                 switchMap(() => this.obtenerPerfil()),
-                tap((usuario) => {
-                    this._usuario.set(usuario)
+
+                tap((profesional) => {
+                    this._profesional.set(profesional)
+
                     this._sesionInicializada.set(true)
                 }),
+
                 catchError((error: unknown) => {
                     this.limpiarSesion()
+
                     return throwError(
                         () =>
                             this.obtenerErrorAutenticacion(
@@ -113,164 +142,208 @@ export class AuthService {
                             )
                     )
                 }),
+
                 finalize(() => {
                     this._cargandoSesion.set(false)
                 })
             )
     }
-    obtenerPerfil(): Observable<Usuario> {
+
+
+    obtenerPerfil(): Observable<Profesional> {
         return this.http
-            .get<ApiResponse<Usuario>>(
+            .get<ApiResponse<Profesional>>(
                 `${this.apiUrl}/perfil`
             )
             .pipe(
                 map((response) => {
-                    const usuario = response.data
-                    if (!usuario) {
+                    const profesional = response.data
+
+                    if (!profesional) {
                         throw new Error(
                             'El API no devolvió la información del perfil'
                         )
                     }
-                    return usuario
+
+                    return profesional
                 })
             )
     }
-    /**
-     * Restaura la sesión cuando inicia la aplicación.
-     *
-     * Debe ejecutarse desde provideAppInitializer().
-     */
-    inicializarSesion(): Observable<Usuario | null> {
+
+
+    inicializarSesion():
+        Observable<Profesional | null> {
         if (this._sesionInicializada()) {
-            return of(this._usuario())
+            return of(this._profesional())
         }
+
         const token = this._token()
+
         if (!token) {
-            this._usuario.set(null)
+            this._profesional.set(null)
+
             this._sesionInicializada.set(true)
 
             return of(null)
         }
+
         return this.cargarPerfil()
     }
-    /**
-     * Recupera el perfil usando el token almacenado.
-     *
-     * shareReplay evita solicitudes duplicadas cuando
-     * varios guards o componentes intentan restaurar
-     * la sesión al mismo tiempo.
-     */
-    cargarPerfil(): Observable<Usuario | null> {
+
+
+    cargarPerfil():
+        Observable<Profesional | null> {
         if (this.solicitudPerfilActual) {
             return this.solicitudPerfilActual
         }
+
         const token = this._token()
+
         if (!token) {
-            this._usuario.set(null)
+            this._profesional.set(null)
+
             this._sesionInicializada.set(true)
 
             return of(null)
         }
+
         this._cargandoSesion.set(true)
+
         this.solicitudPerfilActual =
-            this.obtenerPerfil().pipe(
-                tap((usuario) => {
-                    this._usuario.set(usuario)
-                }),
-                map(
-                    (usuario): Usuario | null =>
-                        usuario
-                ),
-                catchError(() => {
-                    this.limpiarSesion()
-                    return of(null)
-                }),
-                finalize(() => {
-                    this._cargandoSesion.set(false)
-                    this._sesionInicializada.set(true)
-                    this.solicitudPerfilActual = null
-                }),
-                shareReplay({
-                    bufferSize: 1,
-                    refCount: false,
-                })
-            )
+            this.obtenerPerfil()
+                .pipe(
+                    tap((profesional) => {
+                        this._profesional.set(profesional)
+                    }),
+
+                    map(
+                        (
+                            profesional
+                        ): Profesional | null =>
+                            profesional
+                    ),
+
+                    catchError(() => {
+                        this.limpiarSesion()
+
+                        return of(null)
+                    }),
+
+                    finalize(() => {
+                        this._cargandoSesion.set(false)
+
+                        this._sesionInicializada.set(true)
+
+                        this.solicitudPerfilActual = null
+                    }),
+
+                    shareReplay({
+                        bufferSize: 1,
+                        refCount: false,
+                    })
+                )
+
         return this.solicitudPerfilActual
-    }   
+    }
+
+
     registrar(
         datos: RegisterRequest
-    ): Observable<Usuario> {
+    ): Observable<Profesional> {
         return this.http
-            .post<ApiResponse<Usuario>>(
+            .post<ApiResponse<Profesional>>(
                 `${this.apiUrl}/register`,
                 datos
             )
             .pipe(
                 map((response) => {
-                    const usuario = response.data
-                    if (!usuario) {
+                    const profesional = response.data
+
+                    if (!profesional) {
                         throw new Error(
-                            'El API no devolvió el usuario registrado'
+                            'El API no devolvió el profesional registrado'
                         )
                     }
-                    return usuario
+
+                    return profesional
                 })
             )
     }
+
+
     logout(redirigir = true): void {
         this.limpiarSesion()
+
         if (redirigir) {
             void this.router.navigate(['/login'])
         }
     }
 
+
     tieneRol(rolesPermitidos: Role[]): boolean {
         const rolActual = this.rol()
+
         return (
             rolActual !== null &&
-            rolesPermitidos.includes(rolActual)
+            rolesPermitidos.includes(rolActual as Role)
         )
     }
+
+
     obtenerToken(): string | null {
         return this._token()
     }
+
+
     private guardarToken(token: string): void {
         const tokenLimpio = token.trim()
+
         if (!tokenLimpio) {
             throw new Error(
                 'El token recibido no es válido'
             )
         }
+
         localStorage.setItem(
             this.tokenKey,
             tokenLimpio
         )
+
         this._token.set(tokenLimpio)
     }
+
 
     private leerTokenAlmacenado(): string | null {
         const token =
             localStorage.getItem(this.tokenKey)
+
         if (!token) {
             return null
         }
+
         const tokenLimpio = token.trim()
+
         return tokenLimpio.length > 0
             ? tokenLimpio
             : null
     }
+
+
     private limpiarSesion(): void {
         localStorage.removeItem(this.tokenKey)
+
         this._token.set(null)
-        this._usuario.set(null)
+
+        this._profesional.set(null)
+
         this._cargandoSesion.set(false)
+
         this._sesionInicializada.set(true)
+
         this.solicitudPerfilActual = null
     }
-    /**
-     * Convierte los errores de autenticación en mensajes
-     * apropiados para la interfaz.
-     */
+
+
     private obtenerErrorAutenticacion(
         error: unknown
     ): Error {
@@ -281,35 +354,41 @@ export class AuthService {
                     'No fue posible iniciar sesión'
                 )
         }
+
         if (error.status === 0) {
             return new Error(
                 'No fue posible conectarse con el servidor'
             )
         }
+
         if (error.status === 400) {
             return new Error(
                 error.error?.message ??
                 'Los datos enviados no son válidos'
             )
         }
+
         if (error.status === 401) {
             return new Error(
                 error.error?.message ??
                 'Correo o contraseña incorrectos'
             )
         }
+
         if (error.status === 403) {
             return new Error(
                 error.error?.message ??
                 'No tiene permisos para realizar esta acción'
             )
         }
+
         if (error.status === 404) {
             return new Error(
                 error.error?.message ??
-                'No fue posible obtener el perfil del usuario'
+                'No fue posible obtener el perfil del profesional'
             )
         }
+
         return new Error(
             error.error?.message ??
             'Ocurrió un error durante la autenticación'

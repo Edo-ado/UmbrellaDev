@@ -210,6 +210,99 @@ getByFechas = async (
   }
 };
 
+login = async (
+    request: Request,
+    response: Response,
+    next: NextFunction
+) => {
+    try {
+        const {
+            Email: email,
+            Contrasena: contrasena
+        } = request.body
+
+        const resultado = await UsuarioService.login({
+            email,
+            contrasena
+        })
+
+        return response
+            .status(StatusCodes.OK)
+            .json({
+                success: true,
+                message: "Inicio de sesión exitoso",
+                data: resultado
+            })
+    } catch (error) {
+        next(error)
+    }
+};
+
+register = async (
+    request: Request,
+    response: Response,
+    next: NextFunction
+) => {
+    try {
+        const usuario =
+            await UsuarioService.registrar({
+                email: request.body.Email,
+                Contrasena: request.body.Contrasena,
+                nombre: request.body.NombreCompleto,
+                pais: request.body.Pais,
+                role: request.body.Role,
+                modalidad: request.body.Modalidad
+            })
+
+        return response
+            .status(StatusCodes.CREATED)
+            .json({
+                success: true,
+                message: "Usuario registrado correctamente",
+                data: usuario
+            })
+    } catch (error) {
+        next(error)
+    }
+};
+
+
+perfil = async (
+    request: Request & {
+        user?: {
+            Id: number
+            Email: string
+            Role: Role
+        }
+    },
+    response: Response,
+    next: NextFunction
+) => {
+    try {
+        if (!request.user) {
+            return response
+                .status(StatusCodes.UNAUTHORIZED)
+                .json({
+                    success: false,
+                    message: "Usuario no autenticado"
+                })
+        }
+
+        const usuario =
+            await UsuarioService.perfil(
+                request.user.Id
+            )
+
+        return response
+            .status(StatusCodes.OK)
+            .json({
+                success: true,
+                data: usuario
+            })
+    } catch (error) {
+        next(error)
+    }
+};
 
 
 }

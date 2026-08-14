@@ -25,6 +25,16 @@ app.use(
   }),
 );
 
+app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
+  console.error(err);
+  const status = err.statusCode || 500;
+  res.status(status).json({
+    success: false,
+    message: err.message || "Error interno del servidor",
+  });
+});
+
+
 app.get("/", (req, res) => {
   res.json({
     message: "Welcome to the Umbrella Corporation API",

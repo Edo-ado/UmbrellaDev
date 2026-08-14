@@ -1,0 +1,263 @@
+<section class="register-page">
+    <div class="register-shell">
+        <div class="register-brand">
+            <p class="eyebrow">
+                Umbrella Corporation
+            </p>
+
+            <h1>
+                Crea tu cuenta
+            </h1>
+
+            <p class="description">
+                Regístrate para formar parte de la plataforma
+                y acceder a todas sus funcionalidades.
+            </p>
+        </div>
+
+
+        <div class="register-panel">
+            <div class="panel-heading">
+                <span class="panel-line"></span>
+
+                <div>
+                    <p class="panel-kicker">
+                        Nuevo usuario
+                    </p>
+
+                    <h2>
+                        Registrarse
+                    </h2>
+                </div>
+            </div>
+
+
+            @if (error()) {
+                <div class="feedback error">
+                    {{ error() }}
+                </div>
+            }
+
+
+            @if (exito()) {
+                <div class="feedback success">
+                    {{ exito() }}
+                </div>
+            }
+
+
+            <form
+                [formGroup]="registerForm"
+                (ngSubmit)="registrarse()"
+            >
+                <div class="form-grid">
+                    <div class="campo campo-completo">
+                        <label for="NombreCompleto">
+                            Nombre completo
+                        </label>
+
+                        <input
+                            id="NombreCompleto"
+                            type="text"
+                            formControlName="NombreCompleto"
+                            placeholder="Tu nombre completo"
+                            autocomplete="name"
+                        />
+
+                        @if (
+                            mostrarError(
+                                'NombreCompleto'
+                            )
+                        ) {
+                            <small class="campo-error">
+                                El nombre es obligatorio.
+                            </small>
+                        }
+                    </div>
+
+
+                    <div class="campo">
+                        <label for="Email">
+                            Correo electrónico
+                        </label>
+
+                        <input
+                            id="Email"
+                            type="email"
+                            formControlName="Email"
+                            placeholder="usuario@correo.com"
+                            autocomplete="email"
+                        />
+
+                        @if (mostrarError('Email')) {
+                            <small class="campo-error">
+                                @if (
+                                    registerForm.controls.Email
+                                        .hasError('required')
+                                ) {
+                                    El correo es obligatorio.
+                                }
+
+                                @if (
+                                    registerForm.controls.Email
+                                        .hasError('email')
+                                ) {
+                                    Ingresa un correo válido.
+                                }
+                            </small>
+                        }
+                    </div>
+
+
+                    <div class="campo">
+                        <label for="Pais">
+                            País
+                        </label>
+
+                        <input
+                            id="Pais"
+                            type="text"
+                            formControlName="Pais"
+                            placeholder="Costa Rica"
+                            autocomplete="country-name"
+                        />
+
+                        @if (mostrarError('Pais')) {
+                            <small class="campo-error">
+                                El país es obligatorio.
+                            </small>
+                        }
+                    </div>
+
+
+                    <div class="campo">
+                        <label for="Contrasena">
+                            Contraseña
+                        </label>
+
+                        <input
+                            id="Contrasena"
+                            type="password"
+                            formControlName="Contrasena"
+                            placeholder="••••••••"
+                            autocomplete="new-password"
+                        />
+
+                        @if (
+                            mostrarError('Contrasena')
+                        ) {
+                            <small class="campo-error">
+                                La contraseña debe tener al menos
+                                6 caracteres.
+                            </small>
+                        }
+                    </div>
+
+
+                    <div class="campo">
+                        <label for="ConfirmarContrasena">
+                            Confirmar contraseña
+                        </label>
+
+                        <input
+                            id="ConfirmarContrasena"
+                            type="password"
+                            formControlName="ConfirmarContrasena"
+                            placeholder="••••••••"
+                            autocomplete="new-password"
+                        />
+
+                        @if (
+                            mostrarError(
+                                'ConfirmarContrasena'
+                            ) ||
+                            contrasenasNoCoinciden()
+                        ) {
+                            <small class="campo-error">
+                                @if (
+                                    registerForm.controls
+                                        .ConfirmarContrasena
+                                        .hasError('required')
+                                ) {
+                                    Confirma tu contraseña.
+                                }
+
+                                @if (
+                                    contrasenasNoCoinciden()
+                                ) {
+                                    Las contraseñas no coinciden.
+                                }
+                            </small>
+                        }
+                    </div>
+
+
+                    <div class="campo">
+                        <label for="Edad">
+                            Edad
+                        </label>
+
+                        <input
+                            id="Edad"
+                            type="number"
+                            formControlName="Edad"
+                            placeholder="Edad"
+                            min="1"
+                            max="120"
+                        />
+                    </div>
+
+
+                    <div class="campo">
+                        <label for="Telefono">
+                            Teléfono
+                        </label>
+
+                        <input
+                            id="Telefono"
+                            type="tel"
+                            formControlName="Telefono"
+                            placeholder="+506 8888-8888"
+                            autocomplete="tel"
+                        />
+                    </div>
+                </div>
+
+
+                <button
+                    class="btn btn-primario"
+                    type="submit"
+                    [disabled]="cargando()"
+                >
+                    @if (cargando()) {
+                        Creando cuenta...
+                    } @else {
+                        Crear cuenta
+                    }
+                </button>
+            </form>
+
+
+            <div class="separador">
+                <span></span>
+
+                <small>o</small>
+
+                <span></span>
+            </div>
+
+
+            <p class="registro">
+                ¿Ya tienes una cuenta?
+
+                <button
+                    type="button"
+                    class="link-button"
+                    (click)="irALogin()"
+                >
+                    Inicia sesión
+                </button>
+            </p>
+        </div>
+    </div>
+</section>

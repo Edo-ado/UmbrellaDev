@@ -1,0 +1,162 @@
+<section class="login-page">
+    <div class="login-shell">
+        <div class="login-brand">
+            <p class="eyebrow">
+                Umbrella Corporation
+            </p>
+
+            <h1>
+                Bienvenido de nuevo
+            </h1>
+
+            <p class="description">
+                Accede al sistema para administrar
+                tu cuenta y tus servicios.
+            </p>
+        </div>
+
+
+        <div class="login-panel">
+            <div class="panel-heading">
+                <span class="panel-line"></span>
+
+                <div>
+                    <p class="panel-kicker">
+                        Acceso seguro
+                    </p>
+
+                    <h2>
+                        Iniciar sesión
+                    </h2>
+                </div>
+            </div>
+
+
+            @if (error()) {
+                <div class="feedback error">
+                    {{ error() }}
+                </div>
+            }
+
+
+            <form
+                [formGroup]="loginForm"
+                (ngSubmit)="iniciarSesion()"
+            >
+                <div class="campo">
+                    <label for="Email">
+                        Correo electrónico
+                    </label>
+
+                    <input
+                        id="Email"
+                        type="email"
+                        formControlName="Email"
+                        placeholder="usuario@correo.com"
+                        autocomplete="email"
+                    />
+
+                    @if (mostrarError('Email')) {
+                        <small class="campo-error">
+                            @if (
+                                loginForm.controls.Email
+                                    .hasError('required')
+                            ) {
+                                <span>
+                                    El correo es obligatorio.
+                                </span>
+                            }
+
+                            @if (
+                                loginForm.controls.Email
+                                    .hasError('email')
+                            ) {
+                                <span>
+                                    Ingresa un correo válido.
+                                </span>
+                            }
+                        </small>
+                    }
+                </div>
+
+
+                <div class="campo">
+                    <label for="Contrasena">
+                        Contraseña
+                    </label>
+
+                    <input
+                        id="Contrasena"
+                        type="password"
+                        formControlName="Contrasena"
+                        placeholder="••••••••"
+                        autocomplete="current-password"
+                    />
+
+                    @if (mostrarError('Contrasena')) {
+                        <small class="campo-error">
+                            @if (
+                                loginForm.controls.Contrasena
+                                    .hasError('required')
+                            ) {
+                                <span>
+                                    La contraseña es obligatoria.
+                                </span>
+                            }
+
+                            @if (
+                                loginForm.controls.Contrasena
+                                    .hasError('minlength')
+                            ) {
+                                <span>
+                                    Debe tener al menos 6 caracteres.
+                                </span>
+                            }
+                        </small>
+                    }
+                </div>
+
+
+                <button
+                    class="btn btn-primario"
+                    type="submit"
+                    [disabled]="cargando()"
+                >
+                    @if (!cargando()) {
+                        <span>
+                            Iniciar sesión
+                        </span>
+                    }
+
+                    @if (cargando()) {
+                        <span>
+                            Verificando...
+                        </span>
+                    }
+                </button>
+            </form>
+
+
+            <div class="separador">
+                <span></span>
+
+                <small>o</small>
+
+                <span></span>
+            </div>
+
+
+            <p class="registro">
+                ¿Todavía no tienes una cuenta?
+
+                <button
+                    type="button"
+                    class="link-button"
+                    (click)="irARegistro()"
+                >
+                    Regístrate
+                </button>
+            </p>
+        </div>
+    </div>
+</section>

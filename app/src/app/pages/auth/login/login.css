@@ -1,0 +1,120 @@
+.header-container {
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    margin-left: auto;
+}
+
+
+.user-session {
+    display: flex !important;
+    align-items: center;
+    gap: 12px;
+
+    margin-left: auto;
+    padding: 8px 10px;
+
+    background: #121212;
+    border: 1px solid #74202d;
+    border-radius: 14px;
+
+    box-shadow: 0 0 20px rgba(255, 0, 0, .16);
+}
+
+
+.user-avatar {
+    width: 40px !important;
+    height: 40px !important;
+    flex: 0 0 40px;
+
+    display: grid !important;
+    place-items: center;
+
+    color: #ff5b5b;
+
+    background: #250b0f;
+    border: 1px solid #a62a3b;
+    border-radius: 50%;
+}
+
+
+.user-avatar svg {
+    width: 22px;
+    height: 22px;
+
+    fill: currentColor;
+}
+
+
+.user-info-text {
+    display: flex !important;
+    flex-direction: column;
+    gap: 3px;
+
+    min-width: 0;
+}
+
+
+.user-name {
+    max-width: 190px;
+
+    overflow: hidden;
+
+    color: #ffffff !important;
+
+    font-size: .86rem;
+    font-weight: 700;
+
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+
+.user-email {
+    max-width: 190px;
+
+    overflow: hidden;
+
+    color: #ff7777 !important;
+
+    font-size: .72rem;
+
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+
+.btn-logout {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+
+    padding: 10px 14px;
+
+    color: #ffffff !important;
+
+    background: #b00017 !important;
+
+    border: 1px solid #e13b4f !important;
+    border-radius: 10px;
+
+    cursor: pointer;
+
+    font-size: .75rem;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+
+.btn-logout:hover {
+    background: #d3001e !important;
+    transform: translateY(-1px);
+}

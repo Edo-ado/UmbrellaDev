@@ -1,71 +1,29 @@
+// import { prisma } from "../config/prisma";
 
+// export const EstadisticaService = {
+//   // Trae todas las citas y las agrupa por estado
+//   async getCitasPorEstado() {
+//     const citas = await prisma.cita.findMany();
 
-export const EstadisticaService = {
- 
-    getCitasPorEstado(fechaInicial: string, fechaFinal: string): Observable<{ estado: string; total: number }[]> {
-    const params = new HttpParams()
-      .set('fechaInicial', fechaInicial)
-      .set('fechaFinal', fechaFinal);
+//     const conteo: Record<string, number> = {};
+//     citas.forEach(c => {
+//       conteo[c.Estado] = (conteo[c.Estado] || 0) + 1;
+//     });
 
-    return this.http.get<any[]>(`${this.baseUrl}/citas/fechas`, { params }).pipe(
-      map(citas => {
-        const conteo: Record<string, number> = {};
-        citas.forEach(c => { conteo[c.Estado] = (conteo[c.Estado] || 0) + 1; });
-        return Object.entries(conteo).map(([estado, total]) => ({ estado, total }));
-      })
-    );
-  }
+//     return Object.entries(conteo).map(([estado, total]) => ({ estado, total }));
+//   },
 
- 
+//   // Trae todos los usuarios y los agrupa por rol
+//   async getUsuariosPorRol() {
+//     const usuarios = await prisma.usuario.findMany();
 
-  //medio weba hacerle un metodo en el backend
-  getUsuariosPorRol(fechaInicial: string, fechaFinal: string): Observable<{ rol: string; total: number }[]> {
-    return this.http.get<any[]>(`${this.baseUrl}/usuarios`).pipe(
-      map(usuarios => {
-        const min = new Date(fechaInicial);
-        const max = new Date(fechaFinal);
+//     const conteo: Record<string, number> = {};
+//     usuarios.forEach(u => {
+//       conteo[u.Role] = (conteo[u.Role] || 0) + 1;
+//     });
 
-        const filtrados = usuarios.filter(u => {
-          const fecha = new Date(u.CreatedAt);
-          return fecha >= min && fecha <= max;
-        });
-
-        const conteo: Record<string, number> = {};
-        filtrados.forEach(u => { conteo[u.Role] = (conteo[u.Role] || 0) + 1; });
-
-        return Object.entries(conteo).map(([rol, total]) => ({
-          rol: this.Rol(rol),
-          total
-        }));
-      })
-    );
-  }
-
-
-  getcategorias(): Observable<{ categoria: string; total: number }[]> {
-    return this.http.get<any[]>(`${this.baseUrl}/citas`).pipe(
-      map(citas => {
-        const conteo: Record<string, number> = {};
-        citas.forEach(c => {
-          const nombreCategoria = c.servicio?.categoria?.Nombre ?? 'Sin categoría';
-          conteo[nombreCategoria] = (conteo[nombreCategoria] || 0) + 1;
-        });
-        return Object.entries(conteo)
-          .map(([categoria, total]) => ({ categoria, total }))
-          .sort((a, b) => b.total - a.total);
-      })
-    );
-  }
+//     return Object.entries(conteo).map(([rol, total]) => ({ rol, total }));
+//   },
 
   
-  private Rol(rol: string): string {
-    const mapa: Record<string, string> = {
-      ADMIN: 'Administradores',
-      USUARIO: 'Clientes',
-      DESARROLLADOR: 'Profesionales'
-    };
-    return mapa[rol] ?? rol;
-  }
-
-}
-  
+// };
