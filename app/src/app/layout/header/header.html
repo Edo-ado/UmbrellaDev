@@ -108,28 +108,43 @@
                             </svg>
                         </div>
 
+<div class="user-info-text">
+    <span class="user-label">
+        @switch (authService.profesional()?.Role) {
+            @case ('ADMIN') {
+                Administrador
+            }
 
-                        <div class="user-info-text">
-                            <span class="user-label">
-                                Usuario activo
-                            </span>
+            @case ('DESARROLLADOR') {
+                Desarrollador
+            }
 
-                            <span class="user-name">
-                                {{
-                                    authService
-                                        .profesional()
-                                        ?.NombreCompleto
-                                }}
-                            </span>
+            @case ('PROFESIONAL') {
+                Profesional
+            }
 
-                            <span class="user-email">
-                                {{
-                                    authService
-                                        .profesional()
-                                        ?.Email
-                                }}
-                            </span>
-                        </div>
+            @default {
+                Usuario
+            }
+        }
+    </span>
+
+    <span class="user-name">
+        {{
+            authService
+                .profesional()
+                ?.NombreCompleto
+        }}
+    </span>
+
+    <span class="user-email">
+        {{
+            authService
+                .profesional()
+                ?.Email
+        }}
+    </span>
+</div>
 
 
                         <button
@@ -260,27 +275,27 @@
                         </div>
 
 
-                        <div class="user-info-text">
-                            <span class="user-label">
-                                Usuario activo
-                            </span>
+                       <div class="user-info-text">
+    <span class="user-label">
+        Usuario activo
+    </span>
 
-                            <span class="user-name">
-                                {{
-                                    authService
-                                        .profesional()
-                                        ?.NombreCompleto
-                                }}
-                            </span>
+    <span class="user-name">
+        {{
+            authService
+                .profesional()
+                ?.NombreCompleto
+        }}
+    </span>
 
-                            <span class="user-email">
-                                {{
-                                    authService
-                                        .profesional()
-                                        ?.Email
-                                }}
-                            </span>
-                        </div>
+    <span class="user-email">
+        {{
+            authService
+                .profesional()
+                ?.Email
+        }}
+    </span>
+</div>
 
 
                         <button

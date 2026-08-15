@@ -51,7 +51,7 @@ readonly loginForm = this.formBuilder.group({
         '',
         [
             Validators.required,
-            Validators.minLength(6),
+            Validators.minLength(4),
         ],
     ],
 })
