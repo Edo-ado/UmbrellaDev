@@ -9,7 +9,7 @@ import { citasRoutes } from "./cita.routes";
 import { ImageRoutes } from "./image.routes";
 
 
-
+import { EstadisticaRoutes } from "./estadistica.routes";
 
 
 
@@ -26,7 +26,7 @@ export class AppRoutes {
     router.use("/servicios", ServicioRoutes.routes);
     router.use("/citas", citasRoutes.routes);
     router.use("/images", ImageRoutes.routes)
-  
+  router.use("/estadisticas", EstadisticaRoutes.routes);
 
 
     return router;
