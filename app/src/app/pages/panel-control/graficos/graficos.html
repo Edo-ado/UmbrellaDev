@@ -239,4 +239,47 @@
       </div>
     }
   </section>
+
+<section class="panel grafica-panel">
+  <div class="panel-header">
+    <div>
+      <p class="eyebrow">
+        Gráfica 03
+      </p>
+
+      <h2>
+        Citas por profesional
+      </h2>
+    </div>
+  </div>
+
+
+  @if (reporteProfesionalData().length === 0) {
+    <div class="estado-vacio">
+      No hay datos disponibles.
+    </div>
+  } @else {
+    <table class="tabla-reporte">
+      <thead>
+        <tr>
+          <th>Profesional</th>
+          <th>Total citas</th>
+          <th>Completadas</th>
+          <th>% Finalización</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (item of reporteProfesionalData(); track item.nombreProfesional) {
+          <tr>
+            <td>{{ item.nombreProfesional }}</td>
+            <td>{{ item.totalCitas }}</td>
+            <td>{{ item.citasCompletadas }}</td>
+            <td>{{ item.porcentajeFinalizacion }}%</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+</section>
+
 </section>

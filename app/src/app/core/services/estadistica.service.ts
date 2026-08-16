@@ -11,6 +11,12 @@ export interface Profesional {
   NombreCompleto: string;
 }
 
+export interface ReporteProfesional {
+  nombreProfesional: string;
+  totalCitas: number;
+  citasCompletadas: number;
+  porcentajeFinalizacion: number;
+}
 
 export interface Categoria {
   Id: number;
@@ -118,6 +124,11 @@ getCategorias(): Observable<Categoria[]> {
   );
 }
 
+getReportePorProfesional(): Observable<ReporteProfesional[]> {
+  return this.http.get<ReporteProfesional[]>(
+    `${this.baseUrl}/estadisticas/reporte-profesional`
+  );
+}
 
 
 }

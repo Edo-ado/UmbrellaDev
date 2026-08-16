@@ -20,7 +20,8 @@ import {
 } from 'rxjs';
 
 import {
-  EstadisticasService
+  EstadisticasService,
+  ReporteProfesional
 } from '../../../core/services/estadistica.service';
 
 
@@ -58,6 +59,8 @@ export class Graficos implements OnInit {
 
   error = signal('');
 
+reporteProfesionalData =
+  signal<ReporteProfesional[]>([]);
 
   profesionales =
     signal<Profesional[]>([]);
@@ -162,57 +165,111 @@ export class Graficos implements OnInit {
   }
 
 
-  cargarCatalogos(): void {
-    forkJoin({
-      profesionales:
-        this.estadisticasService
-          .getProfesionales(),
+ cargarCatalogos(): void {
+  forkJoin({
+    profesionales:
+      this.estadisticasService
+        .getProfesionales(),
 
-      categorias:
-        this.estadisticasService
-          .getCategorias()
-    }).subscribe({
-      next: ({
-        profesionales,
-        categorias
-      }) => {
-        const profesionalesNormalizados = profesionales.map(
-          (profesional) => ({
-            id: profesional.Id,
-            nombre: profesional.NombreCompleto
-          })
+    categorias:
+      this.estadisticasService
+        .getCategorias(),
+
+    usuariosRol:
+      this.estadisticasService
+        .getUsuariosPorRol(),
+
+    reporteProfesional:
+      this.estadisticasService
+        .getReportePorProfesional()
+  }).subscribe({
+    next: ({
+      profesionales,
+      categorias,
+      usuariosRol,
+      reporteProfesional
+    }) => {
+      const profesionalesNormalizados = profesionales.map(
+        (profesional) => ({
+          id: profesional.Id,
+          nombre: profesional.NombreCompleto
+        })
+      );
+
+      this.profesionales.set(
+        profesionalesNormalizados
+      );
+
+      const categoriasNormalizadas = categorias.map(
+        (categoria) => ({
+          id: categoria.Id,
+          nombre: categoria.Nombre
+        })
+      );
+
+      this.categorias.set(
+        categoriasNormalizadas
+      );
+
+
+      //Usuarios por rol no depende de filtros, se carga una sola vez acá
+      this.usuariosRolData.set([
+        ...usuariosRol
+      ]);
+
+      const seriesUsuarios =
+        usuariosRol.map(
+          item => item.total
         );
 
-        this.profesionales.set(
-          profesionalesNormalizados
+      const categoriasUsuarios =
+        usuariosRol.map(
+          item => item.rol
         );
 
-        const categoriasNormalizadas = categorias.map(
-          (categoria) => ({
-            id: categoria.Id,
-            nombre: categoria.Nombre
-          })
-        );
+      this.usuariosRolChart = {
+        ...this.usuariosRolChart,
 
-        this.categorias.set(
-          categoriasNormalizadas
-        );
+        series: [
+          {
+            name: 'Usuarios',
+            data: [
+              ...seriesUsuarios
+            ]
+          }
+        ],
 
-        this.cargarGraficas();
-      },
+        xaxis: {
+          ...this.usuariosRolChart.xaxis,
 
-      error: (err) => {
-        console.error(
-          'Error al cargar filtros:',
-          err
-        );
+          categories: [
+            ...categoriasUsuarios
+          ]
+        }
+      };
 
-        this.error.set(
-          'No se pudieron cargar los filtros.'
-        );
-      }
-    });
-  }
+
+      //Reporte por profesional tampoco depende de filtros
+      this.reporteProfesionalData.set([
+        ...reporteProfesional
+      ]);
+
+
+      this.cargarGraficas();
+    },
+
+    error: (err) => {
+      console.error(
+        'Error al cargar filtros:',
+        err
+      );
+
+      this.error.set(
+        'No se pudieron cargar los filtros.'
+      );
+    }
+  });
+}
 
 
   cargarGraficas(): void {
@@ -250,15 +307,9 @@ export class Graficos implements OnInit {
     this.cargando.set(true);
 
 
-    console.log(
-      'Filtros enviados:',
-      {
-        fechaInicio,
-        fechaFin,
-        profesionalId,
-        categoriaId
-      }
-    );
+
+
+    
 
 
     forkJoin({
@@ -273,11 +324,17 @@ export class Graficos implements OnInit {
 
       usuariosRol:
         this.estadisticasService
-          .getUsuariosPorRol()
+          .getUsuariosPorRol(),
+
+  reporteProfesional:
+    this.estadisticasService
+      .getReportePorProfesional()
+
     }).subscribe({
       next: ({
         citasEstado,
-        usuariosRol
+        usuariosRol,
+         reporteProfesional
       }) => {
         console.log(
           'Citas recibidas:',

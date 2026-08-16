@@ -444,4 +444,41 @@ apx-chart {
 
     font-size: .9rem;
   }
+
+
+
+
+
+
+
+
+
+  
+}.tabla-reporte {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.tabla-reporte th,
+.tabla-reporte td {
+  padding: 14px 16px;
+  text-align: left;
+  border-bottom: 1px solid #242424;
+}
+
+.tabla-reporte th {
+  color: #ff4b4b;
+  font-size: .8rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.tabla-reporte td {
+  color: #f5f5f5;
+  font-size: .95rem;
+}
+
+.tabla-reporte tbody tr:hover {
+  background-color: #191919;
 }
