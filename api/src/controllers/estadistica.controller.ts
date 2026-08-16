@@ -60,7 +60,28 @@ getReportePorProfesional = async (
   }
 };
 
+getReporteCalificaciones = async (
+  request: AuthRequest,
+  response: Response,
+  next: NextFunction,
+) => {
+  try {
+    const rol = request.user?.Role;
+    const idUsuario = request.user?.Id;
 
+    const idprofesionalFiltro =
+      rol === "DESARROLLADOR" ? idUsuario : undefined;
+
+    const resultado = await EstadisticaService.getReporteCalificaciones(
+      idprofesionalFiltro,
+    );
+
+    return response.status(StatusCodes.OK).json(resultado);
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+};
 
 
 }

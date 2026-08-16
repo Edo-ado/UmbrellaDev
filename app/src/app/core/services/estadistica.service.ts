@@ -18,6 +18,14 @@ export interface ReporteProfesional {
   porcentajeFinalizacion: number;
 }
 
+export interface ReporteCalificaciones {
+  nombreProfesional: string;
+  promedioCalificacion: number;
+  cantidadResenas: number;
+  mejorServicioCalificado: string | null;
+  serviciosBajaCalificacion: string[];
+}
+
 export interface Categoria {
   Id: number;
   Nombre: string;
@@ -127,6 +135,13 @@ getCategorias(): Observable<Categoria[]> {
 getReportePorProfesional(): Observable<ReporteProfesional[]> {
   return this.http.get<ReporteProfesional[]>(
     `${this.baseUrl}/estadisticas/reporte-profesional`
+  );
+}
+
+
+getReporteCalificaciones(): Observable<ReporteCalificaciones[]> {
+  return this.http.get<ReporteCalificaciones[]>(
+    `${this.baseUrl}/estadisticas/reporte-calificaciones`
   );
 }
 

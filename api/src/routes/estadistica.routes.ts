@@ -13,6 +13,21 @@ router.get(
   authenticateToken,
   estadisticaController.getReportePorProfesional,
 );
+
+
+router.get(
+  "/reporte-calificaciones",
+  authenticateToken,
+  estadisticaController.getReporteCalificaciones,
+);
+
+
     return router;
+
   }
+
+
+
+
+
 }

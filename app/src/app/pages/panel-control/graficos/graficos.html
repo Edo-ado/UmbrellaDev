@@ -282,4 +282,54 @@
   }
 </section>
 
+<section class="panel grafica-panel">
+  <div class="panel-header">
+    <div>
+      <p class="eyebrow">
+        Gráfica 04
+      </p>
+
+      <h2>
+        Calificaciones por profesional
+      </h2>
+    </div>
+  </div>
+
+
+  @if (reporteCalificacionesData().length === 0) {
+    <div class="estado-vacio">
+      No hay datos disponibles.
+    </div>
+  } @else {
+    <table class="tabla-reporte">
+      <thead>
+        <tr>
+          <th>Profesional</th>
+          <th>Promedio</th>
+          <th>Reseñas</th>
+          <th>Mejor servicio</th>
+          <th>Baja calificación</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (item of reporteCalificacionesData(); track item.nombreProfesional) {
+          <tr>
+            <td>{{ item.nombreProfesional }}</td>
+            <td>{{ item.promedioCalificacion }}</td>
+            <td>{{ item.cantidadResenas }}</td>
+            <td>{{ item.mejorServicioCalificado || 'Sin reseñas' }}</td>
+            <td>
+              @if (item.serviciosBajaCalificacion.length === 0) {
+                —
+              } @else {
+                {{ item.serviciosBajaCalificacion.join(', ') }}
+              }
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+</section>
+
 </section>

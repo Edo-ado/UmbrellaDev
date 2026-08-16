@@ -5,6 +5,7 @@ import {
   inject
 } from '@angular/core';
 
+
 import {
   FormBuilder,
   ReactiveFormsModule,
@@ -21,7 +22,8 @@ import {
 
 import {
   EstadisticasService,
-  ReporteProfesional
+  ReporteProfesional,
+  ReporteCalificaciones
 } from '../../../core/services/estadistica.service';
 
 
@@ -64,6 +66,9 @@ reporteProfesionalData =
 
   profesionales =
     signal<Profesional[]>([]);
+
+reporteCalificacionesData =
+  signal<ReporteCalificaciones[]>([]);
 
   categorias =
     signal<Categoria[]>([]);
@@ -181,13 +186,19 @@ reporteProfesionalData =
 
     reporteProfesional:
       this.estadisticasService
-        .getReportePorProfesional()
+        .getReportePorProfesional(),
+
+  reporteCalificaciones:
+      this.estadisticasService
+        .getReporteCalificaciones()
+
   }).subscribe({
     next: ({
       profesionales,
       categorias,
       usuariosRol,
-      reporteProfesional
+      reporteProfesional,
+        reporteCalificaciones
     }) => {
       const profesionalesNormalizados = profesionales.map(
         (profesional) => ({
@@ -221,6 +232,10 @@ reporteProfesionalData =
         usuariosRol.map(
           item => item.total
         );
+
+          this.reporteCalificacionesData.set([
+        ...reporteCalificaciones
+      ]);
 
       const categoriasUsuarios =
         usuariosRol.map(
