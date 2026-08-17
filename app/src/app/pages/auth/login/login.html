@@ -62,18 +62,14 @@
                                 loginForm.controls.Email
                                     .hasError('required')
                             ) {
-                                <span>
-                                    El correo es obligatorio.
-                                </span>
+                                El correo es obligatorio.
                             }
 
                             @if (
                                 loginForm.controls.Email
                                     .hasError('email')
                             ) {
-                                <span>
-                                    Ingresa un correo válido.
-                                </span>
+                                Ingresa un correo válido.
                             }
                         </small>
                     }
@@ -93,24 +89,23 @@
                         autocomplete="current-password"
                     />
 
-                    @if (mostrarError('Contrasena')) {
+                    @if (
+                        mostrarError('Contrasena')
+                    ) {
                         <small class="campo-error">
                             @if (
                                 loginForm.controls.Contrasena
                                     .hasError('required')
                             ) {
-                                <span>
-                                    La contraseña es obligatoria.
-                                </span>
+                                La contraseña es obligatoria.
                             }
 
                             @if (
                                 loginForm.controls.Contrasena
                                     .hasError('minlength')
                             ) {
-                                <span>
-                                    Debe tener al menos 6 caracteres.
-                                </span>
+                                La contraseña debe tener al menos
+                                4 caracteres.
                             }
                         </small>
                     }
@@ -122,16 +117,10 @@
                     type="submit"
                     [disabled]="cargando()"
                 >
-                    @if (!cargando()) {
-                        <span>
-                            Iniciar sesión
-                        </span>
-                    }
-
                     @if (cargando()) {
-                        <span>
-                            Verificando...
-                        </span>
+                        Verificando...
+                    } @else {
+                        Iniciar sesión
                     }
                 </button>
             </form>

@@ -1,11 +1,20 @@
 <section class="profesionales-page">
   <div class="profesionales-hero">
     <div>
-      <p class="eyebrow">Umbrella Corporation</p>
-      <h2>Estadísticas</h2>
-      <p class="subtitle">Resumen general de citas y usuarios.</p>
+      <p class="eyebrow">
+        Umbrella Corporation
+      </p>
+
+      <h1>
+        Estadísticas
+      </h1>
+
+      <p class="subtitle">
+        Resumen general de citas y usuarios.
+      </p>
     </div>
   </div>
+
 
   @if (error()) {
     <div class="feedback error">
@@ -13,43 +22,314 @@
     </div>
   }
 
-  <div class="panel">
-    <p class="eyebrow">Gráfica 01</p>
-    <h2>Citas por estado</h2>
+
+  <section class="panel filtros-panel">
+    <p class="eyebrow">
+      Filtros
+    </p>
+
+    <h2>
+      Parámetros de búsqueda
+    </h2>
+
+
+    <form
+      class="filtros-form"
+      [formGroup]="filtrosForm"
+      (ngSubmit)="cargarGraficas()"
+    >
+      <div class="campo">
+        <label for="fechaInicio">
+          Fecha inicial
+        </label>
+
+        <input
+          id="fechaInicio"
+          type="date"
+          formControlName="fechaInicio"
+        />
+
+        @if (
+          filtrosForm.controls.fechaInicio.invalid &&
+          filtrosForm.controls.fechaInicio.touched
+        ) {
+          <small class="campo-error">
+            La fecha inicial es obligatoria.
+          </small>
+        }
+      </div>
+
+
+      <div class="campo">
+        <label for="fechaFin">
+          Fecha final
+        </label>
+
+        <input
+          id="fechaFin"
+          type="date"
+          formControlName="fechaFin"
+        />
+
+        @if (
+          filtrosForm.controls.fechaFin.invalid &&
+          filtrosForm.controls.fechaFin.touched
+        ) {
+          <small class="campo-error">
+            La fecha final es obligatoria.
+          </small>
+        }
+      </div>
+
+
+      <div class="campo">
+        <label for="profesionalId">
+          Profesional
+        </label>
+
+        <select
+          id="profesionalId"
+          formControlName="profesionalId"
+        >
+          <option [ngValue]="null">
+            Todos los profesionales
+          </option>
+
+        @for (
+  profesional of profesionales();
+  track $index
+) {
+  <option
+    [ngValue]="profesional.id"
+  >
+    {{ profesional.nombre }}
+  </option>
+}
+        </select>
+      </div>
+
+
+      <div class="campo">
+        <label for="categoriaId">
+          Categoría
+        </label>
+
+        <select
+          id="categoriaId"
+          formControlName="categoriaId"
+        >
+          <option [ngValue]="null">
+            Todas las categorías
+          </option>
+@for (
+  categoria of categorias();
+  track $index
+) {
+  <option
+    [ngValue]="categoria.id"
+  >
+    {{ categoria.nombre }}
+  </option>
+}
+        </select>
+      </div>
+
+
+      <button
+        type="submit"
+        class="btn btn-primario"
+        [disabled]="cargando()"
+      >
+        @if (cargando()) {
+          Cargando...
+        } @else {
+          Aplicar filtro
+        }
+      </button>
+    </form>
+
+
+    @if (
+      filtrosForm.controls.fechaInicio.value &&
+      filtrosForm.controls.fechaFin.value &&
+      filtrosForm.controls.fechaInicio.value >
+      filtrosForm.controls.fechaFin.value
+    ) {
+      <div class="feedback error filtro-error">
+        La fecha inicial no puede ser posterior
+        a la fecha final.
+      </div>
+    }
+  </section>
+
+
+  <section class="panel grafica-panel">
+    <div class="panel-header">
+      <div>
+        <p class="eyebrow">
+          Gráfica 01
+        </p>
+
+        <h2>
+          Citas por estado
+        </h2>
+      </div>
+    </div>
+
 
     @if (cargando()) {
-      <div class="estado">Cargando gráfica...</div>
+      <div class="estado">
+        <span class="loader"></span>
+        Cargando gráfica...
+      </div>
     } @else if (citasEstadoData().length === 0) {
-      <div class="estado-vacio">No hay datos disponibles.</div>
+      <div class="estado-vacio">
+        No hay citas disponibles para los filtros seleccionados.
+      </div>
     } @else {
-      <apx-chart
-        [series]="citasEstadoChart.series"
-        [chart]="citasEstadoChart.chart"
-        [labels]="citasEstadoChart.labels"
-        [legend]="citasEstadoChart.legend"
-        [colors]="citasEstadoChart.colors"
-        [dataLabels]="citasEstadoChart.dataLabels">
-      </apx-chart>
+      <div class="chart-container">
+        <apx-chart
+          [series]="citasEstadoChart.series"
+          [chart]="citasEstadoChart.chart"
+          [labels]="citasEstadoChart.labels"
+          [legend]="citasEstadoChart.legend"
+          [colors]="citasEstadoChart.colors"
+          [dataLabels]="citasEstadoChart.dataLabels"
+        >
+        </apx-chart>
+      </div>
     }
-  </div>
+  </section>
 
-  <div class="panel">
-    <p class="eyebrow">Gráfica 02</p>
-    <h2>Usuarios por rol</h2>
+
+  <section class="panel grafica-panel">
+    <div class="panel-header">
+      <div>
+        <p class="eyebrow">
+          Gráfica 02
+        </p>
+
+        <h2>
+          Usuarios por rol
+        </h2>
+      </div>
+    </div>
+
 
     @if (cargando()) {
-      <div class="estado">Cargando gráfica...</div>
+      <div class="estado">
+        <span class="loader"></span>
+        Cargando gráfica...
+      </div>
     } @else if (usuariosRolData().length === 0) {
-      <div class="estado-vacio">No hay usuarios disponibles.</div>
+      <div class="estado-vacio">
+        No hay usuarios disponibles.
+      </div>
     } @else {
-      <apx-chart
-        [series]="usuariosRolChart.series"
-        [chart]="usuariosRolChart.chart"
-        [xaxis]="usuariosRolChart.xaxis"
-        [plotOptions]="usuariosRolChart.plotOptions"
-        [dataLabels]="usuariosRolChart.dataLabels"
-        [colors]="usuariosRolChart.colors">
-      </apx-chart>
+      <div class="chart-container">
+        <apx-chart
+          [series]="usuariosRolChart.series"
+          [chart]="usuariosRolChart.chart"
+          [xaxis]="usuariosRolChart.xaxis"
+          [plotOptions]="usuariosRolChart.plotOptions"
+          [dataLabels]="usuariosRolChart.dataLabels"
+          [colors]="usuariosRolChart.colors"
+        >
+        </apx-chart>
+      </div>
     }
+  </section>
+
+<section class="panel grafica-panel">
+  <div class="panel-header">
+    <div>
+      <p class="eyebrow">
+        Gráfica 03
+      </p>
+
+      <h2>
+        Citas por profesional
+      </h2>
+    </div>
   </div>
+
+
+  @if (reporteProfesionalData().length === 0) {
+    <div class="estado-vacio">
+      No hay datos disponibles.
+    </div>
+  } @else {
+    <table class="tabla-reporte">
+      <thead>
+        <tr>
+          <th>Profesional</th>
+          <th>Total citas</th>
+          <th>Completadas</th>
+          <th>% Finalización</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (item of reporteProfesionalData(); track item.nombreProfesional) {
+          <tr>
+            <td>{{ item.nombreProfesional }}</td>
+            <td>{{ item.totalCitas }}</td>
+            <td>{{ item.citasCompletadas }}</td>
+            <td>{{ item.porcentajeFinalizacion }}%</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+</section>
+
+<section class="panel grafica-panel">
+  <div class="panel-header">
+    <div>
+      <p class="eyebrow">
+        Gráfica 04
+      </p>
+
+      <h2>
+        Calificaciones por profesional
+      </h2>
+    </div>
+  </div>
+
+
+  @if (reporteCalificacionesData().length === 0) {
+    <div class="estado-vacio">
+      No hay datos disponibles.
+    </div>
+  } @else {
+    <table class="tabla-reporte">
+      <thead>
+        <tr>
+          <th>Profesional</th>
+          <th>Promedio</th>
+          <th>Reseñas</th>
+          <th>Mejor servicio</th>
+          <th>Baja calificación</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (item of reporteCalificacionesData(); track item.nombreProfesional) {
+          <tr>
+            <td>{{ item.nombreProfesional }}</td>
+            <td>{{ item.promedioCalificacion }}</td>
+            <td>{{ item.cantidadResenas }}</td>
+            <td>{{ item.mejorServicioCalificado || 'Sin reseñas' }}</td>
+            <td>
+              @if (item.serviciosBajaCalificacion.length === 0) {
+                —
+              } @else {
+                {{ item.serviciosBajaCalificacion.join(', ') }}
+              }
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+</section>
+
 </section>

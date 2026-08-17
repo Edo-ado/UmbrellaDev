@@ -1,6 +1,40 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import {
+  HttpClient,
+  HttpParams
+} from '@angular/common/http';
+
 import { Observable, map } from 'rxjs';
+
+export interface Profesional {
+  Id: number;
+  NombreCompleto: string;
+}
+
+export interface ReporteProfesional {
+  nombreProfesional: string;
+  totalCitas: number;
+  citasCompletadas: number;
+  porcentajeFinalizacion: number;
+}
+
+export interface ReporteCalificaciones {
+  nombreProfesional: string;
+  promedioCalificacion: number;
+  cantidadResenas: number;
+  mejorServicioCalificado: string | null;
+  serviciosBajaCalificacion: string[];
+}
+
+export interface Categoria {
+  Id: number;
+  Nombre: string;
+}
+
+export interface CitasPorEstado {
+  estado: string;
+  total: number;
+}
 
 @Injectable({ providedIn: 'root' })
 export class EstadisticasService {
@@ -9,13 +43,55 @@ export class EstadisticasService {
   constructor(private http: HttpClient) {}
 
   // Trae todas las citas y las agrupa por estado
-  getCitasPorEstado(): Observable<{ estado: string; total: number }[]> {
-    return this.http.get<any[]>(`${this.baseUrl}/citas`).pipe(
-      map(citas => {
-        const conteo: Record<string, number> = {};
-        citas.forEach(c => { conteo[c.Estado] = (conteo[c.Estado] || 0) + 1; });
-        return Object.entries(conteo).map(([estado, total]) => ({ estado, total }));
-      })
+// Trae las citas entre una fecha inicial y una fecha final
+// y las agrupa por estado
+
+
+  getCitasPorEstado(
+    fechaInicio: string,
+    fechaFin: string,
+    profesionalId?: number | null,
+    categoriaId?: number | null
+  ): Observable<CitasPorEstado[]> {
+    let params =
+      new HttpParams()
+        .set(
+          'fechaInicio',
+          fechaInicio
+        )
+        .set(
+          'fechaFin',
+          fechaFin
+        );
+
+
+    if (
+      profesionalId !== null &&
+      profesionalId !== undefined
+    ) {
+      params = params.set(
+        'profesionalId',
+        profesionalId.toString()
+      );
+    }
+
+
+    if (
+      categoriaId !== null &&
+      categoriaId !== undefined
+    ) {
+      params = params.set(
+        'categoriaId',
+        categoriaId.toString()
+      );
+    }
+
+
+    return this.http.get<CitasPorEstado[]>(
+      `${this.baseUrl}/estadisticas/citas-por-estado`,
+      {
+        params
+      }
     );
   }
 
@@ -41,5 +117,33 @@ export class EstadisticasService {
       DESARROLLADOR: 'Profesionales'
     };
     return mapa[rol] ?? rol;
+  
+  
   }
+
+getProfesionales(): Observable<Profesional[]> {
+  return this.http.get<Profesional[]>(`${this.baseUrl}/usuarios/rol/DESARROLLADOR`);
+}
+
+
+getCategorias(): Observable<Categoria[]> {
+  return this.http.get<Categoria[]>(
+    `${this.baseUrl}/categorias`
+  );
+}
+
+getReportePorProfesional(): Observable<ReporteProfesional[]> {
+  return this.http.get<ReporteProfesional[]>(
+    `${this.baseUrl}/estadisticas/reporte-profesional`
+  );
+}
+
+
+getReporteCalificaciones(): Observable<ReporteCalificaciones[]> {
+  return this.http.get<ReporteCalificaciones[]>(
+    `${this.baseUrl}/estadisticas/reporte-calificaciones`
+  );
+}
+
+
 }
