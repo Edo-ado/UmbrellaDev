@@ -25,10 +25,11 @@ datasource db {
   }
 
   enum ESTADOCITA {
-    PENDIENTE
-    CONFIRMADA
-    CANCELADA
-    COMPLETADA
+   PENDIENTE
+   ACEPTADA
+   RECHAZADA
+   CANCELADA
+   COMPLETA
   }
 
   enum Estado {
@@ -140,6 +141,11 @@ datasource db {
     Fecha DateTime
     Hora String @db.VarChar(10)
 
+    Monto Float
+
+    MotivoCancelacion String? @db.VarChar(500)
+    MotivoRechazo String? @db.VarChar(500)
+
     Modalidad MODALIDAD @default(PRESENCIAL)
     Descripcion String? @db.VarChar(500)
     Comentarios String? @db.VarChar(500)
@@ -161,9 +167,21 @@ datasource db {
 
   
     resenas Resena[]
+
+    historialEstadoCitas HistorialEstadoCita[]
 }
 
- 
+
+model HistorialEstadoCita {
+  Id Int @id @default(autoincrement())
+  EstadoAnterior ESTADOCITA
+  EstadoNuevo ESTADOCITA
+  Fecha DateTime @default(now())
+
+  citaId Int
+  cita Cita @relation(fields: [citaId], references: [Id])
+}
+
 
 model Resena {
   Id Int @id @default(autoincrement())
