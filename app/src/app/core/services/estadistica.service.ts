@@ -1,7 +1,40 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import {
+  HttpClient,
+  HttpParams
+} from '@angular/common/http';
+
+import { Observable, map } from 'rxjs';
+
+export interface Profesional {
+  Id: number;
+  NombreCompleto: string;
+}
+
+export interface ReporteProfesional {
+  nombreProfesional: string;
+  totalCitas: number;
+  citasCompletadas: number;
+  porcentajeFinalizacion: number;
+}
+
+export interface ReporteCalificaciones {
+  nombreProfesional: string;
+  promedioCalificacion: number;
+  cantidadResenas: number;
+  mejorServicioCalificado: string | null;
+  serviciosBajaCalificacion: string[];
+}
+
+export interface Categoria {
+  Id: number;
+  Nombre: string;
+}
+
+export interface CitasPorEstado {
+  estado: string;
+  total: number;
+}
 
 @Injectable({ providedIn: 'root' })
 export class EstadisticasService {
@@ -9,54 +42,74 @@ export class EstadisticasService {
 
   constructor(private http: HttpClient) {}
 
- 
-  getCitasPorEstado(fechaInicial: string, fechaFinal: string): Observable<{ estado: string; total: number }[]> {
-    const params = new HttpParams()
-      .set('fechaInicial', fechaInicial)
-      .set('fechaFinal', fechaFinal);
+  // Trae todas las citas y las agrupa por estado
+// Trae las citas entre una fecha inicial y una fecha final
+// y las agrupa por estado
 
-    return this.http.get<any[]>(`${this.baseUrl}/citas/fechas`, { params }).pipe(
-      map(citas => {
+
+  getCitasPorEstado(
+    fechaInicio: string,
+    fechaFin: string,
+    profesionalId?: number | null,
+    categoriaId?: number | null
+  ): Observable<CitasPorEstado[]> {
+    let params =
+      new HttpParams()
+        .set(
+          'fechaInicio',
+          fechaInicio
+        )
+        .set(
+          'fechaFin',
+          fechaFin
+        );
+
+
+    if (
+      profesionalId !== null &&
+      profesionalId !== undefined
+    ) {
+      params = params.set(
+        'profesionalId',
+        profesionalId.toString()
+      );
+    }
+
+
+    if (
+      categoriaId !== null &&
+      categoriaId !== undefined
+    ) {
+      params = params.set(
+        'categoriaId',
+        categoriaId.toString()
+      );
+    }
+
+
+    return this.http.get<CitasPorEstado[]>(
+      `${this.baseUrl}/estadisticas/citas-por-estado`,
+      {
+        params
+      }
+    );
+  }
+
+  // rae todos los usuarios y los agrupa por rol
+  getUsuariosPorRol(): Observable<{ rol: string; total: number }[]> {
+    return this.http.get<any[]>(`${this.baseUrl}/usuarios/lista`).pipe(
+      map(usuarios => {
         const conteo: Record<string, number> = {};
-        citas.forEach(c => { conteo[c.Estado] = (conteo[c.Estado] || 0) + 1; });
-        return Object.entries(conteo).map(([estado, total]) => ({ estado, total }));
+        usuarios.forEach(u => { conteo[u.Role] = (conteo[u.Role] || 0) + 1; });
+        return Object.entries(conteo).map(([rol, total]) => ({
+          rol: this.etiquetaRol(rol),
+          total
+        }));
       })
     );
   }
 
- 
- getUsuariosPorRol(fechaInicial: string, fechaFinal: string): Observable<{ rol: string; total: number }[]> {
-  const params = new HttpParams()
-    .set('fechaInicial', fechaInicial)
-    .set('fechaFinal', fechaFinal);
-
-  return this.http.get<any[]>(`${this.baseUrl}/usuarios/fechas`, { params }).pipe(
-    map(usuarios => {
-      const conteo: Record<string, number> = {};
-      usuarios.forEach(u => { conteo[u.Role] = (conteo[u.Role] || 0) + 1; });
-      return Object.entries(conteo).map(([rol, total]) => ({
-        rol: this.etiquetaRol(rol),
-        total
-      }));
-    })
-  );
-}
-
-  getCategorias(): Observable<{ categoria: string; total: number }[]> {
-    return this.http.get<any[]>(`${this.baseUrl}/citas/categorias`).pipe(
-      map(citas => {
-        const conteo: Record<string, number> = {};
-        citas.forEach(c => {
-          const nombreCategoria = c.servicio?.categoria?.Nombre ?? 'Sin categoría';
-          conteo[nombreCategoria] = (conteo[nombreCategoria] || 0) + 1;
-        });
-        return Object.entries(conteo)
-          .map(([categoria, total]) => ({ categoria, total }))
-          .sort((a, b) => b.total - a.total);
-      })
-    );
-  }
-
+  // Trae todos los usuarios y los agrupa por estado
   private etiquetaRol(rol: string): string {
     const mapa: Record<string, string> = {
       ADMIN: 'Administradores',
@@ -64,5 +117,33 @@ export class EstadisticasService {
       DESARROLLADOR: 'Profesionales'
     };
     return mapa[rol] ?? rol;
+  
+  
   }
+
+getProfesionales(): Observable<Profesional[]> {
+  return this.http.get<Profesional[]>(`${this.baseUrl}/usuarios/rol/DESARROLLADOR`);
+}
+
+
+getCategorias(): Observable<Categoria[]> {
+  return this.http.get<Categoria[]>(
+    `${this.baseUrl}/categorias`
+  );
+}
+
+getReportePorProfesional(): Observable<ReporteProfesional[]> {
+  return this.http.get<ReporteProfesional[]>(
+    `${this.baseUrl}/estadisticas/reporte-profesional`
+  );
+}
+
+
+getReporteCalificaciones(): Observable<ReporteCalificaciones[]> {
+  return this.http.get<ReporteCalificaciones[]>(
+    `${this.baseUrl}/estadisticas/reporte-calificaciones`
+  );
+}
+
+
 }

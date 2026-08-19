@@ -36,21 +36,25 @@ export const CitaServices = {
             },
         });
     },
-    async getByFechas(DiaInicial, DiaFinal) {
-        return await prisma.cita.findMany({
-            where: {
-                Fecha: {
-                    gte: DiaInicial,
-                    lte: DiaFinal,
-                },
-            },
-            include: {
-                cliente: true,
-                profesional: true,
-                servicio: true,
-            }
-        });
+   async getByFechas(DiaInicial, DiaFinal) {
+  return await prisma.cita.findMany({
+    where: {
+      Fecha: {
+        gte: DiaInicial,
+        lte: DiaFinal,
+      },
     },
+    include: {
+      cliente: true,
+      profesional: true,
+      servicio: {
+        include: {
+          categoria: true,
+        },
+      },
+    },
+  });
+},
     async toggleStatus(id) {
         const cita = await this.getById(id);
         let nuevoEstado;

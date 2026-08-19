@@ -20,6 +20,8 @@ import { CitasDetalle } from './pages/citas/detalle/detalle';
 
 
 import { Graficos } from './pages/panel-control/graficos/graficos';
+import { LoginComponent } from './pages/auth/login/login';
+import { RegisterComponent } from './pages/auth/register/register';
 
 
 export const routes: Routes = [
@@ -51,6 +53,11 @@ export const routes: Routes = [
 
       // panel de control
       { path: 'panel-control', component: Graficos },
+      //login
+      { path: 'login', component: LoginComponent },
+
+      //register
+    { path: 'register', component: RegisterComponent },
     ],
   },
 ];

@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { usuarioController } from "../controllers/usuario.controller";
+import { authenticateToken } from "../middlewares/auth.middleware";
 
 //La api reconoce primero los que estan hasta arriba es decir que si hay alguna busqueda que tenga que ser con numero
 // o se especifica como se hace abajo o se deja hasta el final
@@ -35,8 +36,25 @@ export class usuarioRoutes {
     router.patch("/CambioDisponibilidad/:id", usuariosController.toggleDisponibilidadByProfesional);
 
 
+
 router.get("/fechas", usuariosController.getByFechas);
 
+router.post(
+    "/login",
+    usuariosController.login
+)
+
+router.post(
+    "/register",
+    usuariosController.register
+)
+
+
+router.get(
+    "/perfil",
+    authenticateToken,
+    usuariosController.perfil
+)
 
     return router;
   }

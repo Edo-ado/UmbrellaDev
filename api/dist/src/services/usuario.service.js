@@ -1,5 +1,9 @@
+
+import bcrypt from "bcrypt"
+import jwt from "jsonwebtoken"
 import { Role } from "../../generated/prisma/enums";
 import { prisma } from "../config/prisma";
+
 import { AppError } from "../utils/app-error";
 export const UsuarioService = {
     async getAll() {
@@ -35,22 +39,27 @@ export const UsuarioService = {
             include: { especialidades: true },
         });
     },
-    async toggleStatus(id) {
-        const usuario = await this.getById(id);
-        let nuevoEstado;
-        if (usuario?.Estado === "ACTIVO") {
-            nuevoEstado = "INACTIVO";
+async toggleStatus(id) {
+    const usuario = await this.getById(id)
+
+    if (!usuario) {
+        throw AppError.badRequest(
+            "El usuario indicado no existe"
+        )
+    }
+
+    const nuevoEstado =
+        usuario.Estado === "ACTIVO"
+            ? "INACTIVO"
+            : "ACTIVO"
+
+    return await prisma.usuario.update({
+        where: { Id: id },
+        data: {
+            Estado: nuevoEstado
         }
-        else {
-            nuevoEstado = "ACTIVO";
-        }
-        return await prisma.usuario.update({
-            where: { Id: id },
-            data: {
-                Estado: nuevoEstado
-            }
-        });
-    },
+    })
+},
     async crear(data) {
         return prisma.usuario.create({
             data: {
@@ -158,5 +167,141 @@ export const UsuarioService = {
                 },
             },
         });
+    },
+
+async login(email, contrasena) {
+    const usuario = await prisma.usuario.findUnique({
+        where: {
+            Email: email
+        },
+        include: {
+            especialidades: true
+        }
+    })
+
+    if (!usuario) {
+        throw AppError.badRequest(
+            "Correo o contraseña incorrectos"
+        )
     }
+
+    if (usuario.Estado !== "ACTIVO") {
+        throw AppError.badRequest(
+            "El usuario se encuentra inactivo"
+        )
+    }
+
+    const contrasenaValida = await bcrypt.compare(
+        contrasena,
+        usuario.Contrasena
+    )
+
+    if (!contrasenaValida) {
+        throw AppError.badRequest(
+            "Correo o contraseña incorrectos"
+        )
+    }
+
+    await prisma.usuario.update({
+        where: {
+            Id: usuario.Id
+        },
+        data: {
+            LastLogin: new Date()
+        }
+    })
+
+    const secret = process.env.JWT_SECRET || "vj_utn_2026"
+
+    const token = jwt.sign(
+        {
+            Id: usuario.Id,
+            Email: usuario.Email,
+            Role: usuario.Role
+        },
+        secret,
+        {
+            expiresIn: "1d"
+        }
+    )
+
+    return {
+        token,
+        usuario: {
+            ...usuario,
+            Contrasena: undefined
+        }
+    }
+},
+async register(data) {
+    const usuarioExistente = await prisma.usuario.findUnique({
+        where: {
+            Email: data.Email
+        }
+    })
+
+    if (usuarioExistente) {
+        throw AppError.badRequest(
+            "El correo ya está registrado"
+        )
+    }
+
+    const contrasenaHasheada = await bcrypt.hash(
+        data.Contrasena,
+        10
+    )
+
+    const usuario = await prisma.usuario.create({
+        data: {
+            NombreCompleto: data.NombreCompleto,
+            Email: data.Email,
+            Contrasena: contrasenaHasheada,
+            Pais: data.Pais,
+            Edad: data.Edad ?? null,
+            Telefono: data.Telefono ?? null,
+            Role: data.Role ?? "USUARIO",
+            Estado: "ACTIVO",
+            Modalidad: data.Modalidad ?? "NOCAP"
+        },
+        include: {
+            especialidades: true
+        }
+    })
+
+    return {
+        ...usuario,
+        Contrasena: undefined
+    }
+},
+
+async getPerfil(id) {
+    const usuario = await prisma.usuario.findUnique({
+        where: {
+            Id: id
+        },
+        include: {
+            especialidades: true,
+            servicios: true,
+            curriculum: true,
+            imagenesUsuario: {
+                include: {
+                    imagen: true
+                }
+            }
+        }
+    })
+
+    if (!usuario) {
+        throw AppError.badRequest(
+            "El usuario indicado no existe"
+        )
+    }
+
+    return {
+        ...usuario,
+        Contrasena: undefined
+    }
+}
+
+
 };
