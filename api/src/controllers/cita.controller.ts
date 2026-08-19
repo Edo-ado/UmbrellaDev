@@ -92,14 +92,16 @@ getByFechas = async (request: Request, response: Response, next: NextFunction) =
 };
 
 
-  create = async (
+
+
+  solicitar = async (
     request: Request,
     response: Response,
     next: NextFunction,
   ) => {
     try {
       const body = request.body;
-      const cita = await CitaServices.create(body);
+      const cita = await CitaServices.solicitar(body);
 
       return response.status(StatusCodes.CREATED).json(cita);
     } catch (error) {
@@ -108,21 +110,16 @@ getByFechas = async (request: Request, response: Response, next: NextFunction) =
     }
   };
 
-  toggleStatus = async (
-  request: Request,
-  response: Response,
-  next: NextFunction,
-) => {
-  try {
-    const { id } = request.params;
-    const cita = await CitaServices.toggleStatus(Number(id));
+//se tienen que agregar los metodos que estan en el service
 
-    return response.status(StatusCodes.OK).json(cita);
-  } catch (error) {
-    console.error(error);
-    next(error);
-  }
-};
+aceptar = async ();
+rechazar = async ();
+cancelar = async ();
+completar = async ();
+dejarreseña = async ();
+
+
+
 
 getCategorias = async (request: Request, response: Response, next: NextFunction) => {
   try {
