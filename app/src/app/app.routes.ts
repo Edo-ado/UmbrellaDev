@@ -18,48 +18,97 @@ import { CitasListadoComponent } from './pages/citas/listado/listado';
 import { CitasCrear } from './pages/citas/registro/registro';
 import { CitasDetalle } from './pages/citas/detalle/detalle';
 
-
 import { Graficos } from './pages/panel-control/graficos/graficos';
 import { LoginComponent } from './pages/auth/login/login';
 import { RegisterComponent } from './pages/auth/register/register';
-import { ProfesionalesCatalogo } from './pages/profesionales/profesionales-catalogo/profesionales-catalogo';
+import { authGuard } from './core/guards/auth.guard';
+import { roleGuard } from './core/guards/role.guard';
 
+import { Role } from '../app/core/models/usuario.model';
 
 export const routes: Routes = [
   {
     path: '',
     component: MainLayout,
     children: [
-      { path: '', component: Home },
-      { path: 'usuarios', component: UsuarioLista },
-      { path: 'categorias', component: CategoriaLista },
-      { path: 'especialidades', component: EspecialidadLista },
+      { path: '', component: Home, canActivate: [authGuard] },
+      {
+        path: 'usuarios',
+        component: UsuarioLista,
+        canActivate: [authGuard, roleGuard],
+        data: { roles: [Role.ADMIN] },
+      },
+      {
+        path: 'categorias',
+        component: CategoriaLista,
+        canActivate: [authGuard, roleGuard],
+        data: { roles: [Role.ADMIN] },
+      },
+      {
+        path: 'especialidades',
+        component: EspecialidadLista,
+        canActivate: [authGuard, roleGuard],
+        data: { roles: [Role.ADMIN] },
+      },
 
       //profesionales
-      { path: 'profesionales', component: ProfesionalLista },
-      { path: 'profesionalescrear', component: ProfesionalesCrear },
-      { path: 'profesionalesEditar/:id', component: ProfesionalesEditar },
-      { path: 'profesionalesDetalle/:id', component: ProfesionalesDetalle },
-      { path: 'catalogo-profesionales', component: ProfesionalesCatalogo },
+      { path: 'profesionales', component: ProfesionalLista, canActivate: [authGuard] },
+      {
+        path: 'profesionalescrear',
+        component: ProfesionalesCrear,
+        canActivate: [authGuard, roleGuard],
+        data: { roles: [Role.ADMIN] },
+      },
+      {
+        path: 'profesionalesEditar/:id',
+        component: ProfesionalesEditar,
+        canActivate: [authGuard, roleGuard],
+        data: { roles: [Role.ADMIN, Role.DESARROLLADOR] },
+      },
+      {
+        path: 'profesionalesDetalle/:id',
+        component: ProfesionalesDetalle,
+        canActivate: [authGuard],
+      },
 
       //servicios
-      { path: 'servicios', component: ServiciosLista },
-   { path: 'servicios/detail/:id', component: ServiciosDetail },
-  { path: 'servicios/create', component: ServiciosCreate },
-  { path: 'servicios/edit/:id', component: ServiciosEdit },
+      { path: 'servicios', component: ServiciosLista, canActivate: [authGuard] },
+      { path: 'servicios/detail/:id', component: ServiciosDetail, canActivate: [authGuard] },
+      {
+        path: 'servicios/create',
+        component: ServiciosCreate,
+        canActivate: [authGuard, roleGuard],
+        data: { roles: [Role.DESARROLLADOR] },
+      },
+      {
+        path: 'servicios/edit/:id',
+        component: ServiciosEdit,
+        canActivate: [authGuard, roleGuard],
+        data: { roles: [Role.DESARROLLADOR] },
+      },
 
       //citas
-      {path: 'citas', component: CitasListadoComponent},
-     {path: 'citas/crear', component: CitasCrear},
-      {path: 'citas/detalle/:id', component: CitasDetalle},
+      {
+        path: 'citas',
+        component: CitasListadoComponent,
+        canActivate: [authGuard, roleGuard],
+        data: { roles: [Role.USUARIO, Role.ADMIN] },
+      },
+      { path: 'citas/crear', component: CitasCrear },
+      { path: 'citas/detalle/:id', component: CitasDetalle , canActivate: [authGuard] },
 
       // panel de control
-      { path: 'panel-control', component: Graficos },
+      { path: 'panel-control', component: Graficos ,
+        canActivate: [authGuard, roleGuard],
+        data: { roles: [Role.ADMIN] }, },
+
+
+        
       //login
       { path: 'login', component: LoginComponent },
 
       //register
-    { path: 'register', component: RegisterComponent },
+      { path: 'register', component: RegisterComponent },
     ],
   },
 ];

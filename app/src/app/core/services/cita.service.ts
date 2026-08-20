@@ -39,4 +39,25 @@ export class CitaService {
   toggleStatus(id: number): Observable<Cita> {
     return this.http.patch<Cita>(`${this.baseUrl}/CambioEstado/${id}`, {});
   }
+
+
+  solicitar (data: Partial<Cita>): Observable<Cita> {
+    return this.http.post<Cita>(`${this.baseUrl}/solicitar`, data);
+  }
+
+  aceptar(id: number): Observable<Cita> {
+    return this.http.post<Cita>(`${this.baseUrl}/aceptar/${id}`, {});
+  }
+
+  rechazar(id: number): Observable<Cita> {
+    return this.http.post<Cita>(`${this.baseUrl}/rechazar/${id}`, {});
+  }
+  cancelar(id: number): Observable<Cita> {
+    return this.http.post<Cita>(`${this.baseUrl}/cancelar/${id}`, {});
+  }
+
+  completar(id: number): Observable<Cita> {
+    return this.http.post<Cita>(`${this.baseUrl}/completar/${id}`, {});
+  }
+
 }

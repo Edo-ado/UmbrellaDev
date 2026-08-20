@@ -211,8 +211,8 @@ export const CitaServices = {
 
     await CitaServices.validarDisponibilidad(
       fechaHora,
+      fechaHoraFin,
       idProfesional,
-      duracionHoras,
     );
 
     return await prisma.cita.create({
@@ -386,59 +386,6 @@ export const CitaServices = {
 
   return citaActualizada;
 },
-
-  async dejarResena(idCita: number, puntuacion: number, comentario?: string) {
-    const cita = await prisma.cita.findUnique({
-      where: { Id: idCita },
-      select: {
-        idcliente: true,
-        idprofesional: true,
-        Estado: true,
-      },
-    });
-
-    if (!cita) {
-      throw AppError.notFound("La cita indicada no existe");
-    }
-
-    if (cita.Estado !== ESTADOCITA.COMPLETA) {
-      throw AppError.badRequest("Solo se pueden reseñar citas completadas");
-    }
-
-    if (!Number.isInteger(puntuacion) || puntuacion < 1 || puntuacion > 5) {
-      throw AppError.badRequest(
-        "La puntuación debe ser un número entero entre 1 y 5",
-      );
-    }
-
-    const comentarioLimpio = comentario?.trim() || null;
-
-    if (comentarioLimpio && comentarioLimpio.length > 500) {
-      throw AppError.badRequest(
-        "El comentario no puede superar los 500 caracteres",
-      );
-    }
-
-    const resenaExistente = await prisma.resena.findUnique({
-      where: {
-        citaId: idCita,
-      },
-    });
-
-    if (resenaExistente) {
-      throw AppError.badRequest("Esta cita ya tiene una reseña");
-    }
-
-    return await prisma.resena.create({
-      data: {
-        citaId: idCita,
-        clienteId: cita.idcliente,
-        profesionalId: cita.idprofesional,
-        Puntuacion: puntuacion,
-        Comentario: comentarioLimpio,
-      },
-    });
-  },
 
   async getCategorias() {
     return await prisma.cita.findMany({

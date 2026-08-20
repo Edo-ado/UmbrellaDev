@@ -1,27 +1,17 @@
 <header class="app-header-shell">
     <div class="top-alert-bar">
         <div class="top-alert-content">
-            <span class="alert-label">
-                AUTHORIZED ACCESS ONLY
-            </span>
-
+            <span class="alert-label">AUTHORIZED ACCESS ONLY</span>
             <span class="alert-divider"></span>
-
             <span class="alert-text">
-                UMBRELLADEV NETWORK //
-                SECURE DEVELOPER PROTOCOL ACTIVE
+                UMBRELLADEV NETWORK // SECURE DEVELOPER PROTOCOL ACTIVE
             </span>
         </div>
     </div>
 
-
     <div class="app-header">
         <div class="header-container">
-            <a
-                routerLink="/"
-                class="header-brand"
-                aria-label="UmbrellaDev - Inicio"
-            >
+            <a routerLink="/" class="header-brand" aria-label="UmbrellaDev - Inicio">
                 <img
                     src="iconUmbrellaDev.ico"
                     alt="UmbrellaDev logo"
@@ -29,123 +19,56 @@
                     height="55"
                     loading="lazy"
                 />
-
-                <span class="header-brand-name">
-                    UMBRELLA<span>DEV</span>
-                </span>
+                <span class="header-brand-name">UMBRELLA<span>DEV</span></span>
             </a>
 
+            <nav class="header-nav" aria-label="Navegación principal">
+    @if (authService.autenticado()) {
+        <ul role="list">
+            @if (authService.tieneRol([Role.ADMIN])) {
+                <li><a routerLink="/usuarios">Usuarios</a></li>
+                <li><a routerLink="/categorias">Categorías</a></li>
+                <li><a routerLink="/especialidades">Especialidades</a></li>
+            }
 
-            <nav
-                class="header-nav"
-                aria-label="Navegación principal"
-            >
-                <ul role="list">
-                    <li>
-                        <a routerLink="/usuarios">
-                            Usuarios
-                        </a>
-                    </li>
+            <li><a routerLink="/profesionales">Profesionales</a></li>
+            <li><a routerLink="/servicios">Servicios</a></li>
+            <li><a routerLink="/citas">Citas</a></li>
 
-                    <li>
-                        <a routerLink="/categorias">
-                            Categorías
-                        </a>
-                    </li>
-
-                    <li>
-                        <a routerLink="/especialidades">
-                            Especialidades
-                        </a>
-                    </li>
-
-                    <li>
-                        <a routerLink="/profesionales">
-                            Profesionales
-                        </a>
-                    </li>
-
-                    <li>
-                        <a routerLink="/servicios">
-                            Servicios
-                        </a>
-                    </li>
-
-                    <li>
-                        <a routerLink="/citas">
-                            Citas
-                        </a>
-                    </li>
-
-                    <li>
-                        <a routerLink="/panel-control">
-                            Reportes Gráficos
-                        </a>
-                    </li>
-                </ul>
-            </nav>
-
+            @if (authService.tieneRol([Role.ADMIN])) {
+                <li><a routerLink="/panel-control">Reportes Gráficos</a></li>
+            }
+        </ul>
+    }
+</nav>
 
             <div class="header-actions">
-                <span class="status-pill">
-                    ONLINE
-                </span>
-
+                <span class="status-pill">ONLINE</span>
 
                 @if (authService.autenticado()) {
                     <div class="user-session">
-                        <div
-                            class="user-avatar"
-                            aria-hidden="true"
-                        >
-                            <svg
-                                viewBox="0 0 24 24"
-                                focusable="false"
-                            >
-                                <path
-                                    d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm0 2c-4.42 0-8 2.24-8 5v1h16v-1c0-2.76-3.58-5-8-5Z"
-                                />
-                            </svg>
+                        <div class="user-avatar" aria-hidden="true">
+                            
                         </div>
 
-<div class="user-info-text">
-    <span class="user-label">
-        @switch (authService.profesional()?.Role) {
-            @case ('ADMIN') {
-                Administrador
-            }
+                        <div class="user-info-text">
+                            <span class="user-label">
+                                @switch (authService.profesional()?.Role) {
+                                    @case ('ADMIN') { Administrador }
+                                    @case ('DESARROLLADOR') { Desarrollador }
+                                    @case ('PROFESIONAL') { Profesional }
+                                    @default { Usuario }
+                                }
+                            </span>
 
-            @case ('DESARROLLADOR') {
-                Desarrollador
-            }
+                            <span class="user-name">
+                                {{ authService.profesional()?.NombreCompleto }}
+                            </span>
 
-            @case ('PROFESIONAL') {
-                Profesional
-            }
-
-            @default {
-                Usuario
-            }
-        }
-    </span>
-
-    <span class="user-name">
-        {{
-            authService
-                .profesional()
-                ?.NombreCompleto
-        }}
-    </span>
-
-    <span class="user-email">
-        {{
-            authService
-                .profesional()
-                ?.Email
-        }}
-    </span>
-</div>
-
+                            <span class="user-email">
+                                {{ authService.profesional()?.Email }}
+                            </span>
+                        </div>
 
                         <button
                             type="button"
@@ -154,38 +77,15 @@
                             aria-label="Cerrar sesión"
                             title="Cerrar sesión"
                         >
-                            <svg
-                                viewBox="0 0 24 24"
-                                aria-hidden="true"
-                                focusable="false"
-                            >
-                                <path
-                                    d="M10 4H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h5v-2H5V6h5V4Zm5.59 4.59L14.17 10l2 2H9v2h7.17l-2 2 1.42 1.41L20 13l-4.41-4.41Z"
-                                />
-                            </svg>
-
-                            <span>
-                                Cerrar sesión
-                            </span>
+                           
+                            <span>Cerrar sesión</span>
                         </button>
                     </div>
                 } @else {
-                    <a
-                        routerLink="/login"
-                        class="btn btn-ghost"
-                    >
-                        Iniciar sesión
-                    </a>
-
-                    <a
-                        routerLink="/register"
-                        class="btn btn-primary"
-                    >
-                        Registrarme
-                    </a>
+                    <a routerLink="/login" class="btn btn-ghost">Iniciar sesión</a>
+                    <a routerLink="/register" class="btn btn-primary">Registrarme</a>
                 }
             </div>
-
 
             <button
                 class="header-menu-toggle"
@@ -201,137 +101,57 @@
         </div>
     </div>
 
-
     @if (menuOpen()) {
-        <nav
-            class="header-mobile-nav"
-            aria-label="Navegación móvil"
-        >
-            <ul role="list">
-                <li>
-                    <a routerLink="/usuarios">
-                        Usuarios
-                    </a>
-                </li>
+        <nav class="header-mobile-nav" aria-label="Navegación móvil">
+    @if (authService.autenticado()) {
+        <ul role="list">
+            @if (authService.tieneRol([Role.ADMIN])) {
+                <li><a routerLink="/usuarios">Usuarios</a></li>
+                <li><a routerLink="/categorias">Categorías</a></li>
+                <li><a routerLink="/especialidades">Especialidades</a></li>
+            }
 
-                <li>
-                    <a routerLink="/categorias">
-                        Categorías
-                    </a>
-                </li>
+            <li><a routerLink="/profesionales">Profesionales</a></li>
+            <li><a routerLink="/servicios">Servicios</a></li>
+            <li><a routerLink="/citas">Citas</a></li>
 
-                <li>
-                    <a routerLink="/especialidades">
-                        Especialidades
-                    </a>
-                </li>
-
-                <li>
-                    <a routerLink="/profesionales">
-                        Profesionales
-                    </a>
-                </li>
-
-                <li>
-                    <a routerLink="/servicios">
-                        Servicios
-                    </a>
-                </li>
-
-                <li>
-                    <a routerLink="/citas">
-                        Citas
-                    </a>
-                </li>
-
-                <li>
-                    <a routerLink="/panel-control">
-                        Reportes Gráficos
-                    </a>
-                </li>
-            </ul>
-
+            @if (authService.tieneRol([Role.ADMIN])) {
+                <li><a routerLink="/panel-control">Reportes Gráficos</a></li>
+            }
+        </ul>
+    }
 
             <div class="header-mobile-actions">
-                <span class="status-pill">
-                    ONLINE
-                </span>
-
+                <span class="status-pill">ONLINE</span>
 
                 @if (authService.autenticado()) {
                     <div class="mobile-user-session">
-                        <div
-                            class="user-avatar"
-                            aria-hidden="true"
-                        >
-                            <svg
-                                viewBox="0 0 24 24"
-                                focusable="false"
-                            >
-                                <path
-                                    d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm0 2c-4.42 0-8 2.24-8 5v1h16v-1c0-2.76-3.58-5-8-5Z"
-                                />
-                            </svg>
+                       
+
+                        <div class="user-info-text">
+                            <span class="user-label">Usuario activo</span>
+
+                            <span class="user-name">
+                                {{ authService.profesional()?.NombreCompleto }}
+                            </span>
+
+                            <span class="user-email">
+                                {{ authService.profesional()?.Email }}
+                            </span>
                         </div>
-
-
-                       <div class="user-info-text">
-    <span class="user-label">
-        Usuario activo
-    </span>
-
-    <span class="user-name">
-        {{
-            authService
-                .profesional()
-                ?.NombreCompleto
-        }}
-    </span>
-
-    <span class="user-email">
-        {{
-            authService
-                .profesional()
-                ?.Email
-        }}
-    </span>
-</div>
-
 
                         <button
                             type="button"
                             class="btn btn-logout"
                             (click)="cerrarSesion()"
                         >
-                            <svg
-                                viewBox="0 0 24 24"
-                                aria-hidden="true"
-                                focusable="false"
-                            >
-                                <path
-                                    d="M10 4H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h5v-2H5V6h5V4Zm5.59 4.59L14.17 10l2 2H9v2h7.17l-2 2 1.42 1.41L20 13l-4.41-4.41Z"
-                                />
-                            </svg>
-
-                            <span>
-                                Cerrar sesión
-                            </span>
+                           
+                            <span>Cerrar sesión</span>
                         </button>
                     </div>
                 } @else {
-                    <a
-                        routerLink="/login"
-                        class="btn btn-ghost"
-                    >
-                        Iniciar sesión
-                    </a>
-
-                    <a
-                        routerLink="/register"
-                        class="btn btn-primary"
-                    >
-                        Registrarme
-                    </a>
+                    <a routerLink="/login" class="btn btn-ghost">Iniciar sesión</a>
+                    <a routerLink="/register" class="btn btn-primary">Registrarme</a>
                 }
             </div>
         </nav>
