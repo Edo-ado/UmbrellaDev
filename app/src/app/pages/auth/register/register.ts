@@ -2,6 +2,7 @@ import {
     Component,
     inject,
     signal,
+    OnInit,
 } from '@angular/core'
 
 import {
@@ -13,6 +14,7 @@ import {
 import { Router } from '@angular/router'
 
 import { AuthService } from '../../../core/services/auth.service'
+import { PaisService } from '../../../core/services/pais.service'
 
 
 @Component({
@@ -24,12 +26,15 @@ import { AuthService } from '../../../core/services/auth.service'
     templateUrl: './register.html',
     styleUrl: './register.css',
 })
-export class RegisterComponent {
+export class RegisterComponent implements OnInit {
     private readonly formBuilder =
         inject(FormBuilder)
 
     private readonly authService =
         inject(AuthService)
+
+    private readonly paisService =
+        inject(PaisService)
 
     private readonly router =
         inject(Router)
@@ -40,6 +45,8 @@ export class RegisterComponent {
     readonly error = signal('')
 
     readonly exito = signal('')
+
+    readonly paises = signal<string[]>([])
 
 
     readonly registerForm =
@@ -103,6 +110,15 @@ export class RegisterComponent {
         })
 
 
+    ngOnInit(): void {
+        this.paisService
+            .obtenerPaises()
+            .subscribe((lista) => {
+                this.paises.set(lista)
+            })
+    }
+
+
     mostrarError(campo: string): boolean {
         const control =
             this.registerForm.get(campo)
@@ -145,28 +161,28 @@ export class RegisterComponent {
             return
         }
 
-const {
-    NombreCompleto,
-    Email,
-    Contrasena,
-    Pais,
-    Edad,
-    Telefono,
-} = this.registerForm.getRawValue()
+        const {
+            NombreCompleto,
+            Email,
+            Contrasena,
+            Pais,
+            Edad,
+            Telefono,
+        } = this.registerForm.getRawValue()
 
 
         this.cargando.set(true)
 
-    this.authService
-    .registrar({
-        NombreCompleto: NombreCompleto ?? '',
-        Email: Email ?? '',
-        Contrasena: Contrasena ?? '',
-        Pais: Pais ?? '',
-        Edad: Edad ?? undefined,
-        Telefono: Telefono ?? undefined,
-    })
-    .subscribe({
+        this.authService
+            .registrar({
+                NombreCompleto: NombreCompleto ?? '',
+                Email: Email ?? '',
+                Contrasena: Contrasena ?? '',
+                Pais: Pais ?? '',
+                Edad: Edad ?? undefined,
+                Telefono: Telefono ?? undefined,
+            })
+            .subscribe({
                 next: () => {
                     this.cargando.set(false)
 
@@ -194,9 +210,9 @@ const {
             })
     }
 
-irALogin(): void {
-    void this.router.navigate([
-        '/login',
-    ])
-}
+    irALogin(): void {
+        void this.router.navigate([
+            '/login',
+        ])
+    }
 }

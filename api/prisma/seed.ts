@@ -2,11 +2,7 @@ import { prisma } from "../src/config/prisma";
 import { Role, ESTADOCITA, Estado, MODALIDAD } from "../generated/prisma/client";
 import bcrypt from "bcryptjs";
 
-// ---------------------------------------------------------------------------
-// Helpers de fecha/hora
-// ---------------------------------------------------------------------------
 
-/** Suma minutos a una hora "HH:mm" y devuelve otra hora "HH:mm" */
 function sumarMinutos(hora: string, minutos: number): string {
   const [h, m] = hora.split(":").map(Number);
   const totalMinutos = h * 60 + m + minutos;
@@ -15,8 +11,7 @@ function sumarMinutos(hora: string, minutos: number): string {
   return `${String(horas).padStart(2, "0")}:${String(mins).padStart(2, "0")}`;
 }
 
-/** Combina una fecha "yyyy-mm-dd" con una hora "HH:mm" en un objeto Date */
-/** Suma una cantidad de horas a un Date completo (sin límite de 24h, sin wraparound) */
+
 function sumarHoras(fecha: Date, horas: number): Date {
   return new Date(fecha.getTime() + horas * 60 * 60 * 1000);
 }
@@ -33,9 +28,7 @@ async function main() {
 
   const passwordHash = await bcrypt.hash("1221", 10);
 
-  // -------------------------------------------------------------------------
-  // Limpieza (orden por dependencias: primero las tablas "hijas")
-  // -------------------------------------------------------------------------
+
   const models = [
     prisma.imagenesServicio,
     prisma.imagenesUsuario,
@@ -65,9 +58,7 @@ async function main() {
   await prisma.$executeRaw`ALTER TABLE Categoria AUTO_INCREMENT = 1`;
   await prisma.$executeRaw`ALTER TABLE Imagenes AUTO_INCREMENT = 1`;
 
-  // -------------------------------------------------------------------------
-  // Categorías (8 -> mínimo pedido: 4, activas e inactivas)
-  // -------------------------------------------------------------------------
+  
   await prisma.categoria.createMany({
     data: [
       { Nombre: "Desarrollo de software", Descripcion: "Servicios de desarrollo y programación de software.", Estado: Estado.ACTIVO },
@@ -100,11 +91,7 @@ async function main() {
     throw new Error("Error: no se encontraron todas las categorías.");
   }
 
-  // -------------------------------------------------------------------------
-  // Especialidades (mínimo pedido: 3, activas e inactivas, asociadas)
-  // Se marcan 3 como INACTIVO (Docker, Kubernetes, Xcode) para cumplir la
-  // variedad de estado sin afectar las asociaciones usadas por los seeders.
-  // -------------------------------------------------------------------------
+ 
   await prisma.especialidad.createMany({
     data: [
       { Nombre: "Html", CategoriaId: catSoftware.Id },
@@ -174,12 +161,8 @@ async function main() {
   const catMap = Object.fromEntries(categorias.map((c: { Id: number; Nombre: string }) => [c.Nombre, c.Id]));
   const espMap = Object.fromEntries(especialidades.map((e: { Id: number; Nombre: string }) => [e.Nombre, e.Id]));
 
-  // -------------------------------------------------------------------------
-  // Usuarios (12 -> mínimo pedido: 10, con 2 admin / 5 clientes / 5 profesionales,
-  // incluyendo activos, inactivos y baneados)
-  // -------------------------------------------------------------------------
+  
 
-  // --- Administradores (2, ambos activos) ---
   await prisma.usuario.create({
     data: {
       NombreCompleto: "Eduardo Ulloa",
@@ -508,12 +491,7 @@ async function main() {
     ])
   );
 
-  // -------------------------------------------------------------------------
-  // Citas (12 -> mínimo pedido: 5)
-  // Cubre los 5 estados (Pendiente, Aceptada, Rechazada, Cancelada, Completa),
-  // citas pasadas y futuras, un traslape intencional (#1 y #2, mismo
-  // profesional), una aceptada cancelable, y completadas con y sin reseña.
-  // -------------------------------------------------------------------------
+ 
   type EstadoCitaKey = keyof typeof ESTADOCITA;
 
   interface CitaSeed {
@@ -534,8 +512,7 @@ async function main() {
 
   const citasSeed: CitaSeed[] = [
     {
-      // Futura, PENDIENTE. Se solapa a propósito con la #2 (mismo profesional)
-      // para poder demostrar en la defensa la validación de traslape.
+      
       clienteEmail: "daniela@cliente.com",
       profesionalEmail: "carlos@profesional.com",
       servicioNombre: "Desarrollo de API REST",
@@ -683,7 +660,7 @@ async function main() {
         { de: "PENDIENTE", a: "ACEPTADA" },
         { de: "ACEPTADA", a: "COMPLETA" },
       ],
-      // sin reseña a propósito
+ 
     },
     {
       // Pasada, COMPLETA, CON reseña baja (para el reporte de "baja calificación")
@@ -707,8 +684,7 @@ async function main() {
     const servicio = servicioMap[c.servicioNombre];
     const fechaHoraInicio = combinarFechaHora(c.fecha, c.hora);
     const fechaHoraFin = sumarHoras(fechaHoraInicio, servicio.Duracion);
-    // HoraFin (string) es solo cosmético para listados rápidos; para servicios de
-    // muchas horas puede "dar la vuelta" al reloj. FechaHoraFin es la fuente de verdad.
+    
     const horaFin = sumarMinutos(c.hora, servicio.Duracion * 60);
 
     const citaCreada = await prisma.cita.create({
@@ -756,9 +732,7 @@ async function main() {
     }
   }
 
-  // -------------------------------------------------------------------------
-  // Imágenes / CVs (se conserva igual que antes)
-  // -------------------------------------------------------------------------
+  
   await prisma.imagenes.createMany({
     data: [{ Url: "api/assets/uploads/EjemploBorrar.png" }],
   });
