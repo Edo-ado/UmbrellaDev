@@ -26,7 +26,7 @@ export class citasRoutes {
 
     router.post("/completar/:id", citaControlleer.completar);
     
-    router.post("/dejarreseña/:id", citaControlleer.dejarreseña);
+    router.post("/dejarreseña/:id", citaControlleer.dejarResena);
 
     router.post("/solicitar", citaControlleer.solicitar);
 

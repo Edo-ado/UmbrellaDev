@@ -1,10 +1,9 @@
 import { ESTADOCITA } from "../../generated/prisma/enums";
 import { prisma } from "../config/prisma";
 import { AppError } from "../utils/app-error";
+import { combinarFechaHora, soloFecha } from "../utils/time";
 
 export const CitaServices = {
-
-
   async getAll() {
     return await prisma.cita.findMany({
       include: {
@@ -70,50 +69,27 @@ export const CitaServices = {
   },
 
   async validarDisponibilidad(
-    fechaHora: Date,
-    idprofesional: number,
-    duracionHoras: number,
-  ) {
-    const fechaFinNueva = new Date(
-      fechaHora.getTime() + duracionHoras * 60 * 60 * 1000,
-    );
+  fechaHoraInicio: Date,
+  fechaHoraFinNueva: Date,
+  idprofesional: number,
+) {
+  const citas = await prisma.cita.findMany({
+    where: {
+      idprofesional,
+      Estado: { notIn: ["CANCELADA", "RECHAZADA"] },
+    },
+    select: { fechaHora: true, FechaHoraFin: true },
+  });
 
-    const citas = await prisma.cita.findMany({
-      where: {
-        idprofesional,
-        fechaHora: {},
-        Estado: {
-          not: "CANCELADA",
-        },
-      },
-      select: {
-        fechaHora: true,
-        TiempoTotal: true,
-      },
-    });
+  const existeCruce = citas.some((cita) => {
+    if (!cita.fechaHora || !cita.FechaHoraFin) return false;
+    return fechaHoraInicio < cita.FechaHoraFin && fechaHoraFinNueva > cita.fechaHora;
+  });
 
-    const existeCruce = citas.some((cita) => {
-      if (!cita.fechaHora) return false;
-
-      const duracionCita = Number(cita.TiempoTotal);
-
-      if (!Number.isFinite(duracionCita) || duracionCita <= 0) {
-        return false;
-      }
-
-      const fechaFinCita = new Date(
-        cita.fechaHora.getTime() + duracionCita * 60 * 60 * 1000,
-      );
-
-      return fechaHora < fechaFinCita && fechaFinNueva > cita.fechaHora;
-    });
-
-    if (existeCruce) {
-      throw AppError.badRequest(
-        "El profesional ya tiene una cita en ese horario",
-      );
-    }
-  },
+  if (existeCruce) {
+    throw AppError.badRequest("El profesional ya tiene una cita en ese horario");
+  }
+},
 
   async calcularMontoServicio(idservicio: number): Promise<number> {
     const servicio = await prisma.servicio.findUnique({
@@ -179,6 +155,10 @@ export const CitaServices = {
       throw AppError.badRequest("El profesional indicado no existe");
     }
 
+    if (!profesionalExiste.Disponibilidad) {
+      throw AppError.badRequest("El profesional no está disponible");
+    }
+
     const idCliente = Number(data.idcliente);
     const idProfesional = Number(data.idprofesional);
     const idServicio = Number(data.idservicio);
@@ -189,6 +169,12 @@ export const CitaServices = {
 
     if (!servicioExiste) {
       throw AppError.badRequest("El servicio indicado no existe");
+    }
+
+    if (servicioExiste.idprofesional !== idProfesional) {
+      throw AppError.badRequest(
+        "El servicio no pertenece al profesional indicado",
+      );
     }
 
     // Cambia Activo por el nombre real de tu campo.
@@ -207,7 +193,7 @@ export const CitaServices = {
       throw AppError.badRequest("El precio del servicio no es válido");
     }
 
-    const fechaHora = new Date(`${data.Fecha}T${data.Hora}:00`);
+    const fechaHora = combinarFechaHora(data.Fecha, data.Hora);
 
     if (Number.isNaN(fechaHora.getTime())) {
       throw AppError.badRequest("La fecha u hora no son válidas");
@@ -234,10 +220,11 @@ export const CitaServices = {
         idcliente: idCliente,
         idprofesional: idProfesional,
         idservicio: idServicio,
-        Fecha: new Date(data.Fecha),
+        Fecha: soloFecha(data.Fecha),
         Hora: data.Hora,
         HoraFin: horaFin,
         fechaHora,
+        FechaHoraFin: fechaHoraFin,
         TiempoTotal: duracionHoras,
         Monto: montoServicio,
         Estado: ESTADOCITA.PENDIENTE,
@@ -245,11 +232,7 @@ export const CitaServices = {
         Descripcion: data.Descripcion,
         Comentarios: data.Comentarios ?? null,
       },
-      include: {
-        cliente: true,
-        profesional: true,
-        servicio: true,
-      },
+      include: { cliente: true, profesional: true, servicio: true },
     });
   },
 
@@ -264,7 +247,7 @@ export const CitaServices = {
       throw AppError.badRequest("Solo se pueden aceptar citas pendientes");
     }
 
-    await prisma.cita.update({
+    const CitaActualizada = await prisma.cita.update({
       where: { Id: id },
       data: {
         Estado: ESTADOCITA.ACEPTADA,
@@ -279,6 +262,8 @@ export const CitaServices = {
         citaId: id,
       },
     });
+
+    return CitaActualizada;
   },
 
   async rechazar(id: number, motivo?: string) {
@@ -296,7 +281,7 @@ export const CitaServices = {
       throw AppError.badRequest("Solo se pueden rechazar citas pendientes");
     }
 
-    await prisma.cita.update({
+    const citaActualizada = await prisma.cita.update({
       where: { Id: id },
       data: {
         Estado: ESTADOCITA.RECHAZADA,
@@ -311,9 +296,10 @@ export const CitaServices = {
         citaId: id,
       },
     });
+    return citaActualizada;
   },
 
-  async cancelar(id: number, motivo: string | undefined, actorRol: string) {
+  async cancelar(id: number, motivo: string, actorRol: string) {
     const rol = actorRol?.trim().toUpperCase();
 
     const cita = await CitaServices.getById(id);
@@ -347,7 +333,7 @@ export const CitaServices = {
       throw AppError.badRequest("El motivo de cancelación es obligatorio");
     }
 
-    await prisma.cita.update({
+    const CitaActualizada = await prisma.cita.update({
       where: { Id: id },
       data: {
         Estado: ESTADOCITA.CANCELADA,
@@ -362,46 +348,44 @@ export const CitaServices = {
         citaId: id,
       },
     });
+
+    return CitaActualizada;
   },
 
-  async completar(id: number) {
-    const cita = await CitaServices.getById(id);
+ async completar(id: number) {
+  const cita = await CitaServices.getById(id);
 
-    if (!cita) {
-      throw AppError.notFound("La cita indicada no existe");
-    }
+  if (!cita) {
+    throw AppError.notFound("La cita indicada no existe");
+  }
 
-    if (cita.Estado !== ESTADOCITA.ACEPTADA) {
-      throw AppError.badRequest("Solo se pueden completar citas aceptadas");
-    }
+  if (cita.Estado !== ESTADOCITA.ACEPTADA) {
+    throw AppError.badRequest("Solo se pueden completar citas aceptadas");
+  }
 
-    if (!cita.fechaHora) {
-      throw AppError.badRequest("La cita no tiene una fecha y hora programada");
-    }
+  if (!cita.FechaHoraFin) {
+    throw AppError.badRequest("La cita no tiene fecha de finalización registrada");
+  }
 
-    const fechaFin = new Date(
-      cita.fechaHora.getTime() + Number(cita.TiempoTotal) * 60 * 60 * 1000,
-    );
+  if (cita.FechaHoraFin > new Date()) {
+    throw AppError.badRequest("La cita todavía no ha finalizado");
+  }
 
-    if (fechaFin > new Date()) {
-      throw AppError.badRequest("La cita todavía no ha finalizado");
-    }
+  const citaActualizada = await prisma.cita.update({
+    where: { Id: id },
+    data: { Estado: ESTADOCITA.COMPLETA },
+  });
 
-    await prisma.cita.update({
-      where: { Id: id },
-      data: {
-        Estado: ESTADOCITA.COMPLETA,
-      },
-    });
+  await prisma.historialEstadoCita.create({
+    data: {
+      EstadoAnterior: cita.Estado,
+      EstadoNuevo: ESTADOCITA.COMPLETA,
+      citaId: id,
+    },
+  });
 
-    await prisma.historialEstadoCita.create({
-      data: {
-        EstadoAnterior: cita.Estado,
-        EstadoNuevo: ESTADOCITA.COMPLETA,
-        citaId: id,
-      },
-    });
-  },
+  return citaActualizada;
+},
 
   async dejarResena(idCita: number, puntuacion: number, comentario?: string) {
     const cita = await prisma.cita.findUnique({

@@ -138,11 +138,13 @@ model Cita {
   Id Int @id @default(autoincrement())
 
   fechaHora DateTime
+  FechaHoraFin DateTime
 
   Fecha       DateTime
   Hora        String   @db.VarChar(10)
   TiempoTotal Int
   HoraFin     String   @db.VarChar(10)
+  
 
   Monto Float
 
