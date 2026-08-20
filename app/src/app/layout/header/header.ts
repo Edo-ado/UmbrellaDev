@@ -1,6 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
+import { Role } from '../../core/models/usuario.model'
 
 @Component({
   selector: 'app-header',
@@ -11,6 +12,7 @@ import { AuthService } from '../../core/services/auth.service';
 })
 export class Header {
   protected readonly authService = inject(AuthService);
+  protected readonly Role = Role;
 
   menuOpen = signal(false);
 

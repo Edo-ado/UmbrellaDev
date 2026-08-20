@@ -23,18 +23,24 @@
             </a>
 
             <nav class="header-nav" aria-label="Navegación principal">
-                @if (authService.autenticado()) {
-                    <ul role="list">
-                        <li><a routerLink="/usuarios">Usuarios</a></li>
-                        <li><a routerLink="/categorias">Categorías</a></li>
-                        <li><a routerLink="/especialidades">Especialidades</a></li>
-                        <li><a routerLink="/profesionales">Profesionales</a></li>
-                        <li><a routerLink="/servicios">Servicios</a></li>
-                        <li><a routerLink="/citas">Citas</a></li>
-                        <li><a routerLink="/panel-control">Reportes Gráficos</a></li>
-                    </ul>
-                }
-            </nav>
+    @if (authService.autenticado()) {
+        <ul role="list">
+            @if (authService.tieneRol([Role.ADMIN])) {
+                <li><a routerLink="/usuarios">Usuarios</a></li>
+                <li><a routerLink="/categorias">Categorías</a></li>
+                <li><a routerLink="/especialidades">Especialidades</a></li>
+            }
+
+            <li><a routerLink="/profesionales">Profesionales</a></li>
+            <li><a routerLink="/servicios">Servicios</a></li>
+            <li><a routerLink="/citas">Citas</a></li>
+
+            @if (authService.tieneRol([Role.ADMIN])) {
+                <li><a routerLink="/panel-control">Reportes Gráficos</a></li>
+            }
+        </ul>
+    }
+</nav>
 
             <div class="header-actions">
                 <span class="status-pill">ONLINE</span>
@@ -97,17 +103,23 @@
 
     @if (menuOpen()) {
         <nav class="header-mobile-nav" aria-label="Navegación móvil">
-            @if (authService.autenticado()) {
-                <ul role="list">
-                    <li><a routerLink="/usuarios">Usuarios</a></li>
-                    <li><a routerLink="/categorias">Categorías</a></li>
-                    <li><a routerLink="/especialidades">Especialidades</a></li>
-                    <li><a routerLink="/profesionales">Profesionales</a></li>
-                    <li><a routerLink="/servicios">Servicios</a></li>
-                    <li><a routerLink="/citas">Citas</a></li>
-                    <li><a routerLink="/panel-control">Reportes Gráficos</a></li>
-                </ul>
+    @if (authService.autenticado()) {
+        <ul role="list">
+            @if (authService.tieneRol([Role.ADMIN])) {
+                <li><a routerLink="/usuarios">Usuarios</a></li>
+                <li><a routerLink="/categorias">Categorías</a></li>
+                <li><a routerLink="/especialidades">Especialidades</a></li>
             }
+
+            <li><a routerLink="/profesionales">Profesionales</a></li>
+            <li><a routerLink="/servicios">Servicios</a></li>
+            <li><a routerLink="/citas">Citas</a></li>
+
+            @if (authService.tieneRol([Role.ADMIN])) {
+                <li><a routerLink="/panel-control">Reportes Gráficos</a></li>
+            }
+        </ul>
+    }
 
             <div class="header-mobile-actions">
                 <span class="status-pill">ONLINE</span>
