@@ -36,6 +36,9 @@ export interface RegisterRequest {
     NombreCompleto: string;
     Email: string;
     Contrasena: string;
+    Pais: string;
+    Edad?: number;
+    Telefono?: string;
 }
 
 export enum Role {

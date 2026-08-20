@@ -221,7 +221,7 @@ async toggleDisponibilidadByProfesional(id: number) {
     Contrasena: string;
     nombre: string;
     role?: Role;
-    pais: string;        // minúscula, y opcional ya que usás ?? null
+    pais: string;        
     telefono?: string;
     edad?: number;
 }) {
@@ -237,7 +237,7 @@ async toggleDisponibilidadByProfesional(id: number) {
             Email: data.email,
             Contrasena: hashedPassword,
             NombreCompleto: data.nombre,
-            Pais: data.pais ?? null,
+            Pais: data.pais,
             Edad: data.edad ?? null,
             Telefono: data.telefono ?? null,
             Role: data.role ?? Role.USUARIO,

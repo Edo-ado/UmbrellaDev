@@ -237,7 +237,6 @@ login = async (
         next(error)
     }
 };
-
 register = async (
     request: Request,
     response: Response,
@@ -251,7 +250,8 @@ register = async (
                 nombre: request.body.NombreCompleto,
                 pais: request.body.Pais,
                 role: request.body.Role,
-                modalidad: request.body.Modalidad
+                edad: request.body.Edad,
+                telefono: request.body.Telefono
             })
 
         return response
@@ -265,7 +265,6 @@ register = async (
         next(error)
     }
 };
-
 
 perfil = async (
     request: Request & {
