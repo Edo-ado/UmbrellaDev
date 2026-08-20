@@ -145,27 +145,28 @@ export class RegisterComponent {
             return
         }
 
-        const {
-            NombreCompleto,
-            Email,
-            Contrasena,
-            Telefono,
-        } = this.registerForm.getRawValue()
+const {
+    NombreCompleto,
+    Email,
+    Contrasena,
+    Pais,
+    Edad,
+    Telefono,
+} = this.registerForm.getRawValue()
+
 
         this.cargando.set(true)
 
-        this.authService
-            .registrar({
-                NombreCompleto:
-                    NombreCompleto ?? '',
-
-                Email:
-                    Email ?? '',
-
-                Contrasena:
-                    Contrasena ?? ''
-            })
-            .subscribe({
+    this.authService
+    .registrar({
+        NombreCompleto: NombreCompleto ?? '',
+        Email: Email ?? '',
+        Contrasena: Contrasena ?? '',
+        Pais: Pais ?? '',
+        Edad: Edad ?? undefined,
+        Telefono: Telefono ?? undefined,
+    })
+    .subscribe({
                 next: () => {
                     this.cargando.set(false)
 
