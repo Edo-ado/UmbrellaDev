@@ -22,6 +22,7 @@ import { CitasDetalle } from './pages/citas/detalle/detalle';
 import { Graficos } from './pages/panel-control/graficos/graficos';
 import { LoginComponent } from './pages/auth/login/login';
 import { RegisterComponent } from './pages/auth/register/register';
+import { ProfesionalesCatalogo } from './pages/profesionales/profesionales-catalogo/profesionales-catalogo';
 
 
 export const routes: Routes = [
@@ -39,6 +40,7 @@ export const routes: Routes = [
       { path: 'profesionalescrear', component: ProfesionalesCrear },
       { path: 'profesionalesEditar/:id', component: ProfesionalesEditar },
       { path: 'profesionalesDetalle/:id', component: ProfesionalesDetalle },
+      { path: 'catalogo-profesionales', component: ProfesionalesCatalogo },
 
       //servicios
       { path: 'servicios', component: ServiciosLista },
