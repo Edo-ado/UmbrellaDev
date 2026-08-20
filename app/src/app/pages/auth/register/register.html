@@ -110,24 +110,31 @@
 
 
                     <div class="campo">
-                        <label for="Pais">
-                            País
-                        </label>
+    <label for="Pais">
+        País
+    </label>
 
-                        <input
-                            id="Pais"
-                            type="text"
-                            formControlName="Pais"
-                            placeholder="Costa Rica"
-                            autocomplete="country-name"
-                        />
+    <input
+        id="Pais"
+        type="text"
+        formControlName="Pais"
+        placeholder="Costa Rica"
+        autocomplete="country-name"
+        list="listaPaises"
+    />
 
-                        @if (mostrarError('Pais')) {
-                            <small class="campo-error">
-                                El país es obligatorio.
-                            </small>
-                        }
-                    </div>
+    <datalist id="listaPaises">
+        @for (pais of paises(); track pais) {
+            <option [value]="pais"></option>
+        }
+    </datalist>
+
+    @if (mostrarError('Pais')) {
+        <small class="campo-error">
+            El país es obligatorio.
+        </small>
+    }
+</div>
 
 
                     <div class="campo">
