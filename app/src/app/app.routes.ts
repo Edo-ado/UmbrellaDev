@@ -103,9 +103,10 @@ export const routes: Routes = [
       { path: 'citas/detalle/:id', component: CitasDetalle , canActivate: [authGuard] },
 
       // panel de control
-      { path: 'panel-control', component: Graficos ,
+      { path: 'panel-control', 
+        component: Graficos ,
         canActivate: [authGuard, roleGuard],
-        data: { roles: [Role.ADMIN] }, },
+        data: { roles: [Role.ADMIN, Role.DESARROLLADOR] } },
 
 
         

@@ -38,9 +38,13 @@
    
 
 
-            @if (authService.tieneRol([Role.ADMIN])) {
-                <li><a routerLink="/panel-control">Reportes Gráficos</a></li>
-            }
+           @if (authService.tieneRol([Role.ADMIN, Role.DESARROLLADOR])) {
+  <li>
+    <a routerLink="/panel-control">
+      Reportes Gráficos
+    </a>
+  </li>
+}
         </ul>
     }
 </nav>
