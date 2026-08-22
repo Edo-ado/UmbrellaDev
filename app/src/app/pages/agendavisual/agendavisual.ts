@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import {
   addMonths,
+  differenceInMinutes,
   eachDayOfInterval,
   endOfMonth,
   endOfWeek,
@@ -124,6 +125,9 @@ export class AgendaVisualComponent implements OnInit {
       isSameDay(new Date(cita.Fecha), dia),
     );
   }
+
+
+  
 
   irADetalle(citaId: number): void {
     this.router.navigate(['/citas/detalle', citaId]);
