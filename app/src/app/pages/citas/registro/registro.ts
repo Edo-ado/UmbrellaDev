@@ -1,5 +1,5 @@
 import { Component, inject, signal, computed, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DecimalPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { CitaService } from '../../../core/services/cita.service';
@@ -11,12 +11,13 @@ interface UsuarioOption {
   Id: number;
   NombreCompleto: string;
   Role: string;
+  Disponibilidad?: boolean;
 }
 
 @Component({
   selector: 'app-citas-crear',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, DecimalPipe],
   templateUrl: './registro.html',
   styleUrl: './registro.css',
 })
@@ -53,6 +54,22 @@ export class CitasCrear implements OnInit {
   profesionales = computed(() =>
     this.usuarios().filter((u) => u.Role === 'DESARROLLADOR'),
   );
+
+  //servicio actualmente seleccionado, para mostrar sus datos
+  servicioSeleccionado = computed(() => {
+    const idServ = this.idservicio();
+    if (!idServ) return null;
+
+    return this.serviciosDisponibles().find(
+      (s) => s.Id === Number(idServ)
+    ) ?? null;
+  });
+
+  //monto estimado a partir del servicio seleccionado
+  montoEstimado = computed(() => {
+    const servicio = this.servicioSeleccionado();
+    return servicio ? servicio.Precio : null;
+  });
 
   ngOnInit(): void {
     this.cargarUsuarios();
@@ -149,13 +166,19 @@ export class CitasCrear implements OnInit {
   }
 
   guardar(): void {
+  
+
+    if (this.guardando()) {
+      return;
+    }
+
     this.mensaje.set('');
     this.error.set('');
 
-    // if (!this.validar()) {
-    //   this.error.set('Revisá los campos marcados antes de continuar.');
-    //   return;
-    // }
+    if (!this.validar()) {
+      this.error.set('Revisá los campos marcados antes de continuar.');
+      return;
+     }
 
     this.guardando.set(true);
 
@@ -165,23 +188,25 @@ export class CitasCrear implements OnInit {
       idservicio: Number(this.idservicio()),
       Fecha: this.fecha(),
       Hora: this.hora(),
-      Modalidad: this.modalidad(),
+      Modalidad: this.modalidad() as 'PRESENCIAL' | 'VIRTUAL' | 'HIBRIDA',
       Descripcion: this.descripcion().trim(),
       Comentarios: this.comentarios().trim(),
       Estado: EstadoCita.PENDIENTE as EstadoCita,
     };
 
-    this.citaService.create(body).subscribe({
+  this.citaService.solicitar(body).subscribe({
       next: () => {
         this.mensaje.set('Cita creada correctamente.');
         this.guardando.set(false);
         setTimeout(() => this.router.navigate(['/citas']), 1200);
       },
-      error: (err: any) => {
-        console.error(err);
-        this.error.set('No se pudo crear la cita.');
-        this.guardando.set(false);
-      },
+    error: (err: any) => {
+  console.error(err);
+  this.error.set(
+    err.error?.message || 'No se pudo crear la cita.'
+  );
+  this.guardando.set(false);
+},
     });
   }
 

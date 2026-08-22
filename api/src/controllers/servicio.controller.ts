@@ -158,4 +158,23 @@ update = async (request: Request,response: Response,next: NextFunction,) => {
 };
 
 
+
+
+
+getByProfesionalActivo = async (
+  request: Request,
+  response: Response,
+  next: NextFunction,
+) => {
+  try {
+    const id = Number(request.params.id);
+
+    const servicios = await ServicioServices.getServiciosProfesionalActivo(id);
+
+    return response.status(StatusCodes.OK).json(servicios);
+  } catch (error) {
+    next(error);
+  }
+};
+
 }

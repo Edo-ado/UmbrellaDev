@@ -131,21 +131,20 @@ export class citaController {
     }
   };
 
-  rechazar = async (
-    request: Request,
-    response: Response,
-    next: NextFunction,
-  ) => {
-    try {
-      const { id } = request.params;
-      const { motivo } = request.body;
-      const cita = await CitaServices.rechazar(Number(id), motivo);
-      return response.status(StatusCodes.OK).json(cita);
-    } catch (error) {
+async rechazar(req: Request, res: Response) {
+  const { id } = req.params;
+  const { motivo } = req.body;
+
+  try {
+    const cita = await CitaServices.rechazar(Number(id), motivo);
+    res.json(cita);
+  } catch (error) {
       console.error(error);
-      next(error);
+      
     }
   };
+
+  
   cancelar = async (
     request: Request,
     response: Response,

@@ -51,4 +51,11 @@ export class ServicioService {
   toggleEstado(id: number): Observable<any> {
     return this.http.patch(`${this.apiUrl}/CambioEstado/${id}`, {});
   }
+
+obtenerPorProfesionalActivo(id: number): Observable<Servicio[]> {
+  return this.http.get<Servicio[]>(
+    `${this.apiUrl}/profesional-activo/${id}`,
+  );
+}
+
 }

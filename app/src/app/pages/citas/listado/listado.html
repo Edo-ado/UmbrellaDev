@@ -10,78 +10,77 @@
     <button class="btn btn-primario" (click)="irACrearCita()">+ Nueva Cita</button>
   </div>
 
+  <!-- Filtros -->
   <div class="panel filtros">
-  <div class="campo">
-    <label for="estado">Estado</label>
-    <select
-      id="estado"
-      [ngModel]="estadoSeleccionado()"
-      (ngModelChange)="estadoSeleccionado.set($event)"
-    >
-      <option value="">Todos</option>
-      @for (estado of estados; track estado) {
-        <option [value]="estado">{{ estado }}</option>
-      }
-    </select>
-  </div>
-
-  <div class="campo">
-    <label for="profesional">Profesional</label>
-    <select
-      id="profesional"
-      [ngModel]="profesionalSeleccionado()"
-      (ngModelChange)="profesionalSeleccionado.set($event)"
-    >
-      <option value="">Todos</option>
-      @for (prof of profesionales(); track prof.id) {
-        <option [value]="prof.id">{{ prof.nombre }}</option>
-      }
-    </select>
-  </div>
-
-  <div class="campo">
-    <label for="desde">Desde</label>
-    <input
-      id="desde"
-      type="date"
-      [ngModel]="fechaInicial()"
-      (ngModelChange)="fechaInicial.set($event)"
-    />
-  </div>
-
-  <div class="campo">
-    <label for="hasta">Hasta</label>
-    <input
-      id="hasta"
-      type="date"
-      [ngModel]="fechaFinal()"
-      (ngModelChange)="fechaFinal.set($event)"
-    />
-  </div>
-
-  <div class="acciones-filtro">
-    <button class="btn btn-secundario" (click)="limpiarFiltros()">Limpiar</button>
-  </div>
-</div>
-
-  @if (mensaje()) {
-    <div class="feedback ok">
-      {{ mensaje() }}
+    <div class="campo">
+      <label for="estado">Estado</label>
+      <select
+        id="estado"
+        [ngModel]="estadoSeleccionado()"
+        (ngModelChange)="estadoSeleccionado.set($event)"
+      >
+        <option value="">Todos</option>
+        @for (estado of estados; track estado) {
+          <option [value]="estado">{{ estado }}</option>
+        }
+      </select>
     </div>
+
+    <div class="campo">
+      <label for="profesional">Profesional</label>
+      <select
+        id="profesional"
+        [ngModel]="profesionalSeleccionado()"
+        (ngModelChange)="profesionalSeleccionado.set($event)"
+      >
+        <option value="">Todos</option>
+        @for (prof of profesionales(); track prof.id) {
+          <option [value]="prof.id">{{ prof.nombre }}</option>
+        }
+      </select>
+    </div>
+
+    <div class="campo">
+      <label for="desde">Desde</label>
+      <input
+        id="desde"
+        type="date"
+        [ngModel]="fechaInicial()"
+        (ngModelChange)="fechaInicial.set($event)"
+      />
+    </div>
+
+    <div class="campo">
+      <label for="hasta">Hasta</label>
+      <input
+        id="hasta"
+        type="date"
+        [ngModel]="fechaFinal()"
+        (ngModelChange)="fechaFinal.set($event)"
+      />
+    </div>
+
+    <div class="acciones-filtro">
+      <button class="btn btn-secundario" (click)="limpiarFiltros()">
+        Limpiar
+      </button>
+    </div>
+  </div>
+
+  <!-- Feedback Messages -->
+  @if (mensaje()) {
+    <div class="feedback ok">{{ mensaje() }}</div>
   }
 
   @if (error()) {
-    <div class="feedback error">
-      {{ error() }}
-    </div>
+    <div class="feedback error">{{ error() }}</div>
   }
 
   @if (loading()) {
-    <div class="panel estado">
-      Cargando citas...
-    </div>
+    <div class="panel estado">Cargando citas...</div>
   }
 
+  <!-- Tabla -->
   @if (!loading() && !error()) {
     <div class="panel tabla-wrap">
       @if (citasFiltradas().length > 0) {
@@ -109,17 +108,42 @@
                   <span
                     class="tag"
                     [class.pendiente]="cita.Estado === 'PENDIENTE'"
-                    [class.confirmada]="cita.Estado === 'CONFIRMADA'"
-                    [class.completada]="cita.Estado === 'COMPLETADA'"
+                    [class.aceptada]="cita.Estado === 'ACEPTADA'"
+                    [class.rechazada]="cita.Estado === 'RECHAZADA'"
+                    [class.completa]="cita.Estado === 'COMPLETA'"
                     [class.cancelada]="cita.Estado === 'CANCELADA'"
                   >
                     {{ cita.Estado }}
                   </span>
                 </td>
-                <td>
+                <td class="acciones-cita">
                   <button class="btn btn-accion" (click)="irADetalle(cita.Id)">
                     Ver detalle
                   </button>
+
+                  @if (puedeAceptar(cita)) {
+                    <button class="btn btn-aceptar" (click)="aceptar(cita)">
+                      Aceptar
+                    </button>
+                  }
+
+                  @if (puedeRechazar(cita)) {
+                    <button class="btn btn-rechazar" (click)="rechazar(cita)">
+                      Rechazar
+                    </button>
+                  }
+
+                  @if (puedeCancelar(cita)) {
+                    <button class="btn btn-cancelar" (click)="cancelar(cita)">
+                      Cancelar
+                    </button>
+                  }
+
+                  @if (puedeCompletar(cita)) {
+                    <button class="btn btn-completar" (click)="completar(cita)">
+                      Completar
+                    </button>
+                  }
                 </td>
               </tr>
             }

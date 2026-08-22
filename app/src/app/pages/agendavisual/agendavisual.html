@@ -1,1 +1,77 @@
-<p>agendavisual works!</p>
+<section class="agenda-page">
+  <div class="agenda-hero">
+    <div>
+      <p class="eyebrow">Umbrella Corporation</p>
+      <h2>Agenda visual</h2>
+      <p class="subtitle">
+        Consulta y da seguimiento a las citas del mes.
+      </p>
+    </div>
+  </div>
+
+  @if (error()) {
+    <div class="feedback error">{{ error() }}</div>
+  }
+
+  @if (loading()) {
+    <div class="panel estado">Cargando agenda...</div>
+  }
+
+  @if (!loading() && !error()) {
+    <section class="panel agenda">
+      <div class="agenda-header">
+        <button class="btn btn-secundario" (click)="mesAnterior()">
+          ‹ Anterior
+        </button>
+
+        <div class="titulo-mes">
+          <h3>{{ nombreMes() | titlecase }}</h3>
+          <button class="btn-hoy" (click)="irAHoy()">Hoy</button>
+        </div>
+
+        <button class="btn btn-secundario" (click)="mesSiguiente()">
+          Siguiente ›
+        </button>
+      </div>
+
+      <div class="calendario">
+        @for (nombreDia of diasSemana; track nombreDia) {
+          <div class="dia-semana">{{ nombreDia }}</div>
+        }
+
+        @for (dia of diasDelMes(); track dia.toISOString()) {
+          <div
+            class="dia"
+            [class.otro-mes]="!esDelMesActual(dia)"
+          >
+            <span class="numero-dia">{{ dia | date: 'd' }}</span>
+
+            <div class="eventos">
+              @for (cita of citasDelDia(dia); track cita.Id) {
+                <button
+                  type="button"
+                  class="evento"
+                  [class.pendiente]="cita.Estado === 'PENDIENTE'"
+                  [class.aceptada]="cita.Estado === 'ACEPTADA'"
+                  [class.rechazada]="cita.Estado === 'RECHAZADA'"
+                  [class.cancelada]="cita.Estado === 'CANCELADA'"
+                  [class.completa]="cita.Estado === 'COMPLETA'"
+                  (click)="irADetalle(cita.Id)"
+                >
+                  <strong>{{ cita.Hora }}</strong>
+                  <span>{{ cita.servicio?.Nombre }}</span>
+                  <small>
+                    {{
+                      cita.profesional?.NombreCompleto ||
+                      cita.cliente?.NombreCompleto
+                    }}
+                  </small>
+                </button>
+              }
+            </div>
+          </div>
+        }
+      </div>
+    </section>
+  }
+</section>

@@ -25,6 +25,10 @@ app.use(
   }),
 );
 
+//---- Definir rutas ----
+app.use(AppRoutes.routes);
+
+
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
   console.error(err);
   const status = err.statusCode || 500;
@@ -77,8 +81,6 @@ app.get("/", (req, res) => {
     },
   });
 });
-//---- Definir rutas ----
-app.use(AppRoutes.routes);
 
 // Handle errors middleware
 

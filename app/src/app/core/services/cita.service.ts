@@ -45,19 +45,23 @@ export class CitaService {
     return this.http.post<Cita>(`${this.baseUrl}/solicitar`, data);
   }
 
-  aceptar(id: number): Observable<Cita> {
-    return this.http.post<Cita>(`${this.baseUrl}/aceptar/${id}`, {});
-  }
+aceptar(id: number): Observable<Cita> {
+  return this.http.post<Cita>(`${this.baseUrl}/aceptar/${id}`, {});
+}
 
-  rechazar(id: number): Observable<Cita> {
-    return this.http.post<Cita>(`${this.baseUrl}/rechazar/${id}`, {});
-  }
-  cancelar(id: number): Observable<Cita> {
-    return this.http.post<Cita>(`${this.baseUrl}/cancelar/${id}`, {});
-  }
+rechazar(id: number, motivo: string): Observable<Cita> {
+  return this.http.post<Cita>(`${this.baseUrl}/rechazar/${id}`, { motivo });
+}
 
-  completar(id: number): Observable<Cita> {
-    return this.http.post<Cita>(`${this.baseUrl}/completar/${id}`, {});
-  }
+cancelar(id: number, motivo: string, actorRol: string): Observable<Cita> {
+  return this.http.post<Cita>(`${this.baseUrl}/cancelar/${id}`, { 
+    motivo,
+    actorRol 
+  });
+}
+
+completar(id: number): Observable<Cita> {
+  return this.http.post<Cita>(`${this.baseUrl}/completar/${id}`, {});
+}
 
 }

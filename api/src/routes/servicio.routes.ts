@@ -26,8 +26,11 @@ export class ServicioRoutes {
     router.put("/update/:id", ServiciosController.update);
     router.patch("/CambioEstado/:id", ServiciosController.toggleStatus);
 
-
-    
+    //por usuario(servicios de un profesional)
+router.get(
+  "/profesional-activo/:id",
+  ServiciosController.getByProfesionalActivo,
+);
     return router;
   }
 }
