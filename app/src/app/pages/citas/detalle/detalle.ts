@@ -69,6 +69,7 @@ tieneResena = computed(() => this.resenaExistente() !== null);
   return (
     !!c &&
     c.Estado === EstadoCita.COMPLETA &&
+    this.esElClienteDeLaCita(c) &&
     !this.tieneResena() &&
     !this.resenaEnviada()
   );

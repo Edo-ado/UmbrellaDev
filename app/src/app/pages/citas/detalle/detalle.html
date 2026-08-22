@@ -58,10 +58,19 @@
         <p>{{ cita()?.Hora }}</p>
       </div>
 
-      <div class="campo-detalle">
-        <label>Hora de finalización</label>
-        <p>{{ cita()?.HoraFin }}</p>
-      </div>
+      @if (cita()?.Estado === EstadoCita.COMPLETA) {
+  <div class="campo-detalle">
+    <label>Hora de finalización</label>
+    <p>{{ cita()?.HoraFin }}</p>
+  </div>
+}
+
+ @if (cita()?.Estado === EstadoCita.COMPLETA) {
+  <div class="campo-detalle">
+    <label>Hora de finalización</label>
+    <p>{{ cita()?.FechaHoraFin | date: 'dd/MM/yyyy' }}</p>
+  </div>
+}
 
       <div class="campo-detalle">
         <label>Modalidad</label>
@@ -258,7 +267,17 @@
       </div>
     </div>
 
-    @if (cita()?.Estado === EstadoCita.COMPLETA) {
+    
+  }
+
+
+
+
+  
+
+
+
+@if (cita()?.Estado === EstadoCita.COMPLETA) {
       @if (verificandoResena()) {
         <div class="panel estado">Verificando reseña...</div>
       }
@@ -335,5 +354,5 @@
         </div>
       }
     }
-  }
+
 </section>
