@@ -17,6 +17,8 @@ export interface HistorialEstadoCita {
 export interface Cita {
   Id: number;
 
+  FechaHoraFin :string;
+
   Fecha: string;
   Hora: string;
   HoraFin: string;
