@@ -50,6 +50,147 @@
   box-shadow: 0 0 30px rgba(255, 0, 0, 0.08);
 }
 
+/* Filtros para administrador */
+.filtros {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 18px;
+  align-items: end;
+}
+
+.campo {
+  display: flex;
+  flex-direction: column;
+}
+
+.campo label {
+  margin-bottom: 9px;
+  color: #9b9b9b;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.campo input,
+.campo select {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 13px;
+  border: 1px solid #2c2c2c;
+  border-radius: 11px;
+  outline: none;
+  background: #191919;
+  color: #ffffff;
+  font-size: 0.86rem;
+  transition: 0.25s;
+}
+
+.campo input:focus,
+.campo select:focus {
+  border-color: #c3001a;
+  box-shadow: 0 0 15px rgba(255, 0, 0, 0.2);
+}
+
+/* Botones generales */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 12px 18px;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  color: #ffffff;
+  font-size: 0.86rem;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  cursor: pointer;
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+}
+
+.btn:active {
+  transform: translateY(0);
+}
+
+/* Botón principal: Buscar fechas */
+.btn-primario {
+  border-color: #cf0020;
+  background: linear-gradient(135deg, #9d0017, #d90025);
+  box-shadow: 0 5px 14px rgba(214, 0, 32, 0.2);
+}
+
+.btn-primario:hover {
+  border-color: #ff4760;
+  background: linear-gradient(135deg, #bd001c, #f0002a);
+  box-shadow: 0 8px 20px rgba(224, 0, 33, 0.34);
+}
+
+/* Botón secundario: Limpiar y navegar por mes */
+.btn-secundario {
+  border-color: #3b3b3b;
+  background: #1b1b1b;
+  color: #e8e8e8;
+}
+
+.btn-secundario:hover {
+  border-color: #ba001b;
+  background: #292929;
+  color: #ffffff;
+  box-shadow: 0 6px 16px rgba(185, 0, 27, 0.16);
+}
+
+/* Botón Hoy */
+.btn-hoy {
+  min-height: 36px;
+  padding: 8px 13px;
+  border: 1px solid #c7001c;
+  border-radius: 10px;
+  background: #a90019;
+  color: #ffffff;
+  font-size: 0.75rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.btn-hoy:hover {
+  transform: translateY(-2px);
+  border-color: #ff5368;
+  background: #d90020;
+  box-shadow: 0 6px 15px rgba(230, 0, 31, 0.3);
+}
+
+.btn-hoy:active {
+  transform: translateY(0);
+}
+
+.btn:focus-visible,
+.btn-hoy:focus-visible {
+  outline: 3px solid #ff5b5b;
+  outline-offset: 3px;
+}
+
+/* Acciones de filtros */
+.acciones-filtro {
+  display: flex;
+  align-items: end;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.acciones-filtro .btn {
+  flex: 1;
+  min-width: 130px;
+}
+
+/* Agenda */
 .agenda {
   max-width: 1240px;
   margin: 0 auto;
@@ -81,45 +222,6 @@
   font-size: 1.45rem;
   text-align: center;
   text-transform: capitalize;
-}
-
-.btn {
-  padding: 12px 18px;
-  border: none;
-  border-radius: 12px;
-  color: white;
-  font-weight: 600;
-  cursor: pointer;
-  transition: 0.25s;
-}
-
-.btn-secundario {
-  border: 1px solid #333;
-  background: #222;
-  color: white;
-}
-
-.btn-secundario:hover {
-  border-color: #c10019;
-  background: #333;
-  box-shadow: 0 0 15px rgba(255, 0, 0, 0.12);
-}
-
-.btn-hoy {
-  padding: 8px 13px;
-  border: 1px solid #b00017;
-  border-radius: 10px;
-  background: #b00017;
-  color: white;
-  font-size: 0.8rem;
-  font-weight: 700;
-  cursor: pointer;
-  transition: 0.25s;
-}
-
-.btn-hoy:hover {
-  background: #d3001e;
-  box-shadow: 0 0 15px rgba(255, 0, 0, 0.3);
 }
 
 .calendario {
@@ -306,6 +408,10 @@
     font-size: 2.1rem;
   }
 
+  .filtros {
+    grid-template-columns: 1fr;
+  }
+
   .agenda {
     padding: 16px;
     overflow-x: auto;
@@ -328,5 +434,16 @@
 
   .calendario {
     min-width: 760px;
+  }
+}
+
+@media (max-width: 600px) {
+  .acciones-filtro {
+    width: 100%;
+    flex-direction: column;
+  }
+
+  .acciones-filtro .btn {
+    width: 100%;
   }
 }

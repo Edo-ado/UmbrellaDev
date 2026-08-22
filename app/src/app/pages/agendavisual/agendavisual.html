@@ -9,34 +9,135 @@
     </div>
   </div>
 
+  @if (usuarioActual()?.Role === 'ADMIN') {
+    <section class="panel filtros">
+      <div class="campo">
+        <label for="estado">Estado</label>
+
+        <select
+          id="estado"
+          [value]="estadoSeleccionado()"
+          (change)="estadoSeleccionado.set($any($event.target).value); filtrarPorEstado()"
+        >
+          <option value="">Todos los estados</option>
+
+          @for (estado of estados; track estado) {
+            <option [value]="estado">
+              {{ estado }}
+            </option>
+          }
+        </select>
+      </div>
+
+      <div class="campo">
+        <label for="profesional">Profesional</label>
+
+        <select
+          id="profesional"
+          [value]="profesionalSeleccionado()"
+          (change)="profesionalSeleccionado.set($any($event.target).value); filtrarPorProfesional()"
+        >
+          <option value="">Todos los profesionales</option>
+
+          @for (profesional of profesionales(); track profesional.id) {
+            <option [value]="profesional.id">
+              {{ profesional.nombre }}
+            </option>
+          }
+        </select>
+      </div>
+
+      <div class="campo">
+        <label for="fechaInicial">Desde</label>
+
+        <input
+          id="fechaInicial"
+          type="date"
+          [value]="fechaInicial()"
+          (change)="fechaInicial.set($any($event.target).value)"
+        />
+      </div>
+
+      <div class="campo">
+        <label for="fechaFinal">Hasta</label>
+
+        <input
+          id="fechaFinal"
+          type="date"
+          [value]="fechaFinal()"
+          (change)="fechaFinal.set($any($event.target).value)"
+        />
+      </div>
+
+      <div class="acciones-filtro">
+        <button
+          type="button"
+          class="btn btn-primario"
+          (click)="filtrarPorFechas()"
+        >
+          Buscar por fechas
+        </button>
+
+        <button
+          type="button"
+          class="btn btn-secundario"
+          (click)="limpiarFiltros()"
+        >
+          Limpiar filtros
+        </button>
+      </div>
+    </section>
+  }
+
   @if (error()) {
-    <div class="feedback error">{{ error() }}</div>
+    <div class="feedback error">
+      {{ error() }}
+    </div>
   }
 
   @if (loading()) {
-    <div class="panel estado">Cargando agenda...</div>
+    <div class="panel estado">
+      Cargando agenda...
+    </div>
   }
 
   @if (!loading() && !error()) {
     <section class="panel agenda">
       <div class="agenda-header">
-        <button class="btn btn-secundario" (click)="mesAnterior()">
+        <button
+          type="button"
+          class="btn btn-secundario"
+          (click)="mesAnterior()"
+        >
           ‹ Anterior
         </button>
 
         <div class="titulo-mes">
           <h3>{{ nombreMes() | titlecase }}</h3>
-          <button class="btn-hoy" (click)="irAHoy()">Hoy</button>
+
+          <button
+            type="button"
+            class="btn-hoy"
+            (click)="irAHoy()"
+          >
+            Hoy
+          </button>
         </div>
 
-        <button class="btn btn-secundario" (click)="mesSiguiente()">
+        <button
+          type="button"
+          class="btn btn-secundario"
+          (click)="mesSiguiente()"
+        >
           Siguiente ›
         </button>
       </div>
 
       <div class="calendario">
         @for (nombreDia of diasSemana; track nombreDia) {
-          <div class="dia-semana">{{ nombreDia }}</div>
+          <div class="dia-semana">
+            {{ nombreDia }}
+          </div>
         }
 
         @for (dia of diasDelMes(); track dia.toISOString()) {
@@ -44,7 +145,9 @@
             class="dia"
             [class.otro-mes]="!esDelMesActual(dia)"
           >
-            <span class="numero-dia">{{ dia | date: 'd' }}</span>
+            <span class="numero-dia">
+              {{ dia | date: 'd' }}
+            </span>
 
             <div class="eventos">
               @for (cita of citasDelDia(dia); track cita.Id) {
@@ -59,7 +162,9 @@
                   (click)="irADetalle(cita.Id)"
                 >
                   <strong>{{ cita.Hora }}</strong>
+
                   <span>{{ cita.servicio?.Nombre }}</span>
+
                   <small>
                     {{
                       cita.profesional?.NombreCompleto ||

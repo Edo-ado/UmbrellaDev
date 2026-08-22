@@ -18,7 +18,7 @@ import { es } from 'date-fns/locale';
 
 import { CitaService } from '../../core/services/cita.service';
 import { AuthService } from '../../core/services/auth.service';
-import { Cita } from '../../core/models/cita.model';
+import { Cita, EstadoCita } from '../../core/models/cita.model';
 
 @Component({
   selector: 'app-agenda-visual',
@@ -36,6 +36,14 @@ export class AgendaVisualComponent implements OnInit {
   mesActual = signal(new Date());
   loading = signal(false);
   error = signal('');
+
+
+    estadoSeleccionado = signal<EstadoCita | ''>('');
+    profesionalSeleccionado = signal('');
+    fechaInicial = signal('');
+    fechaFinal = signal('');
+
+    estados = Object.values(EstadoCita);
 
   diasSemana = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
 
@@ -75,6 +83,26 @@ export class AgendaVisualComponent implements OnInit {
     return [];
   });
 
+profesionales = computed(() => {
+  const mapa = new Map<number, string>();
+
+  this.citas().forEach((cita) => {
+    if (cita.profesional) {
+      mapa.set(
+        cita.profesional.Id,
+        cita.profesional.NombreCompleto,
+      );
+    }
+  });
+
+  return Array.from(mapa.entries()).map(([id, nombre]) => ({
+    id,
+    nombre,
+  }));
+});
+
+
+
   diasDelMes = computed(() => {
     const mes = this.mesActual();
 
@@ -104,6 +132,98 @@ export class AgendaVisualComponent implements OnInit {
     });
   }
 
+
+  filtrarPorProfesional(): void {
+  const profesionalId = Number(this.profesionalSeleccionado());
+
+  if (!profesionalId) {
+    this.cargarCitas();
+    return;
+  }
+
+  this.estadoSeleccionado.set('');
+  this.fechaInicial.set('');
+  this.fechaFinal.set('');
+
+  this.loading.set(true);
+  this.error.set('');
+
+  this.citaService.getByProfesional(profesionalId).subscribe({
+    next: (data) => {
+      this.citas.set(data);
+      this.loading.set(false);
+    },
+    error: () => {
+      this.error.set('No se pudieron cargar las citas del profesional.');
+      this.loading.set(false);
+    },
+  });
+}
+
+filtrarPorEstado(): void {
+  const estado = this.estadoSeleccionado();
+
+  if (!estado) {
+    this.cargarCitas();
+    return;
+  }
+
+  this.profesionalSeleccionado.set('');
+  this.fechaInicial.set('');
+  this.fechaFinal.set('');
+
+  this.loading.set(true);
+  this.error.set('');
+
+  this.citaService.getByStatus(estado).subscribe({
+    next: (data) => {
+      this.citas.set(data);
+      this.loading.set(false);
+    },
+    error: () => {
+      this.error.set('No se pudieron cargar las citas por estado.');
+      this.loading.set(false);
+    },
+  });
+}
+
+
+filtrarPorFechas(): void {
+  const fechaInicial = this.fechaInicial();
+  const fechaFinal = this.fechaFinal();
+
+  if (!fechaInicial || !fechaFinal) {
+    this.error.set('Selecciona una fecha inicial y una fecha final.');
+    return;
+  }
+
+  this.estadoSeleccionado.set('');
+  this.profesionalSeleccionado.set('');
+
+  this.loading.set(true);
+  this.error.set('');
+
+  this.citaService.getByFechas(fechaInicial, fechaFinal).subscribe({
+    next: (data) => {
+      this.citas.set(data);
+      this.loading.set(false);
+    },
+    error: () => {
+      this.error.set('No se pudieron cargar las citas por fechas.');
+      this.loading.set(false);
+    },
+  });
+}
+
+limpiarFiltros(): void {
+  this.estadoSeleccionado.set('');
+  this.profesionalSeleccionado.set('');
+  this.fechaInicial.set('');
+  this.fechaFinal.set('');
+
+  this.cargarCitas();
+}
+
   mesAnterior(): void {
     this.mesActual.update((fecha) => subMonths(fecha, 1));
   }
@@ -129,6 +249,8 @@ export class AgendaVisualComponent implements OnInit {
 
   
 
+
+  
   irADetalle(citaId: number): void {
     this.router.navigate(['/citas/detalle', citaId]);
   }
