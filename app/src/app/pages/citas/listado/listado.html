@@ -109,8 +109,9 @@
                   <span
                     class="tag"
                     [class.pendiente]="cita.Estado === 'PENDIENTE'"
-                    [class.confirmada]="cita.Estado === 'CONFIRMADA'"
-                    [class.completada]="cita.Estado === 'COMPLETADA'"
+                    [class.confirmada]="cita.Estado === 'ACEPTADA'"
+                    [class.confirmada]="cita.Estado === 'RECHAZADA'"
+                    [class.completada]="cita.Estado === 'COMPLETA'"
                     [class.cancelada]="cita.Estado === 'CANCELADA'"
                   >
                     {{ cita.Estado }}

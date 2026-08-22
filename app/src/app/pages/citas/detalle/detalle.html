@@ -57,14 +57,15 @@
       <div class="campo-detalle">
         <label>Estado</label>
         <span
-          class="tag"
-          [class.pendiente]="cita()?.Estado === 'PENDIENTE'"
-          [class.confirmada]="cita()?.Estado === 'CONFIRMADA'"
-          [class.completada]="cita()?.Estado === 'COMPLETADA'"
-          [class.cancelada]="cita()?.Estado === 'CANCELADA'"
-        >
-          {{ cita()?.Estado }}
-        </span>
+  class="tag"
+  [class.pendiente]="cita()?.Estado === 'PENDIENTE'"
+  [class.aceptada]="cita()?.Estado === 'ACEPTADA'"
+  [class.rechazada]="cita()?.Estado === 'RECHAZADA'"
+  [class.completada]="cita()?.Estado === 'COMPLETA'"
+  [class.cancelada]="cita()?.Estado === 'CANCELADA'"
+>
+  {{ cita()?.Estado }}
+</span>
       </div>
 
       <div class="campo-detalle full">
@@ -79,5 +80,83 @@
         </div>
       }
     </div>
+
+    @if (cita()?.Estado === EstadoCita.COMPLETA) {
+      @if (verificandoResena()) {
+        <div class="panel estado">Verificando reseña...</div>
+      }
+
+      @if (!verificandoResena() && resenaEnviada()) {
+        <div class="feedback exito">
+          ¡Gracias! Tu reseña fue registrada correctamente.
+        </div>
+      }
+
+      @if (!verificandoResena() && tieneResena()) {
+        <div class="panel resena-existente">
+          <h3>Reseña de esta cita</h3>
+
+          <div class="resena-header">
+            <strong>{{ resenaExistente()?.cliente?.NombreCompleto }}</strong>
+            <span class="resena-puntuacion">
+              {{ resenaExistente()?.Puntuacion }} / 10
+            </span>
+          </div>
+
+          <p class="resena-comentario">
+            {{ resenaExistente()?.Comentario }}
+          </p>
+
+          <span class="resena-fecha">
+            {{ resenaExistente()?.CreatedAt | date: 'dd/MM/yyyy' }}
+          </span>
+        </div>
+      }
+
+      @if (!verificandoResena() && puedeDejarResena()) {
+        <div class="panel resena-form">
+          <h3>Deja tu reseña</h3>
+
+          @if (errorResena()) {
+            <div class="feedback error">{{ errorResena() }}</div>
+          }
+
+          <div class="campo-detalle full">
+  <label>Calificación (1 a 10)</label>
+
+  <div class="rating-estrellas" (mouseleave)="hoverPuntuacion.set(0)">
+    @for (valor of [1,2,3,4,5,6,7,8,9,10]; track valor) {
+      <span
+        class="estrella"
+        [class.llena]="(hoverPuntuacion() || puntuacion()) >= valor"
+        (mouseenter)="hoverPuntuacion.set(valor)"
+        (click)="puntuacion.set(valor)"
+      >★</span>
+    }
+  </div>
+
+  <p class="rating-texto">{{ puntuacion() }} / 10</p>
+</div>
+
+          <div class="campo-detalle full">
+            <label>Comentario</label>
+            <textarea
+              rows="4"
+              [ngModel]="comentario()"
+              (ngModelChange)="comentario.set($event)"
+              placeholder="Cuéntanos cómo fue tu experiencia..."
+            ></textarea>
+          </div>
+
+          <button
+            class="btn btn-primario"
+            [disabled]="enviandoResena()"
+            (click)="enviarResena()"
+          >
+            {{ enviandoResena() ? 'Enviando...' : 'Enviar reseña' }}
+          </button>
+        </div>
+      }
+    }
   }
 </section>

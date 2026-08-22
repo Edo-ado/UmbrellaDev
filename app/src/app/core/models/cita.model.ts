@@ -1,8 +1,9 @@
 export enum EstadoCita {
   PENDIENTE = 'PENDIENTE',
-  CONFIRMADA = 'CONFIRMADA',
-  COMPLETADA = 'COMPLETADA',
+  ACEPTADA = 'ACEPTADA',
+  RECHAZADA = 'RECHAZADA',
   CANCELADA = 'CANCELADA',
+  COMPLETA = 'COMPLETA',
 }
 
 export interface Cita {
