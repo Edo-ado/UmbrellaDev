@@ -97,7 +97,7 @@ export const routes: Routes = [
         path: 'citas',
         component: CitasListadoComponent,
         canActivate: [authGuard, roleGuard],
-        data: { roles: [Role.USUARIO, Role.ADMIN] },
+        data: { roles: [Role.USUARIO, Role.ADMIN, Role.DESARROLLADOR] },
       },
       { path: 'citas/crear', component: CitasCrear },
       { path: 'citas/detalle/:id', component: CitasDetalle , canActivate: [authGuard] },

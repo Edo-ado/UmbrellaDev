@@ -31,7 +31,6 @@ export class EspecialidadController {
     }
   };
 
-
   getByName = async (
       request: Request,
       response: Response,
