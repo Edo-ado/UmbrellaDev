@@ -13,6 +13,7 @@ import { ServiciosLista } from './pages/servicios/servicios-lista/servicios-list
 import { ServiciosDetail } from './pages/servicios/servicios-detail/servicios-detail';
 import { ServiciosEdit } from './pages/servicios/servicios-edit/servicios-edit';
 import { ServiciosCreate } from './pages/servicios/servicios-create/servicios-create';
+import { PanelGeneral } from './pages/panel-general/panel-general';
 
 import { CitasListadoComponent } from './pages/citas/listado/listado';
 import { CitasCrear } from './pages/citas/registro/registro';
@@ -109,6 +110,15 @@ export const routes: Routes = [
         data: { roles: [Role.ADMIN, Role.DESARROLLADOR] } },
 
 
+
+
+      // panel general
+      { path: 'panel-general', 
+        component: PanelGeneral ,
+        canActivate: [authGuard, roleGuard],
+        data: { roles: [Role.USUARIO] } },
+
+        
         
       //login
       { path: 'login', component: LoginComponent },

@@ -1,1 +1,310 @@
-<p>panel-general works!</p>
+<section class="panel-general-page">
+  <div class="panel-general-hero">
+    <div>
+      <p class="eyebrow">Umbrella Corporation</p>
+
+      <h1>Panel general</h1>
+
+      <p class="subtitle">
+        Consulta tus citas, solicita nuevos servicios y encuentra al profesional ideal.
+      </p>
+    </div>
+
+    <button
+      type="button"
+      class="btn btn-primario"
+      (click)="solicitarCita()"
+    >
+      + Solicitar cita
+    </button>
+  </div>
+
+  <section class="panel citas-panel">
+    <div class="panel-header">
+      <div>
+        <p class="eyebrow">Mis citas</p>
+        <h2>Citas pedidas</h2>
+        <p class="panel-description">
+          Consulta el estado y los detalles de tus citas.
+        </p>
+      </div>
+
+      <button
+        type="button"
+        class="btn btn-secundario"
+        (click)="cargarCitas()"
+      >
+        Actualizar
+      </button>
+    </div>
+
+    @if (loadingCitas()) {
+      <div class="estado">
+        Cargando tus citas...
+      </div>
+    }
+
+    @if (errorCitas()) {
+      <div class="feedback error">
+        {{ errorCitas() }}
+      </div>
+    }
+
+    @if (!loadingCitas() && !errorCitas()) {
+      @if (citas().length > 0) {
+        <div class="citas-lista">
+          @for (cita of citas(); track cita.Id) {
+            <article class="cita-card">
+              <div class="cita-fecha">
+                <span class="fecha-dia">
+                  {{ cita.Fecha | date: 'dd' }}
+                </span>
+
+                <span class="fecha-mes">
+                  {{ cita.Fecha | date: 'MMM' }}
+                </span>
+              </div>
+
+              <div class="cita-info">
+                <h3>
+                  {{ cita.servicio?.Nombre || 'Servicio solicitado' }}
+                </h3>
+
+                <p>
+                  <span>Profesional:</span>
+                  {{ cita.profesional?.NombreCompleto || 'Pendiente' }}
+                </p>
+
+                <p>
+                  <span>Hora:</span>
+                  {{ cita.Hora }}
+                </p>
+              </div>
+
+              <div class="cita-estado">
+                <span
+                  class="tag"
+                  [class.pendiente]="cita.Estado === 'PENDIENTE'"
+                  [class.aceptada]="cita.Estado === 'ACEPTADA'"
+                  [class.rechazada]="cita.Estado === 'RECHAZADA'"
+                  [class.cancelada]="cita.Estado === 'CANCELADA'"
+                  [class.completa]="cita.Estado === 'COMPLETA'"
+                >
+                  {{ cita.Estado }}
+                </span>
+
+                <button
+                  type="button"
+                  class="btn btn-detalle"
+                  (click)="verDetalleCita(cita.Id)"
+                >
+                  Ver detalle
+                </button>
+              </div>
+            </article>
+          }
+        </div>
+      } @else {
+        <div class="estado-vacio">
+          <span class="estado-icono">◷</span>
+          <h3>No tienes citas pedidas</h3>
+          <p>
+            Solicita una cita para comenzar.
+          </p>
+
+          <button
+            type="button"
+            class="btn btn-primario"
+            (click)="solicitarCita()"
+          >
+            Solicitar una cita
+          </button>
+        </div>
+      }
+    }
+  </section>
+
+
+  <section class="panel profesionales-panel">
+    <div class="panel-header">
+      <div>
+        <p class="eyebrow">Talento disponible</p>
+        <h2>Profesionales</h2>
+        <p class="panel-description">
+          Selecciona un profesional para consultar sus servicios.
+        </p>
+      </div>
+
+    
+    
+    </div>
+
+    @if (loadingProfesionales()) {
+      <div class="estado">
+        Cargando profesionales...
+      </div>
+    }
+
+    @if (errorProfesionales()) {
+      <div class="feedback error">
+        {{ errorProfesionales() }}
+      </div>
+    }
+
+    @if (!loadingProfesionales() && !errorProfesionales()) {
+      @if (profesionales().length > 0) {
+        <div class="profesionales-grid">
+          @for (
+            profesional of profesionales();
+            track profesional.Id
+          ) {
+            <button
+              type="button"
+              class="profesional-card"
+              [class.seleccionado]="
+                profesionalSeleccionado()?.Id === profesional.Id
+              "
+              (click)="seleccionarProfesional(profesional)"
+            >
+              <div class="profesional-avatar">
+                @if (profesional.Foto) {
+                  <img
+                    [src]="profesional.Foto"
+                    [alt]="profesional.NombreCompleto"
+                  />
+                } @else {
+                  <span>
+                    {{ profesional.NombreCompleto.charAt(0) }}
+                  </span>
+                }
+              </div>
+
+              <div class="profesional-info">
+                <h3>
+                  {{ profesional.NombreCompleto }}
+                </h3>
+
+                <p>
+                  {{ profesional.Descripcion || 'Profesional disponible' }}
+                </p>
+
+                @if (profesional.Ubicacion) {
+                  <small>
+                    {{ profesional.Ubicacion }}
+                  </small>
+                }
+              </div>
+
+              <span class="flecha">›</span>
+            </button>
+          }
+        </div>
+      } @else {
+        <div class="estado-vacio">
+          No hay profesionales disponibles.
+        </div>
+      }
+    }
+  </section>
+
+  <section class="panel servicios-panel">
+    <div class="panel-header">
+      <div>
+        <p class="eyebrow">Servicios disponibles</p>
+
+        <h2>
+          @if (profesionalSeleccionado()) {
+            Servicios de
+            {{ profesionalSeleccionado()?.NombreCompleto }}
+          } @else {
+            Servicios del profesional
+          }
+        </h2>
+
+        <p class="panel-description">
+          Selecciona un profesional para consultar lo que ofrece.
+        </p>
+      </div>
+
+      <button
+        type="button"
+        class="btn btn-secundario"
+        (click)="verServicios()"
+      >
+        Ver todos
+      </button>
+    </div>
+
+    @if (!profesionalSeleccionado()) {
+      <div class="estado-vacio">
+        <span class="estado-icono">⌁</span>
+        <h3>Selecciona un profesional</h3>
+        <p>
+          Aquí aparecerán los servicios que ofrece.
+        </p>
+      </div>
+    }
+
+    @if (loadingServicios()) {
+      <div class="estado">
+        Cargando servicios...
+      </div>
+    }
+
+    @if (errorServicios()) {
+      <div class="feedback error">
+        {{ errorServicios() }}
+      </div>
+    }
+
+    @if (
+      profesionalSeleccionado() &&
+      !loadingServicios() &&
+      !errorServicios()
+    ) {
+      @if (servicios().length > 0) {
+        <div class="servicios-grid">
+          @for (servicio of servicios(); track servicio.Id) {
+            <article class="servicio-card">
+              <div class="servicio-top">
+                <span class="servicio-modalidad">
+                  {{ servicio.Modalidad }}
+                </span>
+
+                <span class="servicio-precio">
+                  ₡{{ servicio.Precio | number: '1.0-0' }}
+                </span>
+              </div>
+
+              <h3>
+                {{ servicio.Nombre }}
+              </h3>
+
+              <p>
+                {{ servicio.Descripcion || 'Sin descripción disponible.' }}
+              </p>
+
+              @if (servicio.Duracion) {
+                <small>
+                  Duración: {{ servicio.Duracion }} minutos
+                </small>
+              }
+
+              <button
+                type="button"
+                class="btn btn-primario btn-servicio"
+                (click)="solicitarCita()"
+              >
+                Solicitar este servicio
+              </button>
+            </article>
+          }
+        </div>
+      } @else {
+        <div class="estado-vacio">
+          Este profesional no tiene servicios activos.
+        </div>
+      }
+    }
+  </section>
+</section>

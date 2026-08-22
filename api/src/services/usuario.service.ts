@@ -83,6 +83,14 @@ async getAllDesarrolladores() {
   });
 },
 
+async getAllDesarrolladoresActivos() {
+  return await prisma.usuario.findMany({
+    where: { Role: "DESARROLLADOR", Estado: "ACTIVO" }, 
+    include: {
+      especialidades: true, 
+    },
+  });
+},
 
 
 

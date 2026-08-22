@@ -304,4 +304,18 @@ perfil = async (
 };
 
 
+getDesarrolladoresDisponibles = async (
+  request: Request,
+  response: Response,
+  next: NextFunction,
+) => {
+  try {
+    const usuarios = await UsuarioService.getAllDesarrolladoresActivos();
+    return response.status(StatusCodes.OK).json(usuarios);
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+};
+
 }
