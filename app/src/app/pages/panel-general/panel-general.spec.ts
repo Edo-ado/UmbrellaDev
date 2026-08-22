@@ -1,17 +1,17 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ProfesionalesCatalogo } from './profesionales-catalogo';
+import { PanelGeneral } from './panel-general';
 
-describe('ProfesionalesCatalogo', () => {
-  let component: ProfesionalesCatalogo;
-  let fixture: ComponentFixture<ProfesionalesCatalogo>;
+describe('PanelGeneral', () => {
+  let component: PanelGeneral;
+  let fixture: ComponentFixture<PanelGeneral>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ProfesionalesCatalogo],
+      imports: [PanelGeneral],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(ProfesionalesCatalogo);
+    fixture = TestBed.createComponent(PanelGeneral);
     component = fixture.componentInstance;
     await fixture.whenStable();
   });

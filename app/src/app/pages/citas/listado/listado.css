@@ -154,3 +154,56 @@ td{
     padding:20px 18px;
 
 }
+
+
+.acciones-cita {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+
+.tag.aceptada {
+  color: #6ee89a;
+  background: rgba(110, 232, 154, .1);
+  border: 1px solid rgba(110, 232, 154, .3);
+}
+
+.tag.rechazada {
+  color: #ff7777;
+  background: rgba(255, 119, 119, .1);
+  border: 1px solid rgba(255, 119, 119, .3);
+}
+
+.tag.completa {
+  color: #8ab4ff;
+  background: rgba(138, 180, 255, .1);
+  border: 1px solid rgba(138, 180, 255, .3);
+}
+
+
+.btn-aceptar {
+  background: #1b7a3e;
+}
+
+.btn-aceptar:hover {
+  background: #229a4e;
+}
+
+.btn-rechazar,
+.btn-cancelar {
+  background: #7a0010;
+}
+
+.btn-rechazar:hover,
+.btn-cancelar:hover {
+  background: #b00017;
+}
+
+.btn-completar {
+  background: #2c4a8a;
+}
+
+.btn-completar:hover {
+  background: #3a5fb0;
+}

@@ -14,17 +14,19 @@ export const CitaServices = {
     });
   },
 
-  async getById(id: number) {
-    return prisma.cita.findUnique({
-      where: { Id: id },
-      include: {
-        cliente: true,
-        profesional: true,
-        servicio: true,
+async getById(id: number) {
+  return prisma.cita.findUnique({
+    where: { Id: id },
+    include: {
+      cliente: true,
+      profesional: true,
+      servicio: true,
+      historialEstadoCitas: {  
+        orderBy: { Fecha: 'desc' },  
       },
-    });
-  },
-
+    },
+  });
+},
   async getByProfesional(profesionalId: number) {
     return await prisma.cita.findMany({
       where: { idprofesional: profesionalId },

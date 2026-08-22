@@ -4,21 +4,30 @@
       <p class="eyebrow">Umbrella Corporation</p>
       <h2>Detalle de Cita</h2>
       <p class="subtitle">
-        Información completa del registro de la cita seleccionada.
+        Información completa del registro y sus cambios de estado.
       </p>
     </div>
-    <button class="btn btn-secundario" (click)="volver()">← Volver al listado</button>
+
+    <button class="btn btn-secundario" (click)="volver()">
+      ← Volver al listado
+    </button>
   </div>
 
-  @if (loading()) {
-    <div class="panel estado">
-      Cargando cita...
+  @if (mensaje()) {
+    <div class="feedback ok">
+      {{ mensaje() }}
     </div>
   }
 
   @if (error()) {
     <div class="feedback error">
       {{ error() }}
+    </div>
+  }
+
+  @if (loading()) {
+    <div class="panel estado">
+      Cargando cita...
     </div>
   }
 
@@ -45,8 +54,13 @@
       </div>
 
       <div class="campo-detalle">
-        <label>Hora</label>
+        <label>Hora de inicio</label>
         <p>{{ cita()?.Hora }}</p>
+      </div>
+
+      <div class="campo-detalle">
+        <label>Hora de finalización</label>
+        <p>{{ cita()?.HoraFin }}</p>
       </div>
 
       <div class="campo-detalle">
@@ -55,7 +69,12 @@
       </div>
 
       <div class="campo-detalle">
-        <label>Estado</label>
+        <label>Monto</label>
+        <p>₡{{ cita()?.Monto | number }}</p>
+      </div>
+
+      <div class="campo-detalle">
+        <label>Estado actual</label>
         <span
   class="tag"
   [class.pendiente]="cita()?.Estado === 'PENDIENTE'"
@@ -79,6 +98,164 @@
           <p>{{ cita()?.Comentarios }}</p>
         </div>
       }
+
+      <!-- Acciones permitidas según estado y rol -->
+      <div class="campo-detalle full">
+        <label>Acciones</label>
+
+        <div class="acciones-detalle">
+          @if (puedeAceptar()) {
+            <button class="btn btn-aceptar" (click)="aceptar()">
+              Aceptar
+            </button>
+          }
+
+          @if (puedeRechazar()) {
+            <button class="btn btn-rechazar" (click)="abrirModalRechazar()">
+              Rechazar
+            </button>
+          }
+
+          @if (puedeCancelar()) {
+            <button class="btn btn-cancelar" (click)="abrirModalCancelar()">
+              Cancelar
+            </button>
+          }
+
+          @if (puedeCompletar()) {
+            <button class="btn btn-completar" (click)="completar()">
+              Completar
+            </button>
+          }
+
+          @if (
+            !puedeAceptar() &&
+            !puedeRechazar() &&
+            !puedeCancelar() &&
+            !puedeCompletar()
+          ) {
+            <p class="sin-historial">
+              No hay acciones disponibles para esta cita.
+            </p>
+          }
+        </div>
+      </div>
+
+      <!-- Historial -->
+      <div class="campo-detalle full">
+        <label>Historial de Estados</label>
+
+        @if (getHistorialEstados().length > 0) {
+          <ul class="historial-lista">
+            @for (item of getHistorialEstados(); track item.Id) {
+              <li class="historial-item">
+                <div class="historial-cambio">
+                  <span class="historial-anterior">
+                    {{ item.EstadoAnterior }}
+                  </span>
+
+                  <span class="historial-flecha">→</span>
+
+                  <span
+                    class="tag"
+                    [class.pendiente]="item.EstadoNuevo === 'PENDIENTE'"
+                    [class.aceptada]="item.EstadoNuevo === 'ACEPTADA'"
+                    [class.rechazada]="item.EstadoNuevo === 'RECHAZADA'"
+                    [class.completa]="item.EstadoNuevo === 'COMPLETA'"
+                    [class.cancelada]="item.EstadoNuevo === 'CANCELADA'"
+                  >
+                    {{ item.EstadoNuevo }}
+                  </span>
+                </div>
+
+                <span class="historial-fecha">
+                  {{ item.Fecha | date: 'dd/MM/yyyy HH:mm' }}
+                </span>
+
+                @if (item.Motivo) {
+                  <p class="historial-motivo">
+                    <strong>Motivo:</strong> {{ item.Motivo }}
+                  </p>
+                }
+              </li>
+            }
+          </ul>
+        } @else {
+          <p class="sin-historial">
+            Aún no se han registrado cambios de estado para esta cita.
+          </p>
+        }
+      </div>
+    </div>
+  }
+
+  <!-- Modal: Rechazar o Cancelar -->
+  @if (mostrandoModal()) {
+    <div
+      class="modal-overlay"
+      role="presentation"
+      (click)="cerrarModal()"
+    >
+      <div
+        class="modal-content"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="titulo-modal"
+        (click)="$event.stopPropagation()"
+      >
+        <h3 id="titulo-modal">
+          @if (accionPendiente() === 'rechazar') {
+            Rechazar cita
+          } @else {
+            Cancelar cita
+          }
+        </h3>
+
+        <p>
+          @if (accionPendiente() === 'rechazar') {
+            Indicá el motivo por el cual se rechaza esta cita.
+          } @else {
+            Indicá el motivo por el cual se cancela esta cita.
+          }
+        </p>
+
+        <div class="campo">
+          <label for="motivo">Motivo *</label>
+
+          <textarea
+            id="motivo"
+            rows="4"
+            placeholder="Escribí el motivo de forma clara..."
+            [ngModel]="motivoModal()"
+            (ngModelChange)="motivoModal.set($event)"
+          ></textarea>
+
+          @if (errorMotivo()) {
+            <small class="hint error">
+              {{ errorMotivo() }}
+            </small>
+          }
+        </div>
+
+        <div class="modal-acciones">
+          <button class="btn btn-secundario" (click)="cerrarModal()">
+            Volver
+          </button>
+
+          <button
+            class="btn btn-primario"
+            [class.btn-rechazar]="accionPendiente() === 'rechazar'"
+            [class.btn-cancelar]="accionPendiente() === 'cancelar'"
+            (click)="confirmarAccion()"
+          >
+            @if (accionPendiente() === 'rechazar') {
+              Confirmar rechazo
+            } @else {
+              Confirmar cancelación
+            }
+          </button>
+        </div>
+      </div>
     </div>
 
     @if (cita()?.Estado === EstadoCita.COMPLETA) {

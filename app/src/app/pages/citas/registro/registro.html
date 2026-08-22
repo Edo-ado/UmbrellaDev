@@ -1,4 +1,5 @@
 <section class="usuarios-page">
+  <!-- Hero Section -->
   <div class="usuarios-hero">
     <div>
       <p class="eyebrow">Umbrella Corporation</p>
@@ -8,29 +9,28 @@
         se asigna automáticamente como <strong>Pendiente</strong>.
       </p>
     </div>
-    <button class="btn btn-secundario" (click)="cancelar()">← Volver al listado</button>
+    <button class="btn btn-secundario" (click)="cancelar()">
+      ← Volver al listado
+    </button>
   </div>
 
+  <!-- Feedback Messages -->
   @if (mensaje()) {
-    <div class="feedback ok">
-      {{ mensaje() }}
-    </div>
+    <div class="feedback ok">{{ mensaje() }}</div>
   }
 
   @if (error()) {
-    <div class="feedback error">
-      {{ error() }}
-    </div>
+    <div class="feedback error">{{ error() }}</div>
   }
 
   @if (loading()) {
-    <div class="panel estado">
-      Cargando datos...
-    </div>
+    <div class="panel estado">Cargando datos...</div>
   }
 
+  <!-- Formulario -->
   @if (!loading()) {
     <div class="panel formulario">
+      <!-- Cliente -->
       <div class="campo">
         <label for="cliente">Cliente *</label>
         <select
@@ -48,6 +48,7 @@
         }
       </div>
 
+      <!-- Profesional -->
       <div class="campo">
         <label for="profesional">Profesional *</label>
         <select
@@ -57,7 +58,15 @@
         >
           <option value="">Seleccioná un profesional</option>
           @for (prof of profesionales(); track prof.Id) {
-            <option [value]="prof.Id">{{ prof.NombreCompleto }}</option>
+            <option
+              [value]="prof.Id"
+              [disabled]="prof.Disponibilidad === false"
+            >
+              {{ prof.NombreCompleto }}
+              @if (prof.Disponibilidad === false) {
+                (No disponible)
+              }
+            </option>
           }
         </select>
         @if (errores()['profesional']) {
@@ -65,6 +74,7 @@
         }
       </div>
 
+      <!-- Servicio -->
       <div class="campo">
         <label for="servicio">Servicio *</label>
         <select
@@ -74,7 +84,15 @@
         >
           <option value="">Seleccioná un servicio</option>
           @for (serv of serviciosDisponibles(); track serv.Id) {
-            <option [value]="serv.Id">{{ serv.Nombre }}</option>
+            <option
+              [value]="serv.Id"
+              [disabled]="serv.Estado !== 'ACTIVO'"
+            >
+              {{ serv.Nombre }}
+              @if (serv.Estado !== 'ACTIVO') {
+                (Inactivo)
+              }
+            </option>
           }
         </select>
         @if (idprofesional() && serviciosDisponibles().length === 0) {
@@ -83,8 +101,14 @@
         @if (errores()['servicio']) {
           <small class="hint">{{ errores()['servicio'] }}</small>
         }
+        @if (servicioSeleccionado()) {
+          <div class="monto-estimado">
+            Monto estimado: <strong>₡{{ montoEstimado() | number }}</strong>
+          </div>
+        }
       </div>
 
+      <!-- Fecha -->
       <div class="campo">
         <label for="fecha">Fecha *</label>
         <input
@@ -98,6 +122,7 @@
         }
       </div>
 
+      <!-- Hora -->
       <div class="campo">
         <label for="hora">Hora *</label>
         <input
@@ -111,6 +136,7 @@
         }
       </div>
 
+      <!-- Modalidad -->
       <div class="campo">
         <label for="modalidad">Modalidad *</label>
         <select
@@ -128,6 +154,7 @@
         }
       </div>
 
+      <!-- Descripción -->
       <div class="campo full">
         <label for="descripcion">Descripción *</label>
         <textarea
@@ -142,6 +169,7 @@
         }
       </div>
 
+      <!-- Comentarios -->
       <div class="campo full">
         <label for="comentarios">Comentarios (opcional)</label>
         <textarea
@@ -152,8 +180,15 @@
         ></textarea>
       </div>
 
+      <!-- Acciones -->
       <div class="acciones-formulario">
-        <button class="btn btn-secundario" (click)="cancelar()">Cancelar</button>
+        <button
+          class="btn btn-secundario"
+          (click)="cancelar()"
+          [disabled]="guardando()"
+        >
+          Cancelar
+        </button>
         <button
           class="btn btn-primario"
           [disabled]="guardando()"

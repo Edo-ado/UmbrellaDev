@@ -25,6 +25,8 @@ import { authGuard } from './core/guards/auth.guard';
 import { roleGuard } from './core/guards/role.guard';
 
 import { Role } from '../app/core/models/usuario.model';
+import { AgendaVisualComponent } from './pages/agendavisual/agendavisual';
+
 
 export const routes: Routes = [
   {
@@ -59,6 +61,9 @@ export const routes: Routes = [
         canActivate: [authGuard, roleGuard],
         data: { roles: [Role.ADMIN] },
       },
+
+  
+
       {
         path: 'profesionalesEditar/:id',
         component: ProfesionalesEditar,
@@ -109,6 +114,22 @@ export const routes: Routes = [
 
       //register
       { path: 'register', component: RegisterComponent },
+
+      //agenda visual
+
+      {
+        path: 'agenda-visual',
+        component: AgendaVisualComponent,
+        canActivate: [authGuard, roleGuard],
+        data: {
+          roles: [
+            Role.ADMIN,
+            Role.DESARROLLADOR,
+            Role.USUARIO,
+          ],
+        },
+      },
+
     ],
   },
 ];

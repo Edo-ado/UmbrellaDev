@@ -5,7 +5,10 @@ import { Router } from '@angular/router';
 import { ServicioService } from '../../../core/services/servicio.service';
 import { CategoriaService } from '../../../core/services/categoria.service';
 import { Servicio } from '../../../core/models/servicio.model';
+import { Role } from '../../../core/models/usuario.model';
 import { Categoria } from '../../../core/models/categoria.model';
+
+import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-servicios-lista',
@@ -18,6 +21,7 @@ export class ServiciosLista implements OnInit {
   private servicioService = inject(ServicioService);
   private categoriaService = inject(CategoriaService);
   private router = inject(Router);
+private authService = inject(AuthService);
 
   servicios = signal<Servicio[]>([]);
   categorias = signal<Categoria[]>([]);
@@ -36,10 +40,21 @@ export class ServiciosLista implements OnInit {
     this.cargarCategorias();
   }
 
-  cargarServicios() {
-    this.loading.set(true);
-    this.error.set('');
+cargarServicios() {
+  this.loading.set(true);
+  this.error.set('');
+  this.mensaje.set('');
 
+  const usuario = this.authService.profesional();
+
+  if (!usuario) {
+    this.error.set('No hay una sesión iniciada.');
+    this.loading.set(false);
+    return;
+  }
+
+  
+  if (usuario.Role === Role.ADMIN) {
     this.servicioService.listar().subscribe({
       next: (data) => {
         this.servicios.set(data);
@@ -50,7 +65,34 @@ export class ServiciosLista implements OnInit {
         this.loading.set(false);
       },
     });
+
+    return;
   }
+
+  if (usuario.Role === Role.DESARROLLADOR) {
+    this.servicioService.obtenerPorProfesionalActivo(usuario.Id).subscribe({
+      next: (data) => {
+        this.servicios.set(data);
+        this.loading.set(false);
+
+        if (data.length === 0) {
+          this.mensaje.set('No tienes servicios registrados.');
+        }
+      },
+      error: () => {
+        this.error.set('No se pudieron cargar tus servicios.');
+        this.loading.set(false);
+      },
+    });
+
+    return;
+  }
+
+
+  this.servicios.set([]);
+  this.error.set('No tienes permisos para ver servicios.');
+  this.loading.set(false);
+}
 
   cargarCategorias() {
     this.categoriaService.listar().subscribe({
@@ -91,16 +133,32 @@ export class ServiciosLista implements OnInit {
     });
   }
 
-  filtrarPorModalidad() {
-    if (!this.modalidadSeleccionada) {
-      this.cargarServicios();
-      return;
-    }
+filtrarPorModalidad() {
+  if (!this.modalidadSeleccionada) {
+    this.cargarServicios();
+    return;
+  }
 
-    this.loading.set(true);
-    this.error.set('');
+  this.loading.set(true);
+  this.error.set('');
 
-    this.servicioService.obtenerPorModalidad(this.modalidadSeleccionada).subscribe({
+  const usuario = this.authService.profesional();
+
+  //DESARROLLADOR
+  if (usuario?.Role === Role.DESARROLLADOR) {
+    const serviciosFiltrados = this.servicios().filter(
+      (servicio) => servicio.Modalidad === this.modalidadSeleccionada,
+    );
+
+    this.servicios.set(serviciosFiltrados);
+    this.loading.set(false);
+    return;
+  }
+
+  //aDMIN
+  this.servicioService
+    .obtenerPorModalidad(this.modalidadSeleccionada)
+    .subscribe({
       next: (data) => {
         this.servicios.set(data);
         this.loading.set(false);
@@ -110,28 +168,46 @@ export class ServiciosLista implements OnInit {
         this.loading.set(false);
       },
     });
+}
+
+filtrarPorCategoria() {
+  if (!this.categoriaSeleccionada) {
+    this.cargarServicios();
+    return;
   }
 
-  filtrarPorCategoria() {
-    if (!this.categoriaSeleccionada) {
-      this.cargarServicios();
-      return;
-    }
+  this.loading.set(true);
+  this.error.set('');
 
-    this.loading.set(true);
-    this.error.set('');
+  const categoriaId = Number(this.categoriaSeleccionada);
 
-    this.servicioService.obtenerPorCategoria(Number(this.categoriaSeleccionada)).subscribe({
-      next: (data) => {
-        this.servicios.set(data);
-        this.loading.set(false);
-      },
-      error: () => {
-        this.error.set('No se pudo filtrar por categoría.');
-        this.loading.set(false);
-      },
-    });
+
+  if (this.esDesarrollador()) {
+    const serviciosFiltrados = this.servicios().filter(
+      (servicio) => servicio.idcategoria === categoriaId,
+    );
+
+    this.servicios.set(serviciosFiltrados);
+    this.loading.set(false);
+    return;
   }
+
+
+  this.servicioService.obtenerPorCategoria(categoriaId).subscribe({
+    next: (data) => {
+      this.servicios.set(data);
+      this.loading.set(false);
+    },
+    error: () => {
+      this.error.set('No se pudo filtrar por categoría.');
+      this.loading.set(false);
+    },
+  });
+}
+
+private esDesarrollador(): boolean {
+  return this.authService.rol() === Role.DESARROLLADOR;
+}
 
   filtrarPorRangoPrecio() {
     if (this.precioMin == null || this.precioMax == null) {
