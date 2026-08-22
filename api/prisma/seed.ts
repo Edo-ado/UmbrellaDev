@@ -628,7 +628,7 @@ async function main() {
         { de: "PENDIENTE", a: "ACEPTADA" },
         { de: "ACEPTADA", a: "COMPLETA" },
       ],
-      resena: { puntuacion: 5, comentario: "Excelente trabajo, el tablero quedó justo como lo necesitaba." },
+      resena: { puntuacion: 10, comentario: "Excelente trabajo, el tablero quedó justo como lo necesitaba." },
     },
     {
       // Pasada, COMPLETA, CON reseña
@@ -644,7 +644,7 @@ async function main() {
         { de: "PENDIENTE", a: "ACEPTADA" },
         { de: "ACEPTADA", a: "COMPLETA" },
       ],
-      resena: { puntuacion: 4, comentario: "Buen trabajo, cumplió con lo acordado en el tiempo esperado." },
+      resena: { puntuacion:8, comentario: "Buen trabajo, cumplió con lo acordado en el tiempo esperado." },
     },
     {
       // Pasada, COMPLETA, SIN reseña (para distinguir de las ya calificadas)
@@ -676,7 +676,7 @@ async function main() {
         { de: "PENDIENTE", a: "ACEPTADA" },
         { de: "ACEPTADA", a: "COMPLETA" },
       ],
-      resena: { puntuacion: 2, comentario: "El servicio fue aceptable pero tardó más de lo esperado." },
+      resena: { puntuacion: 4 , comentario: "El servicio fue aceptable pero tardó más de lo esperado." },
     },
   ];
 

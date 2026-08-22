@@ -164,3 +164,270 @@
         font-size:2.1rem;
     }
 }
+
+/* --- Tags faltantes (ACEPTADA / RECHAZADA) --- */
+.aceptada{
+    background:#0a2a3a;
+    color:#4bc3ff;
+}
+
+.rechazada{
+    background:#411414;
+    color:#ff6464;
+}
+
+/* --- Feedback de éxito (reseña enviada) --- */
+.exito{
+    background:#10381b;
+    color:#4bff80;
+    border:1px solid rgba(75,255,128,.25);
+}
+
+/* --- Reseña ya existente --- */
+.resena-existente{
+    border-color:#2a1010;
+    background:
+        radial-gradient(circle at top left,#8b001815,transparent 55%),
+        #121212;
+}
+
+.resena-existente h3{
+    margin:0 0 20px;
+    font-size:1.3rem;
+    color:#f5f5f5;
+}
+
+.resena-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:14px;
+    flex-wrap:wrap;
+    gap:12px;
+}
+
+.resena-header strong{
+    font-size:1.05rem;
+    color:#f5f5f5;
+}
+
+.resena-puntuacion{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    padding:8px 16px;
+    border-radius:999px;
+    background:linear-gradient(135deg,#8b0000,#b00017);
+    color:#ffffff;
+    font-weight:700;
+    font-size:.95rem;
+    letter-spacing:.5px;
+    box-shadow:0 0 20px rgba(176,0,23,.35);
+}
+
+.resena-comentario{
+    color:#d4d4d4;
+    line-height:1.7;
+    margin:0 0 16px;
+    font-size:1rem;
+}
+
+.resena-fecha{
+    display:block;
+    color:#777;
+    font-size:.78rem;
+    text-transform:uppercase;
+    letter-spacing:1.5px;
+}
+
+/* --- Formulario para dejar reseña --- */
+.resena-form{
+    border-color:#2a1010;
+    background:
+        radial-gradient(circle at top right,#8b001820,transparent 50%),
+        #121212;
+}
+
+.resena-form h3{
+    margin:0 0 24px;
+    font-size:1.3rem;
+    color:#f5f5f5;
+    position:relative;
+    padding-left:16px;
+}
+
+.resena-form h3::before{
+    content:"";
+    position:absolute;
+    left:0;
+    top:50%;
+    transform:translateY(-50%);
+    width:4px;
+    height:22px;
+    background:linear-gradient(180deg,#8b0000,#b00017);
+    border-radius:4px;
+}
+
+.resena-form .campo-detalle{
+    margin-bottom:20px;
+}
+
+.resena-form label{
+    color:#9b9b9b;
+    font-size:.85rem;
+    text-transform:uppercase;
+    letter-spacing:2px;
+    margin-bottom:10px;
+}
+
+.resena-form input[type="number"],
+.resena-form textarea{
+    background:#0c0c0c;
+    border:1px solid #262626;
+    border-radius:12px;
+    padding:14px 16px;
+    color:#f5f5f5;
+    font-size:1rem;
+    font-family:inherit;
+    outline:none;
+    transition:.25s;
+    resize:vertical;
+}
+
+.resena-form input[type="number"]{
+    max-width:140px;
+}
+
+.resena-form input[type="number"]:focus,
+.resena-form textarea:focus{
+    border-color:#b00017;
+    box-shadow:0 0 0 3px rgba(176,0,23,.15);
+}
+
+.resena-form textarea{
+    min-height:120px;
+    line-height:1.6;
+}
+
+.resena-form input::placeholder,
+.resena-form textarea::placeholder{
+    color:#5c5c5c;
+}
+
+/* --- Botón primario (rojo de marca) --- */
+.btn-primario{
+    background:linear-gradient(135deg,#8b0000,#b00017);
+    color:#ffffff;
+    box-shadow:0 6px 20px rgba(176,0,23,.3);
+}
+
+.btn-primario:hover:not(:disabled){
+    background:linear-gradient(135deg,#a00000,#c8001a);
+    box-shadow:0 8px 26px rgba(176,0,23,.45);
+    transform:translateY(-1px);
+}
+
+.btn-primario:disabled{
+    opacity:.55;
+    cursor:not-allowed;
+    box-shadow:none;
+    transform:none;
+}
+
+@media(max-width:900px){
+    .resena-form input[type="number"]{
+        max-width:100%;
+    }
+    .resena-header{
+        flex-direction:column;
+        align-items:flex-start;
+    }
+}
+
+.rating-selector{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+}
+
+.rating-opcion{
+    position:relative;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    width:44px;
+    height:44px;
+    border-radius:12px;
+    background:#0c0c0c;
+    border:1px solid #262626;
+    color:#9b9b9b;
+    font-weight:600;
+    font-size:.95rem;
+    cursor:pointer;
+    transition:.2s;
+    user-select:none;
+}
+
+.rating-opcion input{
+    position:absolute;
+    opacity:0;
+    pointer-events:none;
+}
+
+.rating-opcion:hover{
+    border-color:#3a3a3a;
+    color:#f5f5f5;
+    transform:translateY(-2px);
+}
+
+.rating-opcion.activa{
+    background:linear-gradient(135deg,#8b0000,#b00017);
+    border-color:transparent;
+    color:#ffffff;
+    box-shadow:0 6px 18px rgba(176,0,23,.4);
+    transform:translateY(-2px);
+}
+
+@media(max-width:900px){
+    .rating-opcion{
+        width:38px;
+        height:38px;
+        font-size:.85rem;
+    }
+}
+
+.rating-estrellas{
+    display:flex;
+    gap:4px;
+}
+
+.estrella{
+    font-size:2.1rem;
+    line-height:1;
+    color:#262626;
+    cursor:pointer;
+    transition:.15s;
+    text-shadow:0 0 0 rgba(176,0,23,0);
+}
+
+.estrella:hover{
+    transform:scale(1.15);
+}
+
+.estrella.llena{
+    color:#b00017;
+    text-shadow:0 0 14px rgba(176,0,23,.55);
+}
+
+.rating-texto{
+    margin:12px 0 0;
+    color:#9b9b9b;
+    font-size:.9rem;
+    letter-spacing:1px;
+}
+
+@media(max-width:900px){
+    .estrella{
+        font-size:1.7rem;
+    }
+}

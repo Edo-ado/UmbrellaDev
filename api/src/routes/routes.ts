@@ -7,6 +7,7 @@ import { especialidadRoutes } from "./especialidad.routes";
 import { ServicioRoutes } from "./servicio.routes";
 import { citasRoutes } from "./cita.routes";
 import { ImageRoutes } from "./image.routes";
+import { resenasRoutes } from "./resena.routes";
 
 
 import { EstadisticaRoutes } from "./estadistica.routes";
@@ -27,6 +28,9 @@ export class AppRoutes {
     router.use("/citas", citasRoutes.routes);
     router.use("/images", ImageRoutes.routes)
   router.use("/estadisticas", EstadisticaRoutes.routes);
+
+    router.use("/resenas", resenasRoutes.routes);
+
 
 
     return router;
