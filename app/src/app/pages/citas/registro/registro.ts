@@ -5,7 +5,9 @@ import { Router } from '@angular/router';
 import { CitaService } from '../../../core/services/cita.service';
 import { UsuarioService } from '../../../core/services/usuario.service';
 import { ServicioService, Servicio } from '../../../core/services/servicios.service';
+import { AuthService } from '../../../core/services/auth.service';
 import { EstadoCita } from '../../../core/models/cita.model';
+import {Role} from '../../../core/models/usuario.model'
 
 interface UsuarioOption {
   Id: number;
@@ -25,6 +27,7 @@ export class CitasCrear implements OnInit {
   private citaService = inject(CitaService);
   private usuarioService = inject(UsuarioService);
   private servicioService = inject(ServicioService);
+  private authService = inject(AuthService);
   private router = inject(Router);
 
   usuarios = signal<UsuarioOption[]>([]);
@@ -36,8 +39,12 @@ export class CitasCrear implements OnInit {
   error = signal<string>('');
   mensaje = signal<string>('');
 
-  // Campos del formulario
-  idcliente = signal<string>('');
+ 
+  usuarioActual = this.authService.profesional;
+
+  cargaValida = computed(() => this.usuarioActual()?.Role === Role.USUARIO);
+
+  
   idprofesional = signal<string>('');
   idservicio = signal<string>('');
   fecha = signal<string>('');
@@ -50,12 +57,10 @@ export class CitasCrear implements OnInit {
 
   modalidades = ['VIRTUAL', 'PRESENCIAL', 'HIBRIDA'];
 
-  clientes = computed(() => this.usuarios().filter((u) => u.Role === 'USUARIO'));
   profesionales = computed(() =>
     this.usuarios().filter((u) => u.Role === 'DESARROLLADOR'),
   );
 
-  //servicio actualmente seleccionado, para mostrar sus datos
   servicioSeleccionado = computed(() => {
     const idServ = this.idservicio();
     if (!idServ) return null;
@@ -65,13 +70,19 @@ export class CitasCrear implements OnInit {
     ) ?? null;
   });
 
-  //monto estimado a partir del servicio seleccionado
   montoEstimado = computed(() => {
     const servicio = this.servicioSeleccionado();
     return servicio ? servicio.Precio : null;
   });
 
   ngOnInit(): void {
+    if (!this.cargaValida()) {
+      this.error.set(
+        'Solo los usuarios clientes pueden agendar citas. Este usuario no tiene permiso para hacerlo.'
+      );
+      return;
+    }
+
     this.cargarUsuarios();
   }
 
@@ -115,8 +126,8 @@ export class CitasCrear implements OnInit {
   private validar(): boolean {
     const errs: Record<string, string> = {};
 
-    if (!this.idcliente()) {
-      errs['cliente'] = 'El cliente es obligatorio.';
+    if (!this.cargaValida()) {
+      errs['cliente'] = 'Solo los usuarios clientes pueden agendar citas.';
     }
 
     if (!this.idprofesional()) {
@@ -166,8 +177,6 @@ export class CitasCrear implements OnInit {
   }
 
   guardar(): void {
-  
-
     if (this.guardando()) {
       return;
     }
@@ -178,12 +187,18 @@ export class CitasCrear implements OnInit {
     if (!this.validar()) {
       this.error.set('Revisá los campos marcados antes de continuar.');
       return;
-     }
+    }
+
+    const usuario = this.usuarioActual();
+    if (!usuario) {
+      this.error.set('No se pudo identificar al usuario actual.');
+      return;
+    }
 
     this.guardando.set(true);
 
     const body = {
-      idcliente: Number(this.idcliente()),
+      idcliente: usuario.Id,
       idprofesional: Number(this.idprofesional()),
       idservicio: Number(this.idservicio()),
       Fecha: this.fecha(),
@@ -194,19 +209,19 @@ export class CitasCrear implements OnInit {
       Estado: EstadoCita.PENDIENTE as EstadoCita,
     };
 
-  this.citaService.solicitar(body).subscribe({
+    this.citaService.solicitar(body).subscribe({
       next: () => {
         this.mensaje.set('Cita creada correctamente.');
         this.guardando.set(false);
         setTimeout(() => this.router.navigate(['/citas']), 1200);
       },
-    error: (err: any) => {
-  console.error(err);
-  this.error.set(
-    err.error?.message || 'No se pudo crear la cita.'
-  );
-  this.guardando.set(false);
-},
+      error: (err: any) => {
+        console.error(err);
+        this.error.set(
+          err.error?.message || 'No se pudo crear la cita.'
+        );
+        this.guardando.set(false);
+      },
     });
   }
 

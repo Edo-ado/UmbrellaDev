@@ -1,5 +1,4 @@
 <section class="usuarios-page">
-  <!-- Hero Section -->
   <div class="usuarios-hero">
     <div>
       <p class="eyebrow">Umbrella Corporation</p>
@@ -14,7 +13,6 @@
     </button>
   </div>
 
-  <!-- Feedback Messages -->
   @if (mensaje()) {
     <div class="feedback ok">{{ mensaje() }}</div>
   }
@@ -27,26 +25,10 @@
     <div class="panel estado">Cargando datos...</div>
   }
 
-  <!-- Formulario -->
-  @if (!loading()) {
+  @if (!loading() && cargaValida()) {
     <div class="panel formulario">
-      <!-- Cliente -->
-      <div class="campo">
-        <label for="cliente">Cliente *</label>
-        <select
-          id="cliente"
-          [ngModel]="idcliente()"
-          (ngModelChange)="idcliente.set($event)"
-        >
-          <option value="">Seleccioná un cliente</option>
-          @for (cliente of clientes(); track cliente.Id) {
-            <option [value]="cliente.Id">{{ cliente.NombreCompleto }}</option>
-          }
-        </select>
-        @if (errores()['cliente']) {
-          <small class="hint">{{ errores()['cliente'] }}</small>
-        }
-      </div>
+      <!-- Cliente: usuario logueado, solo lectura -->
+      
 
       <!-- Profesional -->
       <div class="campo">
