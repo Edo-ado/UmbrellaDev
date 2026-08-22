@@ -33,7 +33,7 @@ export class CitaService {
   }
 
   create(data: Partial<Cita>): Observable<Cita> {
-    return this.http.post<Cita>(`${this.baseUrl}/crear`, data);
+    return this.http.post<Cita>(`${this.baseUrl}/solicitar`, data);
   }
 
   toggleStatus(id: number): Observable<Cita> {
