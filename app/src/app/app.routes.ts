@@ -55,7 +55,10 @@ export const routes: Routes = [
       },
 
       //profesionales
-      { path: 'profesionales', component: ProfesionalLista, canActivate: [authGuard] },
+      { path: 'profesionales', component: ProfesionalLista,
+        canActivate: [authGuard],
+      data: { roles: [Role.ADMIN] } },
+      
       {
         path: 'profesionalescrear',
         component: ProfesionalesCrear,

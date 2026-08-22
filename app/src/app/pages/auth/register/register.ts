@@ -12,7 +12,7 @@ import {
 } from '@angular/forms'
 
 import { Router } from '@angular/router'
-
+import { HttpErrorResponse } from '@angular/common/http';
 import { AuthService } from '../../../core/services/auth.service'
 import { PaisService } from '../../../core/services/pais.service'
 
@@ -199,14 +199,14 @@ export class RegisterComponent implements OnInit {
                     }, 1200)
                 },
 
-                error: (error: Error) => {
-                    this.cargando.set(false)
+              error: (error: HttpErrorResponse) => {
+    this.cargando.set(false)
 
-                    this.error.set(
-                        error.message ||
-                        'No fue posible crear la cuenta'
-                    )
-                },
+    this.error.set(
+        error.error?.message ||
+        'No fue posible crear la cuenta'
+    )
+},
             })
     }
 

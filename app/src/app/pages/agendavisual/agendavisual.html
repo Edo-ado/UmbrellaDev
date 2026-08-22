@@ -9,26 +9,27 @@
     </div>
   </div>
 
-  @if (usuarioActual()?.Role === 'ADMIN') {
-    <section class="panel filtros">
-      <div class="campo">
-        <label for="estado">Estado</label>
+@if (usuarioActual()?.Role === 'ADMIN' || usuarioActual()?.Role === 'DESARROLLADOR') {
+  <section class="panel filtros">
+    <div class="campo">
+      <label for="estado">Estado</label>
 
-        <select
-          id="estado"
-          [value]="estadoSeleccionado()"
-          (change)="estadoSeleccionado.set($any($event.target).value); filtrarPorEstado()"
-        >
-          <option value="">Todos los estados</option>
+      <select
+        id="estado"
+        [value]="estadoSeleccionado()"
+        (change)="estadoSeleccionado.set($any($event.target).value); filtrarPorEstado()"
+      >
+        <option value="">Todos los estados</option>
 
-          @for (estado of estados; track estado) {
-            <option [value]="estado">
-              {{ estado }}
-            </option>
-          }
-        </select>
-      </div>
+        @for (estado of estados; track estado) {
+          <option [value]="estado">
+            {{ estado }}
+          </option>
+        }
+      </select>
+    </div>
 
+    @if (usuarioActual()?.Role === 'ADMIN') {
       <div class="campo">
         <label for="profesional">Profesional</label>
 
@@ -86,8 +87,9 @@
           Limpiar filtros
         </button>
       </div>
-    </section>
-  }
+    }
+  </section>
+}
 
   @if (error()) {
     <div class="feedback error">
