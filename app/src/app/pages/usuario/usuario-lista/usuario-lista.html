@@ -83,6 +83,25 @@
             <button class="btn btn-accion" (click)="toggleEstado(usuario.Id)">
               {{ usuario.Estado === 'ACTIVO' ? 'Desactivar' : 'Activar' }}
             </button>
+           <select
+              class="select-cambiar-rol"
+              [ngModel]="usuario.Role"
+              #nuevoRol
+              aria-label="Seleccionar nuevo rol"
+            >
+              <option value="ADMIN">Administrador</option>
+              <option value="DESARROLLADOR">Desarrollador</option>
+              <option value="USUARIO">Usuario</option>
+            </select>
+
+            <button
+              type="button"
+              class="btn btn-accion btn-cambiar-rol"
+              [disabled]="nuevoRol.value === usuario.Role"
+              (click)="ChangeUserRole(usuario.Id, nuevoRol.value)"
+            >
+              Cambiar
+            </button>
           </td>
         </tr>
       </tbody>

@@ -43,7 +43,7 @@
         }
 
     
-            <li><a routerLink="/servicios">Servicios</a></li>
+ 
             <li><a routerLink="/citas">Citas</a></li>
             <li><a routerLink="/agenda-visual">Agenda Visual</a></li>
 
@@ -55,6 +55,7 @@
 
 
            @if (authService.tieneRol([Role.ADMIN, Role.DESARROLLADOR])) {
+           <li><a routerLink="/servicios">Servicios</a></li>
   <li>
     <a routerLink="/panel-control">
       Reportes Gráficos

@@ -30,6 +30,10 @@ export class UsuarioService {
     });
   }
 
+  ChangeRol(id: number, nuevoRol: string): Observable<any> {
+    return this.http.patch(`${this.apiUrl}/cambiar-rol/${id}`, { nuevoRol });
+  }
+
   getDesarrolladoresDisponibles(): Observable<Profesional[]> {
     return this.http.get<Profesional[]>(`${this.apiUrl}/desarrolladoresDisponibles`);
   }

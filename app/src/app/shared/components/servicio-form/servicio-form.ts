@@ -8,13 +8,15 @@ import {
   maxLength,
   min,
 } from '@angular/forms/signals';
+
 import {
   Servicio,
   ServicioFormModel,
   ServicioCreateDto,
   ServicioUpdateDto,
 } from '../../../core/models/servicio.model';
-import { Profesional } from '../../../core/models/profesional.model';
+
+import { Profesional } from '../../../core/models/usuario.model';
 import { Categoria } from '../../../core/models/categoria.model';
 import { Especialidad } from '../../../core/models/especialidad.model';
 
@@ -27,7 +29,7 @@ import { Especialidad } from '../../../core/models/especialidad.model';
 })
 export class ServicioForm {
   servicio = input<Servicio | null>(null);
-  profesionales = input<Profesional[]>([]);
+  profesional = input<Profesional | null>(null);
   categorias = input<Categoria[]>([]);
   especialidades = input<Especialidad[]>([]);
   saving = input<boolean>(false);
@@ -42,20 +44,35 @@ export class ServicioForm {
     minLength(path.nombre, 3, { message: 'Mínimo 3 caracteres' });
     maxLength(path.nombre, 150, { message: 'Máximo 150 caracteres' });
 
-    maxLength(path.descripcion, 500, { message: 'Máximo 500 caracteres' });
+    maxLength(path.descripcion, 500, {
+      message: 'Máximo 500 caracteres',
+    });
 
-    required(path.idprofesional, { message: 'Seleccione un profesional' });
-    required(path.idcategoria, { message: 'Seleccione una categoría' });
+    required(path.idcategoria, {
+      message: 'Seleccione una categoría',
+    });
 
-    required(path.modalidad, { message: 'Seleccione una modalidad' });
+    required(path.modalidad, {
+      message: 'Seleccione una modalidad',
+    });
 
-    required(path.precio, { message: 'El precio es obligatorio' });
-    min(path.precio, 1, { message: 'El precio debe ser mayor a 0' });
+    required(path.precio, {
+      message: 'El precio es obligatorio',
+    });
+    min(path.precio, 1, {
+      message: 'El precio debe ser mayor a 0',
+    });
 
-    required(path.duracion, { message: 'La duración es obligatoria' });
-    min(path.duracion, 1, { message: 'La duración debe ser mayor a 0' });
+    required(path.duracion, {
+      message: 'La duración es obligatoria',
+    });
+    min(path.duracion, 1, {
+      message: 'La duración debe ser mayor a 0',
+    });
 
-    required(path.estado, { message: 'Seleccione un estado' });
+    required(path.estado, {
+      message: 'Seleccione un estado',
+    });
   });
 
   constructor() {
@@ -76,7 +93,8 @@ export class ServicioForm {
         duracion: servicio.Duracion ?? 0,
         modalidad: servicio.Modalidad ?? 'PRESENCIAL',
         estado: servicio.Estado ?? 'ACTIVO',
-        especialidadIds: servicio.servicioEspecialidades?.map((item: any) => item.Id) ?? [],
+        especialidadIds:
+          servicio.servicioEspecialidades?.map((item: any) => item.Id) ?? [],
       });
     });
   }
@@ -95,37 +113,36 @@ export class ServicioForm {
     };
   }
 
-  private resetForm() {
+  private resetForm(): void {
     this.servicioModel.set(this.modeloVacio());
   }
 
- toggleEspecialidad(id: number, checked: boolean) {
-  const valorActual = this.servicioModel();
-  let nuevasEspecialidades = [...valorActual.especialidadIds];
+  toggleEspecialidad(id: number, checked: boolean): void {
+    const valorActual = this.servicioModel();
+    let nuevasEspecialidades = [...valorActual.especialidadIds];
 
-  if (checked) {
-    if (!nuevasEspecialidades.includes(id)) {
-      nuevasEspecialidades.push(id);
+    if (checked) {
+      if (!nuevasEspecialidades.includes(id)) {
+        nuevasEspecialidades.push(id);
+      }
+    } else {
+      nuevasEspecialidades = nuevasEspecialidades.filter(
+        (item) => item !== id,
+      );
     }
-  } else {
-    nuevasEspecialidades = nuevasEspecialidades.filter(function(item) {
-      return item !== id;
+
+    this.servicioModel.set({
+      ...valorActual,
+      especialidadIds: nuevasEspecialidades,
     });
   }
-
-  this.servicioModel.set({
-    ...valorActual,
-    especialidadIds: nuevasEspecialidades,
-  });
-}
 
   isEspecialidadSelected(id: number): boolean {
     return this.servicioModel().especialidadIds.includes(id);
   }
 
-  private marcarCamposComoTocados() {
+  private marcarCamposComoTocados(): void {
     this.servicioForm.nombre().markAsTouched();
-    this.servicioForm.idprofesional().markAsTouched();
     this.servicioForm.idcategoria().markAsTouched();
     this.servicioForm.modalidad().markAsTouched();
     this.servicioForm.precio().markAsTouched();
@@ -136,7 +153,6 @@ export class ServicioForm {
   private formularioInvalido(): boolean {
     return (
       this.servicioForm.nombre().invalid() ||
-      this.servicioForm.idprofesional().invalid() ||
       this.servicioForm.idcategoria().invalid() ||
       this.servicioForm.modalidad().invalid() ||
       this.servicioForm.precio().invalid() ||
@@ -161,14 +177,17 @@ export class ServicioForm {
     };
   }
 
-  submit() {
-    if (this.saving()) return;
+  submit(): void {
+    if (this.saving()) {
+      return;
+    }
 
     this.marcarCamposComoTocados();
 
-    if (this.formularioInvalido()) return;
+    if (this.formularioInvalido()) {
+      return;
+    }
 
-    const dto = this.buildDto();
-    this.guardar.emit(dto);
+    this.guardar.emit(this.buildDto());
   }
 }

@@ -90,6 +90,27 @@ export class UsuarioLista implements OnInit {
     this.error.set('');
     this.cargarUsuarios();
   }
+ChangeUserRole(id: number, nuevoRol: string) {
+  const confirmar = confirm(
+    `¿Deseas cambiar el rol de este usuario a ${nuevoRol}?`,
+  );
+
+  if (!confirmar) {
+    return;
+  }
+
+  this.usuarioService.ChangeRol(id, nuevoRol).subscribe({
+    next: () => {
+      this.mensaje.set('Rol actualizado correctamente.');
+      this.cargarUsuarios();
+
+      setTimeout(() => this.mensaje.set(''), 2500);
+    },
+    error: () => {
+      this.error.set('No se pudo actualizar el rol del usuario.');
+    },
+  });
+}
 
   toggleEstado(id: number) {
     const confirmar = confirm('¿Deseas cambiar el estado de este usuario?');

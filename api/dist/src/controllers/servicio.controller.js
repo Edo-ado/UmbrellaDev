@@ -23,6 +23,18 @@ export class ServicioController {
             next(error);
         }
     };
+
+   getAllActivos = async (request, response, next) => {
+        try {
+            const servicios = await ServicioServices.GetAllActive();
+            return response.status(StatusCodes.OK).json(servicios);
+        }
+        catch (error) {
+            console.error(error);
+            next(error);
+        }
+    };
+
     getByName = async (request, response, next) => {
         try {
             const nombre = (request.query.nombre || request.query.Nombre);

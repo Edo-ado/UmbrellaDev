@@ -23,6 +23,16 @@ export class CategoriaController {
             next(error);
         }
     };
+    getAllActivos = async (request, response, next) => {
+        try {
+            const categorias = await CategoriaService.GetAllActivos();
+            return response.status(StatusCodes.OK).json(categorias);
+        }
+        catch (error) {
+            console.error(error);
+            next(error);
+        }
+    };
     getByName = async (request, response, next) => {
         try {
             const nombre = (request.query.nombre || request.query.Nombre);

@@ -21,11 +21,15 @@ export class ServicioRoutes {
 
     router.get("/rango-precio", ServiciosController.getByRangoPrecio);
 
+    //ACTIVOS
+    router.get("/activos", ServiciosController.getAllActivos);
     //CRUD
     router.post("/crear", ServiciosController.create);
     router.put("/update/:id", ServiciosController.update);
     router.patch("/CambioEstado/:id", ServiciosController.toggleStatus);
 
+        // Filtrado de servicios
+    router.get('/filtrados', ServiciosController.getServiciosFiltrados);
     //por usuario(servicios de un profesional)
 router.get(
   "/profesional-activo/:id",
@@ -33,4 +37,7 @@ router.get(
 );
     return router;
   }
+
+
+  
 }

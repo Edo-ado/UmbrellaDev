@@ -184,6 +184,93 @@
   font-weight: 700;
 }
 
+.filtros-servicios {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(150px, 1fr));
+  gap: 16px;
+  align-items: end;
+  margin: 0 0 26px;
+  padding: 18px;
+  border: 1px solid #2c2c2c;
+  border-radius: 14px;
+  background:
+    linear-gradient(135deg, rgba(128, 0, 19, 0.12), transparent 45%),
+    #161616;
+}
+
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  min-width: 0;
+}
+
+.campo label {
+  color: #c9c9c9;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.7px;
+  text-transform: uppercase;
+}
+
+.campo input,
+.campo select {
+  width: 100%;
+  min-height: 42px;
+  box-sizing: border-box;
+  border: 1px solid #3a3a3a;
+  border-radius: 9px;
+  outline: none;
+  background: #202020;
+  color: #f3f3f3;
+  font-family: inherit;
+  font-size: 0.8rem;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease;
+}
+
+.campo input {
+  padding: 0 12px;
+}
+
+.campo select {
+  padding: 0 10px;
+  cursor: pointer;
+}
+
+.campo input::placeholder {
+  color: #747474;
+}
+
+.campo input:focus,
+.campo select:focus {
+  border-color: #d3001e;
+  background: #252025;
+  box-shadow: 0 0 0 3px rgba(211, 0, 30, 0.14);
+}
+
+.campo select option {
+  background: #1c1c1c;
+  color: #f4f4f4;
+}
+
+.filtros-acciones {
+  display: flex;
+  grid-column: 1 / -1;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  padding-top: 2px;
+}
+
+.filtros-acciones .btn {
+  min-height: 38px;
+  padding: 9px 15px;
+  font-size: 0.74rem;
+}
+
 .cita-estado {
   display: flex;
   flex-direction: column;
@@ -339,6 +426,40 @@
   margin-top: 6px;
   color: #d05a67;
   font-size: 0.68rem;
+}
+
+/* Botón “Ver detalle” del profesional (tema oscuro) */
+.btn-icono.btn-ver-detalle {
+  display: inline-grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid #3a3a3a;
+  border-radius: 0.5rem;
+  background: #1a1a1a;
+  color: #ff6c78;
+  font-size: 1.05rem;
+  cursor: pointer;
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease,
+    color 0.2s ease,
+    transform 0.15s ease,
+    box-shadow 0.2s ease;
+  flex-shrink: 0;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+}
+
+.btn-icono.btn-ver-detalle:hover {
+  border-color: #c10019;
+  background: #2a1216;
+  color: #ff8a96;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(193, 0, 25, 0.25);
+}
+
+.btn-icono.btn-ver-detalle:active {
+  transform: translateY(0);
 }
 
 .flecha {

@@ -34,6 +34,17 @@ export const CategoriaService = {
       },
     });
   },
+  GetAllActivos: async () => {
+    return await prisma.categoria.findMany({
+      where: { Estado: "ACTIVO" },
+      include: {
+        especialidad: {
+          omit: { Estado: true, Descripcion: true, CategoriaId: true },
+        },
+      },
+    });
+  }
+  , 
 
   async getByEstado(Estado: Estado) {
     return await prisma.categoria.findMany({

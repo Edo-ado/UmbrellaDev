@@ -86,7 +86,7 @@ async getAllDesarrolladores() {
 
 async getAllDesarrolladoresActivos() {
   return await prisma.usuario.findMany({
-    where: { Role: "DESARROLLADOR" , Estado: "ACTIVO" }, 
+    where: { Role: "DESARROLLADOR" , Estado: "ACTIVO" , Disponibilidad: true}, 
     include: {
       especialidades: true, 
     },
@@ -415,5 +415,21 @@ async getByFechas(DiaInicial: Date, DiaFinal: Date) {
       include: { especialidades: true },
     });
   },
+  
+async cambiarRol(id: number, nuevoRol: Role) {
+    const usuario = await this.getById(id);
+    if (!usuario) {
+        throw new Error("El usuario indicado no existe");
+    }
+    if (usuario.Role === nuevoRol) {
+        throw new Error("El usuario ya tiene el rol indicado");
+    }
+    return await prisma.usuario.update({
+        where: { Id: id },
+        data: {
+            Role: nuevoRol,
+        },
+    });
+  }
 
 };

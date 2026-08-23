@@ -13,6 +13,59 @@
 
 }
 
+.tabla-wrap td:last-child {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 270px;
+}
+
+.select-cambiar-rol {
+  min-height: 34px;
+  padding: 0 28px 0 10px;
+  border: 1px solid #3a3a3a;
+  border-radius: 8px;
+  outline: none;
+  background: #1b1b1b;
+  color: #eeeeee;
+  font-family: inherit;
+  font-size: 0.72rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease;
+}
+
+.select-cambiar-rol:hover {
+  border-color: #6a3038;
+  background: #222;
+}
+
+.select-cambiar-rol:focus {
+  border-color: #d3001e;
+  box-shadow: 0 0 0 3px rgba(211, 0, 30, 0.14);
+}
+
+.select-cambiar-rol option {
+  background: #1b1b1b;
+  color: #f5f5f5;
+}
+
+.btn-cambiar-rol {
+  min-height: 34px;
+  padding: 7px 11px;
+}
+
+.btn-cambiar-rol:disabled {
+  border-color: #343434;
+  background: #242424;
+  color: #777;
+  cursor: not-allowed;
+  opacity: 0.7;
+  transform: none;
+}
 
 .usuarios-page{
 
