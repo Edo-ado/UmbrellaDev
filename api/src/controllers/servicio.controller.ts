@@ -80,6 +80,20 @@ export class ServicioController {
     }
   };
 
+getAllActivos = async (
+    request: Request,
+    response: Response,
+    next: NextFunction,
+  ) => {
+    try {
+      const servicios = await ServicioServices.getAllActivos();
+      return response.status(StatusCodes.OK).json(servicios);
+    } catch (error) {
+      console.error(error);
+      next(error);
+    }
+  };
+
   getByModalidad = async (
     request: Request,
     response: Response,

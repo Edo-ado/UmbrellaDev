@@ -210,7 +210,24 @@ async getServiciosProfesionalActivo(profesionalId: number) {
         Estado: "ACTIVO",
       },  
 
+    
+    },
+    include: {
+      profesional: true,
+      categoria: true,
+      servicioEspecialidades: true,
+    },
+  });
+},
+
+//GET ALL ACTIVOS
+async getAllActivos() {
+  return await prisma.servicio.findMany({
+    where: {
       Estado: "ACTIVO",
+      profesional: {
+        Estado: "ACTIVO",
+      },
     },
     include: {
       profesional: true,

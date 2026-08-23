@@ -10,6 +10,18 @@ export const CategoriaService = {
             },
         });
     },
+
+async GetAllActivos() {
+        return prisma.categoria.findMany({
+            where: { Estado: "ACTIVO" },
+            include: {
+                especialidad: {
+                    omit: { Estado: true, Descripcion: true, CategoriaId: true },
+                },
+            },
+        });
+    },
+
     async getById(id) {
         return await prisma.categoria.findUnique({
             where: { Id: id },

@@ -18,6 +18,8 @@ export class ServicioRoutes {
         router.patch("/CambioEstado/:id", ServiciosController.toggleStatus);
         //por usuario(servicios de un profesional)
         router.get("/profesional-activo/:id", ServiciosController.getByProfesionalActivo);
+        //get all servicios activos
+        router.get("/activos", ServiciosController.getAllActivos);
         return router;
     }
 }

@@ -15,18 +15,15 @@
         }
       </div>
 
-      <div class="campo">
-        <label>Profesional</label>
-        <select [formField]="servicioForm.idprofesional">
-          <option [value]="0" disabled>Selecciona un profesional</option>
-          @for (profesional of profesionales(); track profesional.Id) {
-            <option [value]="profesional.Id">{{ profesional.NombreCompleto }}</option>
-          }
-        </select>
-        @if (servicioForm.idprofesional().touched() && servicioForm.idprofesional().invalid()) {
-          <span class="campo-error">{{ servicioForm.idprofesional().errors()[0].message }}</span>
-        }
-      </div>
+    <div class="campo">
+  <label>Profesional asignado</label>
+
+  <input
+    type="text"
+    [value]="profesional()?.NombreCompleto || 'Profesional no identificado'"
+    disabled
+  />
+</div>
 
       <div class="campo">
         <label>Categoría</label>

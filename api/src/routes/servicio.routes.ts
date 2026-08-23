@@ -21,6 +21,8 @@ export class ServicioRoutes {
 
     router.get("/rango-precio", ServiciosController.getByRangoPrecio);
 
+    //ACTIVOS
+    router.get("/activos", ServiciosController.getAllActivos);
     //CRUD
     router.post("/crear", ServiciosController.create);
     router.put("/update/:id", ServiciosController.update);
