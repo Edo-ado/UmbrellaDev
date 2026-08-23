@@ -183,6 +183,23 @@ export const UsuarioService = {
             throw AppError.badRequest("El usuario indicado no existe");
         }
     },
+
+async changeUserRole(id, newRole) {
+        const usuario = await this.getById(id);
+        if (!usuario) {
+            throw AppError.badRequest("El usuario indicado no existe");
+        }
+        if (usuario.Role === newRole) {
+            throw AppError.badRequest("El usuario ya tiene el rol indicado");
+        }
+        return await prisma.usuario.update({
+            where: { Id: id },
+            data: {
+                Role: newRole,
+            },
+        });
+    },
+
     async toggleDisponibilidadByProfesional(id) {
         const usuario = await this.getById(id);
         if (!usuario) {

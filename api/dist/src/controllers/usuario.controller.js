@@ -23,6 +23,26 @@ export class usuarioController {
             next(error);
         }
     };
+
+changeUserRole = async (request, response, next) => {
+        try {
+            const { id } = request.params;
+            const { role } = request.body;
+            if (!Object.values(Role).includes(role)) {
+                return response
+
+                    .status(StatusCodes.BAD_REQUEST)
+                    .json({ error: "Rol inválido" });
+            }
+            const usuario = await UsuarioService.changeUserRole(Number(id), role);
+            return response.status(StatusCodes.OK).json(usuario);
+        }   
+        catch (error) {
+            console.error(error);
+            next(error);
+        }
+    };
+
     getByRol = async (request, response, next) => {
         try {
             const { rol } = request.params;

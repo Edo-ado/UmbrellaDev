@@ -45,6 +45,7 @@ router.get("/fechas", usuariosController.getByFechas);
 
     router.get("/perfil", authenticateToken, usuariosController.perfil);
     router.get("/perfil/:id", usuariosController.perfil);
+    router.patch("/cambiar-rol/:id", usuariosController.changeUserRole);
 
     return router;
   }

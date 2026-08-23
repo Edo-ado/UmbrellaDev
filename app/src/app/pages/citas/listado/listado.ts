@@ -84,7 +84,7 @@ citasVisibles = computed(() => {
   });
 
 
-  // Los filtros del panel se aplican SOBRE citasVisibles, no sobre todas las citas
+  //Los filtros del panel se aplican SOBRE citasVisibles, no sobre todas las citas
   citasFiltradas = computed(() => {
     const estado = this.estadoSeleccionado();
     const profesionalId = this.profesionalSeleccionado();

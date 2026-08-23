@@ -17,6 +17,8 @@ export class AppRoutes {
         router.use("/especialidades", especialidadRoutes.routes);
         router.use("/servicios", ServicioRoutes.routes);
         router.use("/citas", citasRoutes.routes);
+        router.use("/cita", citasRouteses.routes);
+
         router.use("/images", ImageRoutes.routes);
         router.use("/estadisticas", EstadisticaRoutes.routes);
         router.use("/resenas", resenasRoutes.routes);

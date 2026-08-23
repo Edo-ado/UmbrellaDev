@@ -1,0 +1,30 @@
+<section class="bloqueo-page">
+  <div class="bloqueo-card">
+    <div class="bloqueo-icono">⛔</div>
+
+    <p class="eyebrow">Umbrella Corporation</p>
+
+    <h1>Acceso no autorizado</h1>
+
+    <p class="descripcion">
+      No tenés permisos para ver esta sección con tu rol actual.
+    </p>
+
+    @if (usuarioActual()) {
+      <div class="rol-info">
+        Ingresaste como <strong>{{ usuarioActual()?.NombreCompleto }}</strong>
+        ({{ usuarioActual()?.Role }})
+      </div>
+    }
+
+    <div class="bloqueo-acciones">
+      <button class="btn btn-primario" (click)="volverAlInicio()">
+        Volver al inicio
+      </button>
+
+      <button class="btn btn-secundario" (click)="cerrarSesion()">
+        Cerrar sesión
+      </button>
+    </div>
+  </div>
+</section>

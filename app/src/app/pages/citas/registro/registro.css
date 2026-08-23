@@ -28,6 +28,124 @@
     margin-bottom:15px;
 }
 
+select:disabled {
+  opacity: .6;
+  cursor: not-allowed;
+
+  background-color: #131313 !important;
+}
+
+
+.hint-info {
+  color: #9b9b9b;
+}
+
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 20px;
+
+  background: rgba(0, 0, 0, .7);
+
+  z-index: 1000;
+}
+
+
+.modal-confirmacion {
+  width: 100%;
+  max-width: 420px;
+
+  padding: 28px;
+
+  background: #121212;
+
+  border: 1px solid #242424;
+  border-radius: 18px;
+
+  box-shadow: 0 0 40px rgba(255, 0, 0, .15);
+}
+
+
+.modal-confirmacion h3 {
+  margin: 0 0 20px;
+
+  color: #ffffff;
+
+  font-size: 1.3rem;
+}
+
+
+.modal-detalle {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  margin-bottom: 20px;
+}
+
+
+.modal-fila {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding-bottom: 10px;
+
+  border-bottom: 1px solid #242424;
+
+  font-size: .9rem;
+}
+
+
+.modal-fila span {
+  color: #9b9b9b;
+}
+
+
+.modal-fila strong {
+  color: #ffffff;
+}
+
+
+.modal-monto {
+  border-bottom: none;
+
+  padding-top: 6px;
+}
+
+
+.modal-monto strong {
+  color: #ff4b4b;
+
+  font-size: 1.1rem;
+}
+
+
+.modal-nota {
+  margin: 0 0 20px;
+
+  color: #9b9b9b;
+
+  font-size: .82rem;
+}
+
+
+.modal-acciones {
+  display: flex;
+  gap: 12px;
+}
+
+
+.modal-acciones .btn {
+  flex: 1;
+}
+
 .usuarios-hero h2{
     font-size:3rem;
     margin:0;

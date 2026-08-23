@@ -27,7 +27,7 @@ import { roleGuard } from './core/guards/role.guard';
 
 import { Role } from '../app/core/models/usuario.model';
 import { AgendaVisualComponent } from './pages/agendavisual/agendavisual';
-
+import { SinAutorizacion } from './pages/sin-autorizacion/sin-autorizacion';
 import {MiPerfil} from "./pages/usuario/mi-perfil/mi-perfil"
 
 
@@ -57,9 +57,12 @@ export const routes: Routes = [
       },
 
       //profesionales
-      { path: 'profesionales', component: ProfesionalLista,
-        canActivate: [authGuard],
-      data: { roles: [Role.ADMIN] } },
+{
+  path: 'profesionales',
+  component: ProfesionalLista,
+  canActivate: [authGuard, roleGuard],
+  data: { roles: [Role.ADMIN] },
+},
       
       {
         path: 'profesionalescrear',
@@ -68,7 +71,7 @@ export const routes: Routes = [
         data: { roles: [Role.ADMIN] },
       },
 
-  
+  { path: 'sin-autorizacion', component: SinAutorizacion },
 
       {
         path: 'profesionalesEditar/:id',
@@ -105,7 +108,12 @@ export const routes: Routes = [
         canActivate: [authGuard, roleGuard],
         data: { roles: [Role.USUARIO, Role.ADMIN, Role.DESARROLLADOR] },
       },
-      { path: 'citas/crear', component: CitasCrear },
+   {
+  path: 'citas/crear',
+  component: CitasCrear,
+  canActivate: [authGuard, roleGuard],
+  data: { roles: [Role.USUARIO] },
+},
       { path: 'citas/detalle/:id', component: CitasDetalle , canActivate: [authGuard] },
 
       // panel de control

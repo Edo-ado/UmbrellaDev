@@ -416,4 +416,20 @@ async getByFechas(DiaInicial: Date, DiaFinal: Date) {
     });
   },
   
+async cambiarRol(id: number, nuevoRol: Role) {
+    const usuario = await this.getById(id);
+    if (!usuario) {
+        throw new Error("El usuario indicado no existe");
+    }
+    if (usuario.Role === nuevoRol) {
+        throw new Error("El usuario ya tiene el rol indicado");
+    }
+    return await prisma.usuario.update({
+        where: { Id: id },
+        data: {
+            Role: nuevoRol,
+        },
+    });
+  }
+
 };
