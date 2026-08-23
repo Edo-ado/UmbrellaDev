@@ -3,7 +3,9 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UsuarioService } from '../../../core/services/usuario.service';
 import { ImageService } from '../../../core/services/imagen.service';
+import { AuthService } from '../../../core/services/auth.service';
 import { Profesional } from '../../../core/models/profesional.model';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-profesionales-detalle',
@@ -17,6 +19,8 @@ export class ProfesionalesDetalle {
   private readonly router = inject(Router);
   private readonly usuarioService = inject(UsuarioService);
   private readonly imageService = inject(ImageService);
+  private readonly authService = inject(AuthService);
+  private readonly location = inject(Location);
 
   profesional = signal<Profesional | null>(null);
   loading = signal(true);
@@ -58,7 +62,17 @@ export class ProfesionalesDetalle {
     this.router.navigate(['/profesionalesEditar', this.id]);
   }
 
-  volver() {
-    this.router.navigate(['/profesionales']);
+  volver(): void {
+    this.location.back();
+  }
+
+  puedeEditar(): boolean {
+    const usuario = this.authService.profesional();
+
+    if (!usuario) {
+      return false;
+    }
+
+    return usuario.Role === 'ADMIN' || usuario.Role === 'DESARROLLADOR';
   }
 }

@@ -78,7 +78,7 @@ async getAllDesarrolladores() {
 
 async getAllDesarrolladoresActivos() {
   return await prisma.usuario.findMany({
-    where: { Role: "DESARROLLADOR" , Estado: "ACTIVO" }, 
+    where: { Role: "DESARROLLADOR" , Estado: "ACTIVO" , Disponibilidad: true}, 
     include: {
       especialidades: true, 
     },
@@ -302,4 +302,5 @@ async getAllDesarrolladoresActivos() {
       include: { especialidades: true },
     });
   },
+  
 };

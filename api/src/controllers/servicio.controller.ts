@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { StatusCodes } from "http-status-codes";
 import { ServicioServices } from "../services/servicio.service";
 import {  MODALIDAD } from "../../generated/prisma/enums";
+import { Router } from 'express';
 
 export class ServicioController {
   getAll = async (request: Request, response: Response, next: NextFunction) => {
@@ -170,6 +171,33 @@ getByProfesionalActivo = async (
     const id = Number(request.params.id);
 
     const servicios = await ServicioServices.getServiciosProfesionalActivo(id);
+
+    return response.status(StatusCodes.OK).json(servicios);
+  } catch (error) {
+    next(error);
+  }
+};
+
+getServiciosFiltrados = async (
+  request: Request,
+  response: Response,
+  next: NextFunction,
+) => {
+  try {
+    const query = request.query as any;
+
+    const filter: any = {
+      profesionalId: query.profesionalId ? Number(query.profesionalId) : undefined,
+      categoriaId: query.categoriaId ? Number(query.categoriaId) : undefined,
+      modalidad: query.modalidad || undefined,
+      precioMin: query.precioMin ? Number(query.precioMin) : undefined,
+      precioMax: query.precioMax ? Number(query.precioMax) : undefined,
+      nombre: query.nombre || undefined,
+      soloActivos: query.soloActivos === 'true',
+      soloProfesionalActivoYDisponible: query.soloProfesionalActivoYDisponible === 'true',
+    };
+
+    const servicios = await ServicioServices.getServiciosFiltrados(filter);
 
     return response.status(StatusCodes.OK).json(servicios);
   } catch (error) {

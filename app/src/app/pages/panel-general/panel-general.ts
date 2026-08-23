@@ -35,6 +35,13 @@ export class PanelGeneral implements OnInit {
   private categoriaService = inject(CategoriaService);
   private authService = inject(AuthService);
 
+  //filtros
+    categoriaSeleccionada = '';
+    modalidadSeleccionada = '';
+    precioMin: number | null = null;
+    precioMax: number | null = null;
+    nombreServicio = '';
+
 usuarioActual = this.authService.profesional;
   citas = signal<Cita[]>([]);
   profesionales = signal<Profesional[]>([]);
@@ -159,4 +166,184 @@ cargarProfesionales(): void {
   verServicios(): void {
     this.router.navigate(['/servicios']);
   }
+
+
+//filtros
+
+filtrarPorCategoria(): void {
+  const categoriaId = Number(this.categoriaSeleccionada);
+
+  if (!categoriaId) {
+    this.errorServicios.set('Selecciona una categoría.');
+    return;
+  }
+
+  this.loadingServicios.set(true);
+  this.errorServicios.set('');
+
+  this.servicioService.obtenerPorCategoria(categoriaId).subscribe({
+    next: (data) => {
+      this.servicios.set(data);
+      this.loadingServicios.set(false);
+    },
+    error: () => {
+      this.errorServicios.set(
+        'No se pudieron filtrar los servicios por categoría.',
+      );
+      this.loadingServicios.set(false);
+    },
+  });
+}
+
+filtrarPorModalidad(): void {
+  if (!this.modalidadSeleccionada) {
+    this.errorServicios.set('Selecciona una modalidad.');
+    return;
+  }
+
+  this.loadingServicios.set(true);
+  this.errorServicios.set('');
+
+  this.servicioService
+    .obtenerPorModalidad(this.modalidadSeleccionada)
+    .subscribe({
+      next: (data) => {
+        this.servicios.set(data);
+        this.loadingServicios.set(false);
+      },
+      error: () => {
+        this.errorServicios.set(
+          'No se pudieron filtrar los servicios por modalidad.',
+        );
+        this.loadingServicios.set(false);
+      },
+    });
+}
+
+filtrarPorPrecio(): void {
+  if (this.precioMin === null || this.precioMax === null) {
+    this.errorServicios.set('Indica precio mínimo y máximo.');
+    return;
+  }
+
+  if (this.precioMin > this.precioMax) {
+    this.errorServicios.set(
+      'El precio mínimo no puede ser mayor que el máximo.',
+    );
+    return;
+  }
+
+  this.loadingServicios.set(true);
+  this.errorServicios.set('');
+
+  this.servicioService
+    .obtenerPorRangoPrecio(this.precioMin, this.precioMax)
+    .subscribe({
+      next: (data) => {
+        this.servicios.set(data);
+        this.loadingServicios.set(false);
+      },
+      error: () => {
+        this.errorServicios.set(
+          'No se pudieron filtrar los servicios por precio.',
+        );
+        this.loadingServicios.set(false);
+      },
+    });
+}
+
+buscarPorNombre(): void {
+  if (!this.nombreServicio.trim()) {
+    this.errorServicios.set('Escribe un nombre para buscar.');
+    return;
+  }
+
+  this.loadingServicios.set(true);
+  this.errorServicios.set('');
+
+  this.servicioService
+    .buscarPorNombre(this.nombreServicio.trim())
+    .subscribe({
+      next: (data) => {
+        this.servicios.set(data);
+        this.loadingServicios.set(false);
+      },
+      error: () => {
+        this.errorServicios.set(
+          'No se pudieron buscar los servicios por nombre.',
+        );
+        this.loadingServicios.set(false);
+      },
+    });
+}
+
+limpiarFiltrosServicios(): void {
+  this.categoriaSeleccionada = '';
+  this.modalidadSeleccionada = '';
+  this.precioMin = null;
+  this.precioMax = null;
+  this.nombreServicio = '';
+  this.errorServicios.set('');
+
+  const profesional = this.profesionalSeleccionado();
+
+  if (profesional) {
+    this.cargarServicios(profesional.Id);
+  } else {
+    this.servicios.set([]);
+  }
+}
+aplicarFiltrosServicios(): void {
+  const profesional = this.profesionalSeleccionado();
+
+  if (!profesional) {
+    this.errorServicios.set(
+      'Selecciona un profesional antes de aplicar filtros.',
+    );
+    return;
+  }
+
+  if (
+    this.precioMin !== null &&
+    this.precioMax !== null &&
+    this.precioMin > this.precioMax
+  ) {
+    this.errorServicios.set(
+      'El precio mínimo no puede ser mayor que el precio máximo.',
+    );
+    return;
+  }
+
+  this.loadingServicios.set(true);
+  this.errorServicios.set('');
+
+  this.servicioService
+    .obtenerServiciosFiltrados(
+      profesional.Id,
+      this.categoriaSeleccionada
+        ? Number(this.categoriaSeleccionada)
+        : undefined,
+      this.modalidadSeleccionada || undefined,
+      this.precioMin,
+      this.precioMax,
+      this.nombreServicio?.trim() || undefined,
+    )
+    .subscribe({
+      next: (data) => {
+        this.servicios.set(data);
+        this.loadingServicios.set(false);
+      },
+      error: () => {
+        this.errorServicios.set(
+          'No se pudieron aplicar los filtros de servicios.',
+        );
+        this.loadingServicios.set(false);
+      },
+    });
+}
+
+verDetalleProfesional(id: number): void {
+  this.router.navigate(['/profesionalesDetalle/', id]);
+}
+
 }

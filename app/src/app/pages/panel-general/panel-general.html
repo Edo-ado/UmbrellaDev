@@ -10,119 +10,15 @@
       </p>
     </div>
 
-    <button
-      type="button"
-      class="btn btn-primario"
-      (click)="solicitarCita()"
-    >
-      + Solicitar cita
-    </button>
+ 
+              <button
+                type="button"
+                class="btn btn-primario btn-servicio"
+                (click)="solicitarCita()"
+              >
+                Solicitar Cita
+              </button>
   </div>
-
-  <section class="panel citas-panel">
-    <div class="panel-header">
-      <div>
-        <p class="eyebrow">Mis citas</p>
-        <h2>Citas pedidas</h2>
-        <p class="panel-description">
-          Consulta el estado y los detalles de tus citas.
-        </p>
-      </div>
-
-      <button
-        type="button"
-        class="btn btn-secundario"
-        (click)="cargarCitas()"
-      >
-        Actualizar
-      </button>
-    </div>
-
-    @if (loadingCitas()) {
-      <div class="estado">
-        Cargando tus citas...
-      </div>
-    }
-
-    @if (errorCitas()) {
-      <div class="feedback error">
-        {{ errorCitas() }}
-      </div>
-    }
-
-    @if (!loadingCitas() && !errorCitas()) {
-      @if (citas().length > 0) {
-        <div class="citas-lista">
-          @for (cita of citas(); track cita.Id) {
-            <article class="cita-card">
-              <div class="cita-fecha">
-                <span class="fecha-dia">
-                  {{ cita.Fecha | date: 'dd' }}
-                </span>
-
-                <span class="fecha-mes">
-                  {{ cita.Fecha | date: 'MMM' }}
-                </span>
-              </div>
-
-              <div class="cita-info">
-                <h3>
-                  {{ cita.servicio?.Nombre || 'Servicio solicitado' }}
-                </h3>
-
-                <p>
-                  <span>Profesional:</span>
-                  {{ cita.profesional?.NombreCompleto || 'Pendiente' }}
-                </p>
-
-                <p>
-                  <span>Hora:</span>
-                  {{ cita.Hora }}
-                </p>
-              </div>
-
-              <div class="cita-estado">
-                <span
-                  class="tag"
-                  [class.pendiente]="cita.Estado === 'PENDIENTE'"
-                  [class.aceptada]="cita.Estado === 'ACEPTADA'"
-                  [class.rechazada]="cita.Estado === 'RECHAZADA'"
-                  [class.cancelada]="cita.Estado === 'CANCELADA'"
-                  [class.completa]="cita.Estado === 'COMPLETA'"
-                >
-                  {{ cita.Estado }}
-                </span>
-
-                <button
-                  type="button"
-                  class="btn btn-detalle"
-                  (click)="verDetalleCita(cita.Id)"
-                >
-                  Ver detalle
-                </button>
-              </div>
-            </article>
-          }
-        </div>
-      } @else {
-        <div class="estado-vacio">
-          <span class="estado-icono">◷</span>
-          <h3>No tienes citas pedidas</h3>
-          <p>
-            Solicita una cita para comenzar.
-          </p>
-
-          <button
-            type="button"
-            class="btn btn-primario"
-            (click)="solicitarCita()"
-          >
-            Solicitar una cita
-          </button>
-        </div>
-      }
-    }
-  </section>
 
 
   <section class="panel profesionales-panel">
@@ -134,9 +30,6 @@
           Selecciona un profesional para consultar sus servicios.
         </p>
       </div>
-
-    
-    
     </div>
 
     @if (loadingProfesionales()) {
@@ -180,9 +73,19 @@
               </div>
 
               <div class="profesional-info">
-                <h3>
-                  {{ profesional.NombreCompleto }}
-                </h3>
+                <div class="profesional-nombre-row">
+                  <h3>
+                    {{ profesional.NombreCompleto }}
+                  </h3>
+                <button
+                type="button"
+                class="btn-icono btn-ver-detalle"
+                (click)="verDetalleProfesional(profesional.Id); $event.stopPropagation()"
+                title="Ver detalle"
+                >
+                ⌁
+                </button>
+                                </div>
 
                 <p>
                   {{ profesional.Descripcion || 'Profesional disponible' }}
@@ -225,14 +128,6 @@
           Selecciona un profesional para consultar lo que ofrece.
         </p>
       </div>
-
-      <button
-        type="button"
-        class="btn btn-secundario"
-        (click)="verServicios()"
-      >
-        Ver todos
-      </button>
     </div>
 
     @if (!profesionalSeleccionado()) {
@@ -262,6 +157,91 @@
       !loadingServicios() &&
       !errorServicios()
     ) {
+      <div class="filtros-servicios">
+        <div class="campo">
+          <label for="categoriaServicio">Categoría</label>
+
+          <select
+            id="categoriaServicio"
+            [(ngModel)]="categoriaSeleccionada"
+          >
+            <option value="">Todas las categorías</option>
+
+            @for (categoria of categorias(); track categoria.Id) {
+              <option [value]="categoria.Id">
+                {{ categoria.Nombre }}
+              </option>
+            }
+          </select>
+        </div>
+
+        <div class="campo">
+          <label for="modalidadServicio">Modalidad</label>
+
+          <select
+            id="modalidadServicio"
+            [(ngModel)]="modalidadSeleccionada"
+          >
+            <option value="">Todas las modalidades</option>
+            <option value="PRESENCIAL">Presencial</option>
+            <option value="VIRTUAL">Virtual</option>
+            <option value="HIBRIDA">Híbrida</option>
+          </select>
+        </div>
+
+        <div class="campo">
+          <label for="precioMin">Precio mínimo</label>
+
+          <input
+            id="precioMin"
+            type="number"
+            min="0"
+            [(ngModel)]="precioMin"
+            placeholder="₡0"
+          />
+        </div>
+
+        <div class="campo">
+          <label for="precioMax">Precio máximo</label>
+
+          <input
+            id="precioMax"
+            type="number"
+            min="0"
+            [(ngModel)]="precioMax"
+            placeholder="₡50000"
+          />
+        </div>
+
+        <div class="campo">
+          <label for="nombreServicio">Nombre del servicio</label>
+
+          <input
+            id="nombreServicio"
+            type="text"
+            [(ngModel)]="nombreServicio"
+            placeholder="Ej. Terapia cognitiva"
+          />
+        </div>
+<div class="filtros-acciones">
+  <button
+    type="button"
+    class="btn btn-primario"
+    (click)="aplicarFiltrosServicios()"
+  >
+    Aplicar filtros
+  </button>
+
+  <button
+    type="button"
+    class="btn btn-secundario"
+    (click)="limpiarFiltrosServicios()"
+  >
+    Limpiar filtros
+  </button>
+</div>
+      </div>
+
       @if (servicios().length > 0) {
         <div class="servicios-grid">
           @for (servicio of servicios(); track servicio.Id) {
@@ -290,13 +270,6 @@
                 </small>
               }
 
-              <button
-                type="button"
-                class="btn btn-primario btn-servicio"
-                (click)="solicitarCita()"
-              >
-                Solicitar este servicio
-              </button>
             </article>
           }
         </div>
