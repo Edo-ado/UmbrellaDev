@@ -20,6 +20,16 @@ app.use(express.json());
 app.use(express.urlencoded({
     extended: true,
 }));
+//---- Definir rutas ----
+app.use(AppRoutes.routes);
+app.use((err, req, res, next) => {
+    console.error(err);
+    const status = err.statusCode || 500;
+    res.status(status).json({
+        success: false,
+        message: err.message || "Error interno del servidor",
+    });
+});
 app.get("/", (req, res) => {
     res.json({
         message: "Welcome to the Umbrella Corporation API",
@@ -38,6 +48,7 @@ app.get("/", (req, res) => {
             ],
             usuarios: [
                 "GET /usuarios",
+                "GET /usuarios/desarrolladores",
                 "GET /usuarios/id/:id",
                 "GET /usuarios/rol/:rol",
                 "GET /usuarios/buscar?nombre=Carlos",
@@ -61,8 +72,6 @@ app.get("/", (req, res) => {
         },
     });
 });
-//---- Definir rutas ----
-app.use(AppRoutes.routes);
 // Handle errors middleware
 //Acceso a las imágenes
 app.use("/images", express.static(path.join(path.resolve(), "assets/uploads")));
