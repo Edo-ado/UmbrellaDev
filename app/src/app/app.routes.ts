@@ -13,6 +13,7 @@ import { ServiciosLista } from './pages/servicios/servicios-lista/servicios-list
 import { ServiciosDetail } from './pages/servicios/servicios-detail/servicios-detail';
 import { ServiciosEdit } from './pages/servicios/servicios-edit/servicios-edit';
 import { ServiciosCreate } from './pages/servicios/servicios-create/servicios-create';
+import { PanelGeneral } from './pages/panel-general/panel-general';
 
 import { CitasListadoComponent } from './pages/citas/listado/listado';
 import { CitasCrear } from './pages/citas/registro/registro';
@@ -56,7 +57,10 @@ export const routes: Routes = [
       },
 
       //profesionales
-      { path: 'profesionales', component: ProfesionalLista, canActivate: [authGuard] },
+      { path: 'profesionales', component: ProfesionalLista,
+        canActivate: [authGuard],
+      data: { roles: [Role.ADMIN] } },
+      
       {
         path: 'profesionalescrear',
         component: ProfesionalesCrear,
@@ -105,11 +109,21 @@ export const routes: Routes = [
       { path: 'citas/detalle/:id', component: CitasDetalle , canActivate: [authGuard] },
 
       // panel de control
-      { path: 'panel-control', component: Graficos ,
+      { path: 'panel-control', 
+        component: Graficos ,
         canActivate: [authGuard, roleGuard],
-        data: { roles: [Role.ADMIN] }, },
+        data: { roles: [Role.ADMIN, Role.DESARROLLADOR] } },
 
 
+
+
+      // panel general
+      { path: 'panel-general', 
+        component: PanelGeneral ,
+        canActivate: [authGuard, roleGuard],
+        data: { roles: [Role.USUARIO] } },
+
+        
         
       //login
       { path: 'login', component: LoginComponent },

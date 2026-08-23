@@ -30,6 +30,10 @@ export class UsuarioService {
     });
   }
 
+  getDesarrolladoresDisponibles(): Observable<Profesional[]> {
+    return this.http.get<Profesional[]>(`${this.apiUrl}/desarrolladoresDisponibles`);
+  }
+
   obtenerPorRol(rol: string): Observable<Profesional[]> {
     return this.http.get<Profesional[]>(`${this.apiUrl}/rol/${rol}`);
   }

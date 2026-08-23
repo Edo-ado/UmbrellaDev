@@ -75,14 +75,28 @@ export const UsuarioService = {
     });
   },
 
-  async getAllDesarrolladores() {
-    return await prisma.usuario.findMany({
-      where: { Role: "DESARROLLADOR" },
-      include: {
-        especialidades: true,
-      },
-    });
-  },
+async getAllDesarrolladores() {
+  return await prisma.usuario.findMany({
+    where: { Role: "DESARROLLADOR" }, 
+    include: {
+      especialidades: true, 
+    },
+  });
+},
+
+async getAllDesarrolladoresActivos() {
+  return await prisma.usuario.findMany({
+    where: { Role: "DESARROLLADOR" , Estado: "ACTIVO" }, 
+    include: {
+      especialidades: true, 
+    },
+  });
+},
+
+
+
+
+
   async crear(data: CreateUsuarioDto) {
     return prisma.usuario.create({
       data: {
