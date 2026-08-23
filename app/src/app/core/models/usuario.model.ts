@@ -1,21 +1,33 @@
+export interface LoginResult {
+    token: string;
+    Id: number;
+    Email: string;
+    Role: string;
+}
+
 export interface Profesional {
   Id: number;
   NombreCompleto: string;
   Email: string;
   Telefono?: string;
   Pais: string;
+  Edad?: number;
   Ubicacion?: string;
-  Contrasena: string;
-  TituloProfesional: string;
+  TituloProfesional?: string;
   Descripcion?: string;
-  Modalidad: 'PRESENCIAL' | 'VIRTUAL' | 'HIBRIDA';
-  TarifaBase: number;
+  Modalidad?: 'PRESENCIAL' | 'VIRTUAL' | 'HIBRIDA';
+  TarifaBase?: number;
   AnosExperiencia?: number;
   Universidad?: string;
-  Disponibilidad: boolean;
+  Disponibilidad?: boolean;
   Estado: 'ACTIVO' | 'INACTIVO';
-  Role: 'DESARROLLADOR' | 'ADMIN' | string; 
+  Role: Role;
+  Foto?: string | null;
   especialidades?: Especialidad[];
+  calificacion?: {
+    promedio: number;
+    totalResenas: number;
+  };
 }
 
 export interface Especialidad {

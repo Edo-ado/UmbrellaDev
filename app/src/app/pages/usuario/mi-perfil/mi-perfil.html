@@ -1,0 +1,306 @@
+<section class="usuarios-page">
+  <div class="usuarios-hero">
+    <div>
+      <p class="eyebrow">Umbrella Corporation</p>
+      <h2>Mi Perfil</h2>
+      <p class="subtitle">
+        Consultá tu información y mantené tus datos actualizados.
+      </p>
+    </div>
+
+    @if (usuario() && !esAdmin() && !editando()) {
+      <button class="btn btn-primario" (click)="iniciarEdicion()">
+        Editar perfil
+      </button>
+    }
+  </div>
+
+  @if (mensaje()) {
+    <div class="feedback ok">
+      {{ mensaje() }}
+    </div>
+  }
+
+  @if (error()) {
+    <div class="feedback error">
+      {{ error() }}
+    </div>
+  }
+
+  @if (!usuario()) {
+    <div class="panel estado">
+      Cargando perfil...
+    </div>
+  }
+
+  @if (usuario(); as u) {
+    <div class="panel perfil-cabecera">
+      <div class="perfil-avatar-wrapper">
+        @if (fotoActualUrl()) {
+          <img class="perfil-avatar" [src]="fotoActualUrl()" alt="Foto de perfil" />
+        } @else {
+          <div class="perfil-avatar perfil-avatar-vacio">
+            {{ u.NombreCompleto.charAt(0) }}
+          </div>
+        }
+
+        @if (editando()) {
+          <label class="perfil-avatar-editar" for="inputFoto">
+            Cambiar foto
+            <input
+              id="inputFoto"
+              type="file"
+              accept="image/jpeg,image/png,image/webp"
+              (change)="onFotoSeleccionada($event)"
+              hidden
+            />
+          </label>
+        }
+      </div>
+
+      <div class="perfil-identidad">
+        <h3>{{ u.NombreCompleto }}</h3>
+        <p class="perfil-email">{{ u.Email }}</p>
+
+        <div class="perfil-tags">
+          <span class="tag" [class.aceptada]="u.Role === 'DESARROLLADOR'" [class.pendiente]="u.Role === 'USUARIO'">
+            {{ u.Role === 'DESARROLLADOR' ? 'Profesional' : 'Cliente' }}
+          </span>
+
+          <span class="tag" [class.completada]="u.Estado === 'ACTIVO'" [class.cancelada]="u.Estado === 'INACTIVO'">
+            {{ u.Estado }}
+          </span>
+
+          @if (esProfesional() && u.calificacion) {
+            <span class="resena-puntuacion">
+              ★ {{ u.calificacion.promedio | number: '1.1-1' }} · {{ u.calificacion.totalResenas }} reseñas
+            </span>
+          }
+        </div>
+
+        @if (errorFoto()) {
+          <small class="hint error">{{ errorFoto() }}</small>
+        }
+      </div>
+    </div>
+
+    @if (esAdmin()) {
+      <div class="feedback error">
+        Los administradores no pueden editar su perfil desde este apartado.
+      </div>
+    }
+
+    <!-- Vista de solo lectura -->
+    @if (!editando()) {
+      <div class="panel detalle-grid">
+        <div class="campo-detalle">
+          <label>Nombre completo</label>
+          <p>{{ u.NombreCompleto }}</p>
+        </div>
+
+        <div class="campo-detalle">
+          <label>Correo</label>
+          <p>{{ u.Email }}</p>
+        </div>
+
+        <div class="campo-detalle">
+          <label>Teléfono</label>
+          <p>{{ u.Telefono || 'Sin registrar' }}</p>
+        </div>
+
+        <div class="campo-detalle">
+          <label>País</label>
+          <p>{{ u.Pais }}</p>
+        </div>
+
+        @if (u.Edad) {
+          <div class="campo-detalle">
+            <label>Edad</label>
+            <p>{{ u.Edad }}</p>
+          </div>
+        }
+
+        @if (u.Modalidad) {
+          <div class="campo-detalle">
+            <label>Modalidad</label>
+            <p>{{ u.Modalidad }}</p>
+          </div>
+        }
+
+        @if (esProfesional()) {
+          <div class="campo-detalle">
+            <label>Título profesional</label>
+            <p>{{ u.TituloProfesional || 'Sin registrar' }}</p>
+          </div>
+
+          <div class="campo-detalle">
+            <label>Universidad</label>
+            <p>{{ u.Universidad || 'Sin registrar' }}</p>
+          </div>
+
+          <div class="campo-detalle">
+            <label>Años de experiencia</label>
+            <p>{{ u.AnosExperiencia ?? 'Sin registrar' }}</p>
+          </div>
+
+          <div class="campo-detalle">
+            <label>Ubicación</label>
+            <p>{{ u.Ubicacion || 'Sin registrar' }}</p>
+          </div>
+
+          <div class="campo-detalle">
+            <label>Tarifa base</label>
+            <p>{{ u.TarifaBase ? ('₡' + (u.TarifaBase | number)) : 'Sin registrar' }}</p>
+          </div>
+
+          <div class="campo-detalle">
+            <label>Disponibilidad</label>
+            <span class="tag" [class.completada]="u.Disponibilidad" [class.cancelada]="!u.Disponibilidad">
+              {{ u.Disponibilidad ? 'Disponible' : 'No disponible' }}
+            </span>
+          </div>
+
+          <div class="campo-detalle full">
+            <label>Descripción</label>
+            <p>{{ u.Descripcion || 'Sin descripción registrada.' }}</p>
+          </div>
+
+          @if (u.especialidades && u.especialidades.length > 0) {
+            <div class="campo-detalle full">
+              <label>Especialidades</label>
+              <div class="perfil-tags">
+                @for (especialidad of u.especialidades; track especialidad.Id) {
+                  <span class="tag">{{ especialidad.Nombre }}</span>
+                }
+              </div>
+            </div>
+          }
+        }
+      </div>
+    }
+
+    <!-- Modo edición -->
+    @if (editando()) {
+      <div class="panel perfil-form">
+        <h3>Editar información</h3>
+
+        <div class="grid-formulario">
+          <div class="campo">
+            <label for="nombreCompleto">Nombre completo *</label>
+            <input
+              id="nombreCompleto"
+              type="text"
+              [ngModel]="nombreCompleto()"
+              (ngModelChange)="nombreCompleto.set($event)"
+            />
+          </div>
+
+          <div class="campo">
+            <label for="email">Correo *</label>
+            <input
+              id="email"
+              type="email"
+              [ngModel]="email()"
+              (ngModelChange)="email.set($event)"
+            />
+          </div>
+
+          <div class="campo">
+            <label for="telefono">Teléfono</label>
+            <input
+              id="telefono"
+              type="text"
+              [ngModel]="telefono()"
+              (ngModelChange)="telefono.set($event)"
+            />
+          </div>
+
+          <div class="campo">
+            <label for="pais">País *</label>
+            <input
+              id="pais"
+              type="text"
+              [ngModel]="pais()"
+              (ngModelChange)="pais.set($event)"
+            />
+          </div>
+
+          @if (esProfesional()) {
+            <div class="campo">
+              <label for="ubicacion">Ubicación</label>
+              <input
+                id="ubicacion"
+                type="text"
+                [ngModel]="ubicacion()"
+                (ngModelChange)="ubicacion.set($event)"
+              />
+            </div>
+
+            <div class="campo">
+              <label for="tarifaBase">Tarifa base (₡)</label>
+              <input
+                id="tarifaBase"
+                type="number"
+                min="0"
+                [ngModel]="tarifaBase()"
+                (ngModelChange)="tarifaBase.set($event)"
+              />
+            </div>
+
+            <div class="campo full">
+              <label for="descripcion">Descripción</label>
+              <textarea
+                id="descripcion"
+                rows="4"
+                [ngModel]="descripcion()"
+                (ngModelChange)="descripcion.set($event)"
+                placeholder="Contale a tus clientes sobre tu experiencia..."
+              ></textarea>
+            </div>
+          }
+        </div>
+
+        <div class="perfil-separador">
+          <p class="eyebrow">Cambiar contraseña (opcional)</p>
+        </div>
+
+        <div class="grid-formulario">
+          <div class="campo">
+            <label for="nuevaContrasena">Nueva contraseña</label>
+            <input
+              id="nuevaContrasena"
+              type="password"
+              [ngModel]="nuevaContrasena()"
+              (ngModelChange)="nuevaContrasena.set($event)"
+              placeholder="Dejar en blanco para no cambiarla"
+            />
+          </div>
+
+          <div class="campo">
+            <label for="confirmarContrasena">Confirmar contraseña</label>
+            <input
+              id="confirmarContrasena"
+              type="password"
+              [ngModel]="confirmarContrasena()"
+              (ngModelChange)="confirmarContrasena.set($event)"
+            />
+          </div>
+        </div>
+
+        @if (errorContrasena()) {
+          <small class="hint error">{{ errorContrasena() }}</small>
+        }
+
+        <div class="perfil-acciones">
+          <button class="btn btn-secundario" [disabled]="guardando()" (click)="cancelarEdicion()">
+            Cancelar
+          </button>
+
+          <button class="btn btn-primario" [disabled]="guardando()" (click)="guardar()">
+            {{ guardando() ? 'Guardando...' : 'Guardar cambios' }}
+          </button>
+        </div>
+      </div>
+    }
+  }
+</section>

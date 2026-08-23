@@ -2,6 +2,9 @@ import { Request, Response, NextFunction } from "express";
 import { StatusCodes } from "http-status-codes";
 import { UsuarioService } from "../services/usuario.service";
 import { MODALIDAD, Role } from "../../generated/prisma/enums";
+import { AuthRequest } from "../middlewares/auth.middleware";
+
+
 
 export class usuarioController  {
   getAll = async (request: Request, response: Response, next: NextFunction) => {
@@ -139,18 +142,19 @@ getAllDesarrolladores = async (
     }
   };
 
-  update = async (request: Request, response: Response, next: NextFunction) => {
-    try {
-      const id = Number(request.params.id);
-      const usuario = await UsuarioService.actualizar(id, request.body);
-      return response.status(StatusCodes.OK).json({
-        message: "Usuario actualizado correctamente",
-        data: usuario,
-      });
-    } catch (error) {
-      next(error);
-    }
-  };
+update = async (request: Request, response: Response, next: NextFunction) => {
+  try {
+    const id = Number(request.params.id);
+    const usuario = await UsuarioService.actualizar(id, request.body, request.file);
+
+    return response.status(StatusCodes.OK).json({
+      message: "Usuario actualizado correctamente",
+      data: usuario,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 
 toggleStatus = async (request: Request,response: Response,next: NextFunction,) => {
   try {
@@ -267,39 +271,22 @@ register = async (
 };
 
 perfil = async (
-    request: Request & {
-        user?: {
-            Id: number
-            Email: string
-            Role: Role
-        }
-    },
+  request: AuthRequest,
     response: Response,
     next: NextFunction
 ) => {
     try {
-        if (!request.user) {
-            return response
-                .status(StatusCodes.UNAUTHORIZED)
-                .json({
-                    success: false,
-                    message: "Usuario no autenticado"
-                })
-        }
-
-        const usuario =
-            await UsuarioService.perfil(
-                request.user.Id
-            )
+    const id = request.user?.Id ?? Number(request.params.id);
+        const usuario = await UsuarioService.perfil(id);
 
         return response
             .status(StatusCodes.OK)
             .json({
                 success: true,
                 data: usuario
-            })
+            });
     } catch (error) {
-        next(error)
+        next(error);
     }
 };
 

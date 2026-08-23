@@ -15,13 +15,15 @@ export const Role = {
 export const MODALIDAD = {
     PRESENCIAL: 'PRESENCIAL',
     VIRTUAL: 'VIRTUAL',
-    HIBRIDA: 'HIBRIDA'
+    HIBRIDA: 'HIBRIDA',
+    NOCAP: 'NOCAP'
 };
 export const ESTADOCITA = {
     PENDIENTE: 'PENDIENTE',
-    CONFIRMADA: 'CONFIRMADA',
+    ACEPTADA: 'ACEPTADA',
+    RECHAZADA: 'RECHAZADA',
     CANCELADA: 'CANCELADA',
-    COMPLETADA: 'COMPLETADA'
+    COMPLETA: 'COMPLETA'
 };
 export const Estado = {
     ACTIVO: 'ACTIVO',

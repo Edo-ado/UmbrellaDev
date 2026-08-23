@@ -31,11 +31,23 @@ export class UsuarioService {
   }
 
   obtenerPorRol(rol: string): Observable<Profesional[]> {
-  return this.http.get<Profesional[]>(`${this.apiUrl}/rol/${rol}`);
-}
+    return this.http.get<Profesional[]>(`${this.apiUrl}/rol/${rol}`);
+  }
 
-  actualizar(id: number, data: ProfesionalUpdateDto): Observable<any> {
-    return this.http.put(`${this.apiUrl}/update/${id}`, data);
+  actualizar(id: number, data: ProfesionalUpdateDto, foto?: File): Observable<any> {
+    const formData = new FormData();
+
+    Object.entries(data).forEach(([key, value]) => {
+      if (value !== undefined && value !== null && value !== '') {
+        formData.append(key, String(value));
+      }
+    });
+
+    if (foto) {
+      formData.append('image', foto);
+    }
+
+    return this.http.put(`${this.apiUrl}/update/${id}`, formData);
   }
 
   toggleEstado(id: number): Observable<any> {

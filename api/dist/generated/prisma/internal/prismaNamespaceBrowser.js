@@ -44,6 +44,7 @@ export const ModelName = {
     Especialidad: 'Especialidad',
     Servicio: 'Servicio',
     Cita: 'Cita',
+    HistorialEstadoCita: 'HistorialEstadoCita',
     Resena: 'Resena',
     Imagenes: 'Imagenes',
     Curriculum: 'Curriculum',
@@ -77,6 +78,7 @@ export const UsuarioScalarFieldEnum = {
     TarifaBase: 'TarifaBase',
     Disponibilidad: 'Disponibilidad',
     Universidad: 'Universidad',
+    Foto: 'Foto',
     LastLogin: 'LastLogin',
     CreatedAt: 'CreatedAt',
     UpdatedAt: 'UpdatedAt'
@@ -110,8 +112,14 @@ export const ServicioScalarFieldEnum = {
 export const CitaScalarFieldEnum = {
     Id: 'Id',
     fechaHora: 'fechaHora',
+    FechaHoraFin: 'FechaHoraFin',
     Fecha: 'Fecha',
     Hora: 'Hora',
+    TiempoTotal: 'TiempoTotal',
+    HoraFin: 'HoraFin',
+    Monto: 'Monto',
+    MotivoCancelacion: 'MotivoCancelacion',
+    MotivoRechazo: 'MotivoRechazo',
     Modalidad: 'Modalidad',
     Descripcion: 'Descripcion',
     Comentarios: 'Comentarios',
@@ -121,6 +129,14 @@ export const CitaScalarFieldEnum = {
     idcliente: 'idcliente',
     idprofesional: 'idprofesional',
     idservicio: 'idservicio'
+};
+export const HistorialEstadoCitaScalarFieldEnum = {
+    Id: 'Id',
+    EstadoAnterior: 'EstadoAnterior',
+    EstadoNuevo: 'EstadoNuevo',
+    Motivo: 'Motivo',
+    Fecha: 'Fecha',
+    citaId: 'citaId'
 };
 export const ResenaScalarFieldEnum = {
     Id: 'Id',
@@ -169,7 +185,8 @@ export const UsuarioOrderByRelevanceFieldEnum = {
     Descripcion: 'Descripcion',
     Ubicacion: 'Ubicacion',
     TituloProfesional: 'TituloProfesional',
-    Universidad: 'Universidad'
+    Universidad: 'Universidad',
+    Foto: 'Foto'
 };
 export const CategoriaOrderByRelevanceFieldEnum = {
     Nombre: 'Nombre',
@@ -185,8 +202,14 @@ export const ServicioOrderByRelevanceFieldEnum = {
 };
 export const CitaOrderByRelevanceFieldEnum = {
     Hora: 'Hora',
+    HoraFin: 'HoraFin',
+    MotivoCancelacion: 'MotivoCancelacion',
+    MotivoRechazo: 'MotivoRechazo',
     Descripcion: 'Descripcion',
     Comentarios: 'Comentarios'
+};
+export const HistorialEstadoCitaOrderByRelevanceFieldEnum = {
+    Motivo: 'Motivo'
 };
 export const ResenaOrderByRelevanceFieldEnum = {
     Comentario: 'Comentario'
