@@ -1,18 +1,15 @@
 import { Router } from "express";
 import { usuarioController } from "../controllers/usuario.controller";
 import { authenticateToken } from "../middlewares/auth.middleware";
-
-//La api reconoce primero los que estan hasta arriba es decir que si hay alguna busqueda que tenga que ser con numero
-// o se especifica como se hace abajo o se deja hasta el final
+import { uploadImage } from "../middlewares/image-config.middleware";
 
 export class usuarioRoutes {
   static get routes(): Router {
     const router = Router();
     const usuariosController = new usuarioController();
 
-    //metodos de CRUD
     router.post("/crear", usuariosController.crear);
-    router.put("/update/:id", usuariosController.update);
+    router.put("/update/:id", uploadImage, usuariosController.update);
     router.patch("/CambioEstado/:id", usuariosController.toggleStatus);
 
     //Metodos para conseguir datos generales
@@ -40,22 +37,14 @@ export class usuarioRoutes {
 
 router.get("/fechas", usuariosController.getByFechas);
 
-router.post(
-    "/login",
-    usuariosController.login
-)
+    router.get("/fechas", usuariosController.getByFechas);
 
-router.post(
-    "/register",
-    usuariosController.register
-)
+    router.post("/login", usuariosController.login);
 
+    router.post("/register", usuariosController.register);
 
-router.get(
-    "/perfil",
-    authenticateToken,
-    usuariosController.perfil
-)
+    router.get("/perfil", authenticateToken, usuariosController.perfil);
+    router.get("/perfil/:id", usuariosController.perfil);
 
     return router;
   }

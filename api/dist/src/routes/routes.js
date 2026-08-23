@@ -6,6 +6,8 @@ import { especialidadRoutes } from "./especialidad.routes";
 import { ServicioRoutes } from "./servicio.routes";
 import { citasRoutes } from "./cita.routes";
 import { ImageRoutes } from "./image.routes";
+import { resenasRoutes } from "./resena.routes";
+import { EstadisticaRoutes } from "./estadistica.routes";
 export class AppRoutes {
     static get routes() {
         const router = Router();
@@ -16,6 +18,8 @@ export class AppRoutes {
         router.use("/servicios", ServicioRoutes.routes);
         router.use("/citas", citasRoutes.routes);
         router.use("/images", ImageRoutes.routes);
+        router.use("/estadisticas", EstadisticaRoutes.routes);
+        router.use("/resenas", resenasRoutes.routes);
         return router;
     }
 }

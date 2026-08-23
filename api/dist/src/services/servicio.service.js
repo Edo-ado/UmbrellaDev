@@ -165,4 +165,20 @@ export const ServicioServices = {
             throw AppError.badRequest("El servicio indicado no existe");
         }
     },
+    async getServiciosProfesionalActivo(profesionalId) {
+        return await prisma.servicio.findMany({
+            where: {
+                idprofesional: profesionalId,
+                profesional: {
+                    Estado: "ACTIVO",
+                },
+                Estado: "ACTIVO",
+            },
+            include: {
+                profesional: true,
+                categoria: true,
+                servicioEspecialidades: true,
+            },
+        });
+    },
 };

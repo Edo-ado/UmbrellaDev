@@ -28,6 +28,8 @@ import { roleGuard } from './core/guards/role.guard';
 import { Role } from '../app/core/models/usuario.model';
 import { AgendaVisualComponent } from './pages/agendavisual/agendavisual';
 
+import {MiPerfil} from "./pages/usuario/mi-perfil/mi-perfil"
+
 
 export const routes: Routes = [
   {
@@ -138,6 +140,21 @@ export const routes: Routes = [
         data: {
           roles: [
             Role.ADMIN,
+            Role.DESARROLLADOR,
+            Role.USUARIO,
+          ],
+        },
+      },
+
+      //mi perfil
+
+     {
+        path: 'Mi-Perfil',
+        component: MiPerfil,
+        canActivate: [authGuard, roleGuard],
+        data: {
+          roles: [
+           
             Role.DESARROLLADOR,
             Role.USUARIO,
           ],
