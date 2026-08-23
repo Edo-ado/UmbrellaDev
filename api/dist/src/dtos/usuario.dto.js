@@ -71,6 +71,11 @@ export const createUsuarioSchema = z.object({
         .trim()
         .max(150, "La universidad no puede superar 150 caracteres")
         .optional(),
+    Foto: z
+        .string()
+        .trim()
+        .max(255, "El nombre de archivo de la foto no puede superar 255 caracteres")
+        .optional(),
     especialidadIds: z
         .array(z.number().int().positive("Especialidad inválida"))
         .optional(),

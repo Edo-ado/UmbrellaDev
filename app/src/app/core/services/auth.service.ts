@@ -111,9 +111,9 @@ export class AuthService {
                 map((response) => {
                     const resultado = response.data
 
-                    if (!resultado?.token) {
+                    if (!resultado?.token || !resultado?.Id) {
                         throw new Error(
-                            'El API no devolvió el token de autenticación'
+                            'El API no devolvió los datos de autenticación esperados'
                         )
                     }
 
@@ -124,7 +124,9 @@ export class AuthService {
                     this.guardarToken(token)
                 }),
 
-                switchMap(() => this.obtenerPerfil()),
+                switchMap((resultado) =>
+                    this.obtenerPerfil(resultado.Id)
+                ),
 
                 tap((profesional) => {
                     this._profesional.set(profesional)
@@ -150,10 +152,10 @@ export class AuthService {
     }
 
 
-    obtenerPerfil(): Observable<Profesional> {
+    obtenerPerfil(id: number): Observable<Profesional> {
         return this.http
             .get<ApiResponse<Profesional>>(
-                `${this.apiUrl}/perfil`
+                `${this.apiUrl}/perfil/${id}`
             )
             .pipe(
                 map((response) => {
@@ -207,10 +209,18 @@ export class AuthService {
             return of(null)
         }
 
+        const id = this.decodificarIdDesdeToken(token)
+
+        if (!id) {
+            this.limpiarSesion()
+
+            return of(null)
+        }
+
         this._cargandoSesion.set(true)
 
         this.solicitudPerfilActual =
-            this.obtenerPerfil()
+            this.obtenerPerfil(id)
                 .pipe(
                     tap((profesional) => {
                         this._profesional.set(profesional)
@@ -271,6 +281,28 @@ export class AuthService {
     }
 
 
+    /**
+     * Recarga el perfil del usuario actualmente autenticado.
+     * Se usa después de editar "Mi Perfil" para reflejar los cambios
+     * guardados sin necesidad de volver a iniciar sesión.
+     */
+    refrescarPerfil(): Observable<Profesional> {
+        const usuarioActual = this._profesional()
+
+        if (!usuarioActual) {
+            return throwError(
+                () => new Error('No hay una sesión activa')
+            )
+        }
+
+        return this.obtenerPerfil(usuarioActual.Id).pipe(
+            tap((profesional) => {
+                this._profesional.set(profesional)
+            })
+        )
+    }
+
+
     logout(redirigir = true): void {
         this.limpiarSesion()
 
@@ -326,6 +358,37 @@ export class AuthService {
         return tokenLimpio.length > 0
             ? tokenLimpio
             : null
+    }
+
+
+    /**
+     * Decodifica el payload del JWT SIN verificar su firma.
+     * Solo se usa para leer el Id y poder restaurar la sesión
+     * (ej. al recargar la página); la validación real de la firma
+     * la hace siempre el backend en cada request protegido.
+     */
+    private decodificarIdDesdeToken(token: string): number | null {
+        try {
+            const payloadBase64 = token.split('.')[1]
+
+            if (!payloadBase64) {
+                return null
+            }
+
+            const payloadJson = atob(
+                payloadBase64
+                    .replace(/-/g, '+')
+                    .replace(/_/g, '/')
+            )
+
+            const payload = JSON.parse(payloadJson)
+
+            return typeof payload.Id === 'number'
+                ? payload.Id
+                : null
+        } catch {
+            return null
+        }
     }
 
 

@@ -1,13 +1,18 @@
-
-import bcrypt from "bcrypt"
-import jwt from "jsonwebtoken"
-import { Role } from "../../generated/prisma/enums";
+import bcrypt from "bcryptjs";
+import { MODALIDAD, Role, Estado } from "../../generated/prisma/enums";
 import { prisma } from "../config/prisma";
-
 import { AppError } from "../utils/app-error";
+import jwt from "jsonwebtoken";
+import { CitaServices } from "../services/cita.service";
+import { ImageService } from "../services/image.service";
+import { ResenaService } from "../services/resena.service";
+const imageService = new ImageService();
+const resenaService = ResenaService;
 export const UsuarioService = {
     async getAll() {
-        return await prisma.usuario.findMany({ include: { especialidades: true } });
+        return await prisma.usuario.findMany({
+            include: { especialidades: true },
+        });
     },
     async getById(id) {
         return await prisma.usuario.findUnique({
@@ -39,27 +44,30 @@ export const UsuarioService = {
             include: { especialidades: true },
         });
     },
-async toggleStatus(id) {
-    const usuario = await this.getById(id)
-
-    if (!usuario) {
-        throw AppError.badRequest(
-            "El usuario indicado no existe"
-        )
-    }
-
-    const nuevoEstado =
-        usuario.Estado === "ACTIVO"
-            ? "INACTIVO"
-            : "ACTIVO"
-
-    return await prisma.usuario.update({
-        where: { Id: id },
-        data: {
-            Estado: nuevoEstado
+    async toggleStatus(id) {
+        const usuario = await this.getById(id);
+        let nuevoEstado;
+        if (usuario?.Estado === "ACTIVO") {
+            nuevoEstado = "INACTIVO";
         }
-    })
-},
+        else {
+            nuevoEstado = "ACTIVO";
+        }
+        return await prisma.usuario.update({
+            where: { Id: id },
+            data: {
+                Estado: nuevoEstado,
+            },
+        });
+    },
+    async getAllDesarrolladores() {
+        return await prisma.usuario.findMany({
+            where: { Role: "DESARROLLADOR" },
+            include: {
+                especialidades: true,
+            },
+        });
+    },
     async crear(data) {
         return prisma.usuario.create({
             data: {
@@ -97,42 +105,74 @@ async toggleStatus(id) {
             },
         });
     },
-    async actualizar(id, data) {
-        await this.validateUsuario(id); //reviso si exsite
-        await this.getById(id);
-        //futuras validaciones que iremos viendo
+    identificarTipoUsuario(role) {
+        switch (role) {
+            case Role.ADMIN:
+                return "ADMINISTRADOR";
+            case Role.DESARROLLADOR:
+                return "DESARROLLADOR";
+            case Role.USUARIO:
+                return "CLIENTE";
+            default:
+                throw new Error("Rol de usuario no reconocido");
+        }
+    },
+    async validarEmailDisponible(email, idUsuarioActual) {
+        const existente = await prisma.usuario.findUnique({
+            where: { Email: email },
+        });
+        if (existente && existente.Id !== idUsuarioActual) {
+            throw new Error("El correo ya está en uso por otro usuario");
+        }
+    },
+    async actualizar(id, data, file) {
+        const usuario = await this.getById(id);
+        if (!usuario) {
+            throw AppError.badRequest("El usuario indicado no existe");
+        }
+        const tipoUsuario = this.identificarTipoUsuario(usuario.Role);
+        if (tipoUsuario === "ADMINISTRADOR") {
+            throw new Error("Los administradores no pueden editar su perfil");
+        }
+        if (data.Email && data.Email !== usuario.Email) {
+            await this.validarEmailDisponible(data.Email, id);
+        }
+        const contrasenaActualizada = data.Contraseña
+            ? await bcrypt.hash(data.Contraseña, 10)
+            : usuario.Contrasena;
+        const fotoActualizada = file
+            ? await imageService.uploadImage(file, usuario.Foto ?? undefined)
+            : usuario.Foto;
+        const camposBase = {
+            NombreCompleto: data.NombreCompleto ?? usuario.NombreCompleto,
+            Email: data.Email ?? usuario.Email,
+            Contrasena: contrasenaActualizada,
+            Pais: data.Pais ?? usuario.Pais,
+            Telefono: data.Telefono ?? usuario.Telefono,
+            Foto: fotoActualizada,
+        };
+        const camposProfesional = tipoUsuario === "DESARROLLADOR"
+            ? {
+                Descripcion: data.Descripcion ?? usuario.Descripcion,
+                Ubicacion: data.Ubicacion ?? usuario.Ubicacion,
+                TarifaBase: data.TarifaBase ?? usuario.TarifaBase,
+                especialidades: data.especialidadIds
+                    ? { set: data.especialidadIds.map((Id) => ({ Id })) }
+                    : undefined,
+            }
+            : {};
         return prisma.usuario.update({
             where: { Id: id },
             data: {
-                NombreCompleto: data.NombreCompleto,
-                Email: data.Email,
-                Contrasena: data.Contraseña,
-                Telefono: data.Telefono,
-                Pais: data.Pais,
-                Edad: data.Edad,
-                Role: data.Role,
-                Estado: data.Estado,
-                Modalidad: data.Modalidad,
-                TituloProfesional: data.TituloProfesional,
-                Descripcion: data.Descripcion,
-                AnosExperiencia: data.AnosExperiencia,
-                Ubicacion: data.Ubicacion,
-                TarifaBase: data.TarifaBase,
-                Disponibilidad: data.Disponibilidad,
-                Universidad: data.Universidad,
-                especialidades: data.especialidadIds
-                    ? { set: data.especialidadIds.map((Id) => ({ Id })),
-                    }
-                    : undefined,
+                ...camposBase,
+                ...camposProfesional,
             },
             include: {
                 especialidades: true,
                 servicios: true,
                 curriculum: true,
                 imagenesUsuario: {
-                    include: {
-                        imagen: true,
-                    },
+                    include: { imagen: true },
                 },
             },
         });
@@ -151,6 +191,10 @@ async toggleStatus(id) {
         if (usuario.Role !== Role.DESARROLLADOR) {
             throw AppError.badRequest("El usuario indicado no es un desarrollador");
         }
+        const tieneActiva = await CitaServices.tieneCitaActiva(id);
+        if (tieneActiva) {
+            throw AppError.badRequest("No puedes cambiar tu disponibilidad mientras tengas una cita activa");
+        }
         return await prisma.usuario.update({
             where: { Id: id },
             data: {
@@ -168,140 +212,106 @@ async toggleStatus(id) {
             },
         });
     },
-
-async login(email, contrasena) {
-    const usuario = await prisma.usuario.findUnique({
-        where: {
-            Email: email
-        },
-        include: {
-            especialidades: true
+    async registrar(data) {
+        const usuarioExists = await prisma.usuario.findUnique({
+            where: { Email: data.email },
+        });
+        if (usuarioExists) {
+            throw new Error("El correo ya está registrado");
         }
-    })
-
-    if (!usuario) {
-        throw AppError.badRequest(
-            "Correo o contraseña incorrectos"
-        )
-    }
-
-    if (usuario.Estado !== "ACTIVO") {
-        throw AppError.badRequest(
-            "El usuario se encuentra inactivo"
-        )
-    }
-
-    const contrasenaValida = await bcrypt.compare(
-        contrasena,
-        usuario.Contrasena
-    )
-
-    if (!contrasenaValida) {
-        throw AppError.badRequest(
-            "Correo o contraseña incorrectos"
-        )
-    }
-
-    await prisma.usuario.update({
-        where: {
-            Id: usuario.Id
-        },
-        data: {
-            LastLogin: new Date()
+        const hashedPassword = await bcrypt.hash(data.Contrasena, 10);
+        const usuario = await prisma.usuario.create({
+            data: {
+                Email: data.email,
+                Contrasena: hashedPassword,
+                NombreCompleto: data.nombre,
+                Pais: data.pais,
+                Edad: data.edad ?? null,
+                Telefono: data.telefono ?? null,
+                Role: data.role ?? Role.USUARIO,
+                Estado: Estado.ACTIVO,
+                Modalidad: MODALIDAD.PRESENCIAL,
+                Disponibilidad: true,
+            },
+        });
+        const { Contrasena, ...usuarioWithoutPassword } = usuario;
+        return usuarioWithoutPassword;
+    },
+    async login(data) {
+        const usuario = await prisma.usuario.findUnique({
+            where: { Email: data.email },
+        });
+        if (!usuario) {
+            throw new Error("Correo o contraseña incorrectos");
         }
-    })
-
-    const secret = process.env.JWT_SECRET || "vj_utn_2026"
-
-    const token = jwt.sign(
-        {
+        const isPasswordValid = await bcrypt.compare(data.contrasena, usuario.Contrasena);
+        if (!isPasswordValid) {
+            throw new Error("Correo o contraseña incorrectos");
+        }
+        const payload = {
             Id: usuario.Id,
             Email: usuario.Email,
-            Role: usuario.Role
-        },
-        secret,
-        {
-            expiresIn: "1d"
+            Role: usuario.Role,
+        };
+        const secret = process.env.JWT_SECRET || "vj_utn_2026";
+        const options = {
+            expiresIn: "2h",
+        };
+        const token = jwt.sign(payload, secret, options);
+        return {
+            token,
+        };
+    },
+    async perfil(usuarioId) {
+        const usuario = await prisma.usuario.findUnique({
+            where: { Id: usuarioId },
+            include: {
+                especialidades: true,
+                servicios: true,
+                curriculum: true,
+                imagenesUsuario: {
+                    include: { imagen: true },
+                },
+            },
+        });
+        if (!usuario) {
+            throw new Error("El usuario no existe");
         }
-    )
-
-    return {
-        token,
-        usuario: {
-            ...usuario,
-            Contrasena: undefined
+        const tipoUsuario = this.identificarTipoUsuario(usuario.Role);
+        const { Contrasena, ...usuarioSinPassword } = usuario;
+        if (tipoUsuario !== "DESARROLLADOR") {
+            const { especialidades, servicios, curriculum, imagenesUsuario, Descripcion, AnosExperiencia, Ubicacion, TituloProfesional, TarifaBase, Disponibilidad, Universidad, ...usuarioBase } = usuarioSinPassword;
+            return usuarioBase;
         }
-    }
-},
-async register(data) {
-    const usuarioExistente = await prisma.usuario.findUnique({
-        where: {
-            Email: data.Email
-        }
-    })
-
-    if (usuarioExistente) {
-        throw AppError.badRequest(
-            "El correo ya está registrado"
-        )
-    }
-
-    const contrasenaHasheada = await bcrypt.hash(
-        data.Contrasena,
-        10
-    )
-
-    const usuario = await prisma.usuario.create({
-        data: {
-            NombreCompleto: data.NombreCompleto,
-            Email: data.Email,
-            Contrasena: contrasenaHasheada,
-            Pais: data.Pais,
-            Edad: data.Edad ?? null,
-            Telefono: data.Telefono ?? null,
-            Role: data.Role ?? "USUARIO",
-            Estado: "ACTIVO",
-            Modalidad: data.Modalidad ?? "NOCAP"
-        },
-        include: {
-            especialidades: true
-        }
-    })
-
-    return {
-        ...usuario,
-        Contrasena: undefined
-    }
-},
-
-async getPerfil(id) {
-    const usuario = await prisma.usuario.findUnique({
-        where: {
-            Id: id
-        },
-        include: {
-            especialidades: true,
-            servicios: true,
-            curriculum: true,
-            imagenesUsuario: {
-                include: {
-                    imagen: true
-                }
-            }
-        }
-    })
-
-    if (!usuario) {
-        throw AppError.badRequest(
-            "El usuario indicado no existe"
-        )
-    }
-
-    return {
-        ...usuario,
-        Contrasena: undefined
-    }
-}
-
-
+        const { promedio, totalResenas } = await ResenaService.promedioCalificacionPorProfesional(usuarioId);
+        return {
+            ...usuarioSinPassword,
+            calificacion: {
+                promedio,
+                totalResenas,
+            },
+            async getByFechas(DiaInicial, DiaFinal) {
+                return await prisma.usuario.findMany({
+                    where: {
+                        CreatedAt: {
+                            gte: DiaInicial,
+                            lte: DiaFinal,
+                        },
+                    },
+                    include: { especialidades: true },
+                });
+            },
+        };
+    },
+    async getByFechas(DiaInicial, DiaFinal) {
+        return await prisma.usuario.findMany({
+            where: {
+                CreatedAt: {
+                    gte: DiaInicial,
+                    lte: DiaFinal,
+                },
+            },
+            include: { especialidades: true },
+        });
+    },
 };

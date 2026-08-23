@@ -35,6 +35,10 @@
             <li><a routerLink="/servicios">Servicios</a></li>
             <li><a routerLink="/citas">Citas</a></li>
             <li><a routerLink="/agenda-visual">Agenda Visual</a></li>
+
+            @if (authService.tieneRol([Role.DESARROLLADOR, Role.USUARIO])) {
+<li><a routerLink="/Mi-Perfil">Mi Perfil</a></li>
+}
    
 
 
@@ -59,7 +63,7 @@
                                 @switch (authService.profesional()?.Role) {
                                     @case ('ADMIN') { Administrador }
                                     @case ('DESARROLLADOR') { Desarrollador }
-                                    @case ('PROFESIONAL') { Profesional }
+                                    @case ('USUARIO') { cliente }
                                     @default { Usuario }
                                 }
                             </span>
