@@ -7,6 +7,14 @@ export const EspecialidadService = {
             omit: { CategoriaId: true },
         });
     },
+    getAllActivos() {
+        return prisma.especialidad.findMany({
+            where: { Estado: "ACTIVO" },
+            include: { CategoriaAsociada: true },
+            omit: { CategoriaId: true },
+        });
+    }
+    ,
     async getById(id) {
         return await prisma.especialidad.findUnique({
             where: { Id: id },
@@ -14,7 +22,7 @@ export const EspecialidadService = {
             omit: { CategoriaId: true },
         });
     },
-    
+
     async GetMyEspecialidades(id) {
         return await prisma.especialidad.findMany({
             where: { CategoriaId: id },

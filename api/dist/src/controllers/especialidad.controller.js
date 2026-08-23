@@ -23,6 +23,16 @@ export class EspecialidadController {
             next(error);
         }
     };
+    getAllActivos = async (request, response, next) => {
+        try {
+            const especialidades = await EspecialidadService.getAllActivos();
+            return response.status(StatusCodes.OK).json(especialidades);
+        }
+        catch (error) {
+            console.error(error);
+            next(error);
+        }
+    };
     getByName = async (request, response, next) => {
         try {
             const nombre = (request.query.nombre || request.query.Nombre);

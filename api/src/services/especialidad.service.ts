@@ -25,6 +25,13 @@ export const EspecialidadService = {
       omit: { CategoriaId: true },
     });
   },
+  async getAllActivos() {
+    return await prisma.especialidad.findMany({
+      where: { Estado: "ACTIVO" },
+      include: { CategoriaAsociada: true },
+      omit: { CategoriaId: true },
+    });
+  },
 
   async getByEstado(Estado: Estado) {
     return await prisma.especialidad.findMany({
