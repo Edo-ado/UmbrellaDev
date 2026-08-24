@@ -1,4 +1,4 @@
-<section class="panel-general-page">
+2<section class="panel-general-page">
   <div class="panel-general-hero">
     <div>
       <p class="eyebrow">Umbrella Corporation</p>
@@ -246,32 +246,39 @@
       @if (servicios().length > 0) {
         <div class="servicios-grid">
           @for (servicio of servicios(); track servicio.Id) {
-            <article class="servicio-card">
-              <div class="servicio-top">
-                <span class="servicio-modalidad">
-                  {{ servicio.Modalidad }}
-                </span>
+           <article class="servicio-card">
+  <div class="servicio-top">
+    <span class="servicio-modalidad">
+      {{ servicio.Modalidad }}
+    </span>
 
-                <span class="servicio-precio">
-                  ₡{{ servicio.Precio | number: '1.0-0' }}
-                </span>
-              </div>
+    <span class="servicio-precio">
+      ₡{{ servicio.Precio | number: '1.0-0' }}
+    </span>
+  </div>
 
-              <h3>
-                {{ servicio.Nombre }}
-              </h3>
+  <h3>
+    {{ servicio.Nombre }}
+  </h3>
 
-              <p>
-                {{ servicio.Descripcion || 'Sin descripción disponible.' }}
-              </p>
+  <p>
+    {{ servicio.Descripcion || 'Sin descripción disponible.' }}
+  </p>
 
-              @if (servicio.Duracion) {
-                <small>
-                  Duración: {{ servicio.Duracion }} minutos
-                </small>
-              }
+  @if (servicio.Duracion) {
+    <small>
+      Duración: {{ servicio.Duracion }} minutos
+    </small>
+  }
 
-            </article>
+  <button
+    type="button"
+    class="btn btn-primario btn-solicitar-servicio"
+    (click)="solicitarCitaConServicio(servicio)"
+  >
+    Solicitar este servicio
+  </button>
+</article>
           }
         </div>
       } @else {
