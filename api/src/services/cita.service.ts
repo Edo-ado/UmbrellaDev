@@ -272,7 +272,7 @@ export const CitaServices = {
 
     if (fechaCita > hoy) {
       throw AppError.badRequest(
-        "No puedes aceptar una cita cuyo día aún no ha llegado",
+        "Aun no es posible aceptar la cita, la fecha de la cita es posterior a la fecha actual",
       );
     }
 
