@@ -253,7 +253,7 @@ export const CitaServices = {
     return !!citaActiva;
   },
 
-  async aceptar(id: number, motivo?: string) {
+ async aceptar(id: number, motivo?: string) {
     const cita = await this.getById(id);
 
     if (!cita) {
@@ -262,6 +262,18 @@ export const CitaServices = {
 
     if (cita.Estado !== ESTADOCITA.PENDIENTE) {
       throw AppError.badRequest("Solo se pueden aceptar citas pendientes");
+    }
+
+    const hoy = new Date();
+    hoy.setHours(0, 0, 0, 0);
+
+    const fechaCita = new Date(cita.Fecha);
+    fechaCita.setHours(0, 0, 0, 0);
+
+    if (fechaCita > hoy) {
+      throw AppError.badRequest(
+        "No puedes aceptar una cita cuyo día aún no ha llegado",
+      );
     }
 
     const ocupado = await CitaServices.tieneCitaActiva(cita.idprofesional);
@@ -325,36 +337,35 @@ export const CitaServices = {
     });
     return citaActualizada;
   },
-async cancelar(id: number, motivo: string, actorRol: string) {
-  const rol = actorRol?.trim().toUpperCase();
+  async cancelar(id: number, motivo: string, actorRol: string) {
+    const rol = actorRol?.trim().toUpperCase();
 
-  const cita = await CitaServices.getById(id);
+    const cita = await CitaServices.getById(id);
 
-  if (!cita) {
-    throw AppError.notFound("La cita indicada no existe");
-  }
+    if (!cita) {
+      throw AppError.notFound("La cita indicada no existe");
+    }
 
-  const esPendiente = cita.Estado === ESTADOCITA.PENDIENTE;
-  const esAceptada = cita.Estado === ESTADOCITA.ACEPTADA;
+    const esPendiente = cita.Estado === ESTADOCITA.PENDIENTE;
+    const esAceptada = cita.Estado === ESTADOCITA.ACEPTADA;
 
-  if (!esPendiente && !esAceptada) {
-    throw AppError.badRequest(
-      "La cita no puede cancelarse en su estado actual",
-    );
-  }
+    if (!esPendiente && !esAceptada) {
+      throw AppError.badRequest(
+        "La cita no puede cancelarse en su estado actual",
+      );
+    }
 
-  if (esPendiente && rol !== "USUARIO") {
-    throw AppError.badRequest(
-      "Una cita pendiente solo puede cancelarla el cliente",
-    );
-  }
+    if (esPendiente && rol !== "USUARIO") {
+      throw AppError.badRequest(
+        "Una cita pendiente solo puede cancelarla el cliente",
+      );
+    }
 
-  if (esAceptada && rol !== "USUARIO" && rol !== "DESARROLLADOR") {
-    throw AppError.badRequest(
-      "Una cita aceptada solo puede cancelarla el cliente o el profesional",
-    );
-  }
-
+    if (esAceptada && rol !== "USUARIO" && rol !== "DESARROLLADOR") {
+      throw AppError.badRequest(
+        "Una cita aceptada solo puede cancelarla el cliente o el profesional",
+      );
+    }
 
     if (esAceptada && (!motivo || motivo.trim() === "")) {
       throw AppError.badRequest("El motivo de cancelación es obligatorio");
