@@ -185,16 +185,19 @@ export const UsuarioService = {
     };
 
     const camposProfesional =
-      tipoUsuario === "DESARROLLADOR"
-        ? {
-            Descripcion: data.Descripcion ?? usuario.Descripcion,
-            Ubicacion: data.Ubicacion ?? usuario.Ubicacion,
-            TarifaBase: data.TarifaBase ?? usuario.TarifaBase,
-            especialidades: data.especialidadIds
-              ? { set: data.especialidadIds.map((Id) => ({ Id })) }
-              : undefined,
-          }
-        : {};
+  tipoUsuario === "DESARROLLADOR"
+    ? {
+        Descripcion: data.Descripcion ?? usuario.Descripcion,
+        Ubicacion: data.Ubicacion ?? usuario.Ubicacion,
+        TarifaBase:
+          data.TarifaBase !== undefined && data.TarifaBase !== null
+            ? Number(data.TarifaBase)
+            : usuario.TarifaBase,
+        especialidades: data.especialidadIds
+          ? { set: data.especialidadIds.map((Id) => ({ Id })) }
+          : undefined,
+      }
+    : {};
 
     return prisma.usuario.update({
       where: { Id: id },
