@@ -22,6 +22,10 @@ export class CategoriaService {
     });
   }
 
+  getAllActivos(): Observable<Categoria[]> {
+    return this.http.get<Categoria[]>(`${this.apiUrl}/activos`);
+  }
+
   obtenerPorEstado(estado: 'ACTIVO' | 'INACTIVO'): Observable<Categoria[]> {
     return this.http.get<Categoria[]>(`${this.apiUrl}/estado/${estado}`);
   }

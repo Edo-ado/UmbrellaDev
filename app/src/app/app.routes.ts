@@ -13,6 +13,7 @@ import { ServiciosLista } from './pages/servicios/servicios-lista/servicios-list
 import { ServiciosDetail } from './pages/servicios/servicios-detail/servicios-detail';
 import { ServiciosEdit } from './pages/servicios/servicios-edit/servicios-edit';
 import { ServiciosCreate } from './pages/servicios/servicios-create/servicios-create';
+import { PanelGeneral } from './pages/panel-general/panel-general';
 
 import { CitasListadoComponent } from './pages/citas/listado/listado';
 import { CitasCrear } from './pages/citas/registro/registro';
@@ -26,7 +27,7 @@ import { roleGuard } from './core/guards/role.guard';
 
 import { Role } from '../app/core/models/usuario.model';
 import { AgendaVisualComponent } from './pages/agendavisual/agendavisual';
-
+import { SinAutorizacion } from './pages/sin-autorizacion/sin-autorizacion';
 import {MiPerfil} from "./pages/usuario/mi-perfil/mi-perfil"
 
 
@@ -56,7 +57,13 @@ export const routes: Routes = [
       },
 
       //profesionales
-      { path: 'profesionales', component: ProfesionalLista, canActivate: [authGuard] },
+{
+  path: 'profesionales',
+  component: ProfesionalLista,
+  canActivate: [authGuard, roleGuard],
+  data: { roles: [Role.ADMIN] },
+},
+      
       {
         path: 'profesionalescrear',
         component: ProfesionalesCrear,
@@ -64,7 +71,7 @@ export const routes: Routes = [
         data: { roles: [Role.ADMIN] },
       },
 
-  
+  { path: 'sin-autorizacion', component: SinAutorizacion },
 
       {
         path: 'profesionalesEditar/:id',
@@ -101,15 +108,30 @@ export const routes: Routes = [
         canActivate: [authGuard, roleGuard],
         data: { roles: [Role.USUARIO, Role.ADMIN, Role.DESARROLLADOR] },
       },
-      { path: 'citas/crear', component: CitasCrear },
+   {
+  path: 'citas/crear',
+  component: CitasCrear,
+  canActivate: [authGuard, roleGuard],
+  data: { roles: [Role.USUARIO] },
+},
       { path: 'citas/detalle/:id', component: CitasDetalle , canActivate: [authGuard] },
 
       // panel de control
-      { path: 'panel-control', component: Graficos ,
+      { path: 'panel-control', 
+        component: Graficos ,
         canActivate: [authGuard, roleGuard],
-        data: { roles: [Role.ADMIN] }, },
+        data: { roles: [Role.ADMIN, Role.DESARROLLADOR] } },
 
 
+
+
+      // panel general
+      { path: 'panel-general', 
+        component: PanelGeneral ,
+        canActivate: [authGuard, roleGuard],
+        data: { roles: [Role.USUARIO] } },
+
+        
         
       //login
       { path: 'login', component: LoginComponent },

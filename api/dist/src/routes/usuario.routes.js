@@ -25,6 +25,8 @@ export class usuarioRoutes {
         router.post("/register", usuariosController.register);
         router.get("/perfil", authenticateToken, usuariosController.perfil);
         router.get("/perfil/:id", usuariosController.perfil);
+        //change user role
+  router.patch("/cambiar-rol/:id", usuariosController.changeUserRole);
         return router;
     }
 }

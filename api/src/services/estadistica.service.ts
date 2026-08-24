@@ -92,7 +92,7 @@ export const EstadisticaService = {
 
       profesionalEnReporte.totalCitas += 1;
 
-      if (cita.Estado === "COMPLETADA") {
+      if (cita.Estado === "COMPLETA") {
         profesionalEnReporte.citasCompletadas += 1;
       }
     }

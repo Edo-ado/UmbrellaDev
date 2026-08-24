@@ -290,5 +290,36 @@ perfil = async (
     }
 };
 
+changeUserRole = async (
+  request: Request,
+  response: Response,
+  next: NextFunction
+) => {
+  try {
+    const { id } = request.params;
+    const { nuevoRol } = request.body;
+
+    const usuario = await UsuarioService.cambiarRol(Number(id), nuevoRol);
+
+    return response.status(StatusCodes.OK).json(usuario);
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+};
+
+getDesarrolladoresDisponibles = async (
+  request: Request,
+  response: Response,
+  next: NextFunction,
+) => {
+  try {
+    const usuarios = await UsuarioService.getAllDesarrolladoresActivos();
+    return response.status(StatusCodes.OK).json(usuarios);
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+};
 
 }

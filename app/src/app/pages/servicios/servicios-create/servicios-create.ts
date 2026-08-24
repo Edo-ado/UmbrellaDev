@@ -2,11 +2,10 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit, signal, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { ServicioForm } from '../../../shared/components/servicio-form/servicio-form';
-import { UsuarioService } from '../../../core/services/usuario.service';
 import { CategoriaService } from '../../../core/services/categoria.service';
 import { EspecialidadService } from '../../../core/services/especialidad.service';
 import { ServicioService } from '../../../core/services/servicio.service';
-import { Profesional } from '../../../core/models/profesional.model';
+import { AuthService } from '../../../core/services/auth.service';
 import { Categoria } from '../../../core/models/categoria.model';
 import { Especialidad } from '../../../core/models/especialidad.model';
 import { ServicioCreateDto } from '../../../core/models/servicio.model';
@@ -16,37 +15,30 @@ import { ServicioCreateDto } from '../../../core/models/servicio.model';
   standalone: true,
   imports: [CommonModule, ServicioForm],
   templateUrl: './servicios-create.html',
-  styleUrls: ['./servicios-create.css']
+  styleUrls: ['./servicios-create.css'],
 })
 export class ServiciosCreate implements OnInit {
   private router = inject(Router);
-  private usuarioService = inject(UsuarioService);
   private categoriaService = inject(CategoriaService);
   private especialidadService = inject(EspecialidadService);
   private servicioService = inject(ServicioService);
+  private authService = inject(AuthService);
 
   saving = signal(false);
   error = signal('');
 
-  profesionales = signal<Profesional[]>([]);
   categorias = signal<Categoria[]>([]);
   especialidades = signal<Especialidad[]>([]);
 
+  profesionalActual = this.authService.profesional;
+
   ngOnInit(): void {
-    this.cargarProfesionales();
     this.cargarCategorias();
     this.cargarEspecialidades();
   }
 
-  cargarProfesionales(): void {
-    this.usuarioService.obtenerDesarrolladores().subscribe({
-      next: (data) => this.profesionales.set(data),
-      error: () => this.error.set('No se pudieron cargar los profesionales.'),
-    });
-  }
-
   cargarCategorias(): void {
-    this.categoriaService.listar().subscribe({
+    this.categoriaService.getAllActivos().subscribe({
       next: (data) => this.categorias.set(data),
       error: () => this.error.set('No se pudieron cargar las categorías.'),
     });
@@ -60,10 +52,24 @@ export class ServiciosCreate implements OnInit {
   }
 
   guardar(data: ServicioCreateDto): void {
+    const profesional = this.profesionalActual();
+
+    if (!profesional) {
+      this.error.set(
+        'No se pudo identificar al profesional autenticado.',
+      );
+      return;
+    }
+
     this.saving.set(true);
     this.error.set('');
 
-    this.servicioService.crear(data).subscribe({
+    const servicio: ServicioCreateDto = {
+      ...data,
+      idprofesional: profesional.Id,
+    };
+
+    this.servicioService.crear(servicio).subscribe({
       next: () => {
         this.saving.set(false);
         this.router.navigate(['/servicios']);

@@ -6,6 +6,7 @@ import {
 } from '@angular/core';
 
 
+
 import {
   FormBuilder,
   ReactiveFormsModule,
@@ -26,6 +27,8 @@ import {
   ReporteCalificaciones
 } from '../../../core/services/estadistica.service';
 
+import { AuthService } from '../../../core/services/auth.service';
+import { Role } from '../../../core/models/usuario.model';
 
 interface Profesional {
   id: number;
@@ -56,6 +59,10 @@ export class Graficos implements OnInit {
   private formBuilder =
     inject(FormBuilder);
 
+    private authService = inject(AuthService);
+
+usuarioActual = this.authService.profesional;
+readonly Role = Role;
 
   cargando = signal(false);
 
@@ -130,6 +137,9 @@ reporteCalificacionesData =
     }
   };
 
+esDesarrollador(): boolean {
+  return this.usuarioActual()?.Role === Role.DESARROLLADOR;
+}
 
   usuariosRolChart: any = {
     series: [
@@ -291,13 +301,19 @@ reporteCalificacionesData =
     this.error.set('');
 
 
-    const {
-      fechaInicio,
-      fechaFin,
-      profesionalId,
-      categoriaId
-    } = this.filtrosForm.getRawValue();
+const {
+  fechaInicio,
+  fechaFin,
+  profesionalId,
+  categoriaId
+} = this.filtrosForm.getRawValue();
 
+const usuario = this.usuarioActual();
+
+const profesionalIdConsulta =
+  usuario?.Role === Role.DESARROLLADOR
+    ? usuario.Id
+    : profesionalId;
 
     if (!fechaInicio || !fechaFin) {
       this.filtrosForm.markAllAsTouched();
@@ -328,19 +344,16 @@ reporteCalificacionesData =
 
 
     forkJoin({
-      citasEstado:
-        this.estadisticasService
-          .getCitasPorEstado(
-            fechaInicio,
-            fechaFin,
-            profesionalId,
-            categoriaId
-          ),
+  citasEstado:
+  this.estadisticasService
+    .getCitasPorEstado(
+      fechaInicio,
+      fechaFin,
+      profesionalIdConsulta,
+      categoriaId
+    ),
 
-      usuariosRol:
-        this.estadisticasService
-          .getUsuariosPorRol(),
-
+   
   reporteProfesional:
     this.estadisticasService
       .getReportePorProfesional()
@@ -348,7 +361,6 @@ reporteCalificacionesData =
     }).subscribe({
       next: ({
         citasEstado,
-        usuariosRol,
          reporteProfesional
       }) => {
         console.log(
@@ -356,20 +368,13 @@ reporteCalificacionesData =
           citasEstado
         );
 
-        console.log(
-          'Usuarios recibidos:',
-          usuariosRol
-        );
-
+ 
 
         this.citasEstadoData.set([
           ...citasEstado
         ]);
 
-        this.usuariosRolData.set([
-          ...usuariosRol
-        ]);
-
+  
 
         const seriesCitas =
           citasEstado.map(
@@ -395,38 +400,6 @@ reporteCalificacionesData =
         };
 
 
-        const seriesUsuarios =
-          usuariosRol.map(
-            item => item.total
-          );
-
-        const categoriasUsuarios =
-          usuariosRol.map(
-            item => item.rol
-          );
-
-
-        this.usuariosRolChart = {
-          ...this.usuariosRolChart,
-
-          series: [
-            {
-              name: 'Usuarios',
-
-              data: [
-                ...seriesUsuarios
-              ]
-            }
-          ],
-
-          xaxis: {
-            ...this.usuariosRolChart.xaxis,
-
-            categories: [
-              ...categoriasUsuarios
-            ]
-          }
-        };
 
 
         this.cargando.set(false);

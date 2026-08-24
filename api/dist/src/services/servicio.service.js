@@ -10,6 +10,17 @@ export const ServicioServices = {
             },
         });
     },
+   async GetAllActive() {
+        return prisma.servicio.findMany({
+            where: { Estado: "ACTIVO" },
+            include: {
+                profesional: true,
+                categoria: true,
+                servicioEspecialidades: true,
+            },
+        });
+    }
+    ,
     async getById(id) {
         return await prisma.servicio.findUnique({
             where: { Id: id },

@@ -29,10 +29,21 @@
                 <li><a routerLink="/usuarios">Usuarios</a></li>
                 <li><a routerLink="/categorias">Categorías</a></li>
                 <li><a routerLink="/especialidades">Especialidades</a></li>
+            <li><a routerLink="/profesionales">Profesionales</a></li>
+
             }
 
-            <li><a routerLink="/profesionales">Profesionales</a></li>
-            <li><a routerLink="/servicios">Servicios</a></li>
+
+ @if (authService.tieneRol([Role.USUARIO])) {
+            <li>
+                <a routerLink="/panel-general">
+                    Panel General
+                </a>
+            </li>
+        }
+
+    
+ 
             <li><a routerLink="/citas">Citas</a></li>
             <li><a routerLink="/agenda-visual">Agenda Visual</a></li>
 
@@ -42,11 +53,19 @@
    
 
 
-            @if (authService.tieneRol([Role.ADMIN])) {
-                <li><a routerLink="/panel-control">Reportes Gráficos</a></li>
-            }
+
+           @if (authService.tieneRol([Role.ADMIN, Role.DESARROLLADOR])) {
+           <li><a routerLink="/servicios">Servicios</a></li>
+  <li>
+    <a routerLink="/panel-control">
+      Reportes Gráficos
+    </a>
+  </li>
+}
         </ul>
     }
+
+       
 </nav>
 
             <div class="header-actions">

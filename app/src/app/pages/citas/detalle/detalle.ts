@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CitaService } from '../../../core/services/cita.service';
-
+import { Location } from '@angular/common';
 import { AuthService } from '../../../core/services/auth.service';
 import {
   Cita,
@@ -30,6 +30,7 @@ export class CitasDetalle implements OnInit {
   private authService = inject(AuthService);
   private resenaService = inject(ResenaService);
   private route = inject(ActivatedRoute);
+  private location = inject(Location);
   private router = inject(Router);
  readonly EstadoCita = EstadoCita;
 
@@ -184,9 +185,9 @@ tieneResena = computed(() => this.resenaExistente() !== null);
   });
   }
 
-  volver(): void {
-    this.router.navigate(['/citas']);
-  }
+volver(): void {
+  this.location .back();
+}
 
   abrirModalRechazar(): void {
     this.accionPendiente.set('rechazar');

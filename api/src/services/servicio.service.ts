@@ -210,7 +210,7 @@ async getServiciosProfesionalActivo(profesionalId: number) {
         Estado: "ACTIVO",
       },  
 
-      Estado: "ACTIVO",
+    
     },
     include: {
       profesional: true,
@@ -219,6 +219,77 @@ async getServiciosProfesionalActivo(profesionalId: number) {
     },
   });
 },
+
+//GET ALL ACTIVOS
+async getAllActivos() {
+  return await prisma.servicio.findMany({
+    where: {
+      Estado: "ACTIVO",
+      profesional: {
+        Estado: "ACTIVO",
+      },
+    },
+    include: {
+      profesional: true,
+      categoria: true,
+      servicioEspecialidades: true,
+    },
+  });
+},
+// FILTROS  ACTIVOS DE UN PROFESIONAL ACTIVO y SERVICIO ACTIVO
+async getServiciosFiltrados(filter: any) {
+  const where: any = {};
+
+  if (filter.profesionalId) {
+    where.idprofesional = filter.profesionalId;
+  }
+
+  if (filter.categoriaId) {
+    where.idcategoria = filter.categoriaId;
+  }
+
+  if (filter.modalidad) {
+    where.Modalidad = filter.modalidad;
+  }
+
+  if (filter.precioMin !== undefined || filter.precioMax !== undefined) {
+    where.Precio = {};
+
+    if (filter.precioMin !== undefined) {
+      where.Precio.gte = filter.precioMin;
+    }
+
+    if (filter.precioMax !== undefined) {
+      where.Precio.lte = filter.precioMax;
+    }
+  }
+
+  if (filter.nombre && filter.nombre.trim()) {
+    where.Nombre = {
+      contains: filter.nombre.trim(),
+    };
+  }
+
+  if (filter.soloActivos) {
+    where.Estado = 'ACTIVO';
+  }
+
+  if (filter.soloProfesionalActivoYDisponible) {
+    where.profesional = {
+      Estado: 'ACTIVO',
+      Disponibilidad: true,
+    };
+  }
+
+  return await prisma.servicio.findMany({
+    where,
+    include: {
+      profesional: true,
+      categoria: true,
+      servicioEspecialidades: true,
+    },
+  });
+}
 
 
 

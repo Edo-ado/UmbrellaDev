@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Servicio, ServicioCreateDto, ServicioUpdateDto } from '../models/servicio.model';
 
@@ -57,5 +57,47 @@ obtenerPorProfesionalActivo(id: number): Observable<Servicio[]> {
     `${this.apiUrl}/profesional-activo/${id}`,
   );
 }
+
+
+obtenerServiciosFiltrados(
+  profesionalId: number,
+  categoriaId?: number,
+  modalidad?: string,
+  precioMin?: number | null,
+  precioMax?: number | null,
+  nombre?: string,
+): Observable<Servicio[]> {
+  let params = new HttpParams()
+    .set('profesionalId', profesionalId.toString())
+    .set('soloActivos', 'true')
+    .set('soloProfesionalActivoYDisponible', 'true');
+
+  if (categoriaId) {
+    params = params.set('categoriaId', categoriaId.toString());
+  }
+
+  if (modalidad) {
+    params = params.set('modalidad', modalidad);
+  }
+
+  if (precioMin !== undefined && precioMin !== null) {
+    params = params.set('precioMin', precioMin.toString());
+  }
+
+  if (precioMax !== undefined && precioMax !== null) {
+    params = params.set('precioMax', precioMax.toString());
+  }
+
+  if (nombre?.trim()) {
+    params = params.set('nombre', nombre.trim());
+  }
+
+  return this.http.get<Servicio[]>(
+    `${this.apiUrl}/filtrados`,
+    { params },
+  );
+}
+
+
 
 }

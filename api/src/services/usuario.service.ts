@@ -75,14 +75,28 @@ export const UsuarioService = {
     });
   },
 
-  async getAllDesarrolladores() {
-    return await prisma.usuario.findMany({
-      where: { Role: "DESARROLLADOR" },
-      include: {
-        especialidades: true,
-      },
-    });
-  },
+async getAllDesarrolladores() {
+  return await prisma.usuario.findMany({
+    where: { Role: "DESARROLLADOR" }, 
+    include: {
+      especialidades: true, 
+    },
+  });
+},
+
+async getAllDesarrolladoresActivos() {
+  return await prisma.usuario.findMany({
+    where: { Role: "DESARROLLADOR" , Estado: "ACTIVO" , Disponibilidad: true}, 
+    include: {
+      especialidades: true, 
+    },
+  });
+},
+
+
+
+
+
   async crear(data: CreateUsuarioDto) {
     return prisma.usuario.create({
       data: {
@@ -404,5 +418,21 @@ async getByFechas(DiaInicial: Date, DiaFinal: Date) {
       include: { especialidades: true },
     });
   },
+  
+async cambiarRol(id: number, nuevoRol: Role) {
+    const usuario = await this.getById(id);
+    if (!usuario) {
+        throw new Error("El usuario indicado no existe");
+    }
+    if (usuario.Role === nuevoRol) {
+        throw new Error("El usuario ya tiene el rol indicado");
+    }
+    return await prisma.usuario.update({
+        where: { Id: id },
+        data: {
+            Role: nuevoRol,
+        },
+    });
+  }
 
 };

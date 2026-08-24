@@ -14,7 +14,15 @@ export class CategoriaController {
       next(error);
     }
   };
-
+getAllActivos = async (request: Request, response: Response, next: NextFunction) => {
+    try {
+      const categorias = await CategoriaService.GetAllActivos();
+      return response.status(StatusCodes.OK).json(categorias);
+    } catch (error) {
+      console.error(error);
+      next(error);
+    }
+  };
   getById = async (
     request: Request,
     response: Response,

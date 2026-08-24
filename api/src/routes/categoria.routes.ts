@@ -16,6 +16,7 @@ export class CategoriaRoutes {
 
     router.patch("/CambioEstado/:id", categoriaController.toggleStatus)
     
+    router.get("/activos", categoriaController.getAllActivos);
 
     return router;
   }

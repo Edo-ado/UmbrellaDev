@@ -27,9 +27,6 @@
 
   @if (!loading() && cargaValida()) {
     <div class="panel formulario">
-      <!-- Cliente: usuario logueado, solo lectura -->
-      
-
       <!-- Profesional -->
       <div class="campo">
         <label for="profesional">Profesional *</label>
@@ -62,7 +59,7 @@
         <select
           id="servicio"
           [ngModel]="idservicio()"
-          (ngModelChange)="idservicio.set($event)"
+          (ngModelChange)="idservicio.set($event); onServicioChange()"
         >
           <option value="">Seleccioná un servicio</option>
           @for (serv of serviciosDisponibles(); track serv.Id) {
@@ -118,22 +115,22 @@
         }
       </div>
 
-      <!-- Modalidad -->
+      <!-- Modalidad: autocompletada por el servicio, no editable -->
       <div class="campo">
         <label for="modalidad">Modalidad *</label>
         <select
           id="modalidad"
           [ngModel]="modalidad()"
-          (ngModelChange)="modalidad.set($event)"
+          disabled
         >
-          <option value="">Seleccioná una modalidad</option>
+          <option value="">Seleccioná un servicio primero</option>
           @for (mod of modalidades; track mod) {
             <option [value]="mod">{{ mod }}</option>
           }
         </select>
-        @if (errores()['modalidad']) {
-          <small class="hint">{{ errores()['modalidad'] }}</small>
-        }
+        <small class="hint hint-info">
+          La modalidad la define el servicio seleccionado.
+        </small>
       </div>
 
       <!-- Descripción -->
@@ -176,8 +173,67 @@
           [disabled]="guardando()"
           (click)="guardar()"
         >
-          {{ guardando() ? 'Guardando...' : 'Crear Cita' }}
+          Crear Cita
         </button>
+      </div>
+    </div>
+  }
+
+  @if (mostrarConfirmacion()) {
+    <div class="modal-overlay" (click)="cerrarConfirmacion()">
+      <div class="modal-confirmacion" (click)="$event.stopPropagation()">
+        <h3>Confirmar cita</h3>
+
+        <div class="modal-detalle">
+          <div class="modal-fila">
+            <span>Servicio</span>
+            <strong>{{ servicioSeleccionado()?.Nombre }}</strong>
+          </div>
+
+          <div class="modal-fila">
+            <span>Fecha</span>
+            <strong>{{ fecha() }}</strong>
+          </div>
+
+          <div class="modal-fila">
+            <span>Hora</span>
+            <strong>{{ hora() }}</strong>
+          </div>
+
+          <div class="modal-fila">
+            <span>Modalidad</span>
+            <strong>{{ modalidad() }}</strong>
+          </div>
+
+          <div class="modal-fila modal-monto">
+            <span>Monto estimado</span>
+            <strong>₡{{ montoEstimado() | number }}</strong>
+          </div>
+        </div>
+
+        <p class="modal-nota">
+          El estado inicial de la cita será <strong>Pendiente</strong>.
+        </p>
+
+        <div class="modal-acciones">
+          <button
+            type="button"
+            class="btn btn-secundario"
+            (click)="cerrarConfirmacion()"
+            [disabled]="guardando()"
+          >
+            Volver
+          </button>
+
+          <button
+            type="button"
+            class="btn btn-primario"
+            (click)="confirmarCita()"
+            [disabled]="guardando()"
+          >
+            {{ guardando() ? 'Enviando...' : 'Confirmar cita' }}
+          </button>
+        </div>
       </div>
     </div>
   }

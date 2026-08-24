@@ -30,6 +30,8 @@ export class CitasCrear implements OnInit {
   private authService = inject(AuthService);
   private router = inject(Router);
 
+  
+mostrarConfirmacion = signal<boolean>(false);
   usuarios = signal<UsuarioOption[]>([]);
   serviciosDisponibles = signal<Servicio[]>([]);
 
@@ -103,25 +105,37 @@ export class CitasCrear implements OnInit {
     });
   }
 
-  onProfesionalChange(): void {
-    this.idservicio.set('');
-    this.serviciosDisponibles.set([]);
+onProfesionalChange(): void {
+  this.idservicio.set('');
+  this.serviciosDisponibles.set([]);
+  this.modalidad.set('');
 
-    const profId = this.idprofesional();
-    if (!profId) return;
+  const profId = this.idprofesional();
+  if (!profId) return;
 
-    this.cargandoServicios.set(true);
-    this.servicioService.getByProfesional(Number(profId)).subscribe({
-      next: (data) => {
-        this.serviciosDisponibles.set(data);
-        this.cargandoServicios.set(false);
-      },
-      error: (err) => {
-        console.error(err);
-        this.cargandoServicios.set(false);
-      },
-    });
+  this.cargandoServicios.set(true);
+  this.servicioService.getByProfesional(Number(profId)).subscribe({
+    next: (data) => {
+      this.serviciosDisponibles.set(data);
+      this.cargandoServicios.set(false);
+    },
+    error: (err) => {
+      console.error(err);
+      this.cargandoServicios.set(false);
+    },
+  });
+}
+
+onServicioChange(): void {
+  const servicio = this.servicioSeleccionado();
+
+  if (servicio) {
+    this.modalidad.set(servicio.Modalidad);
+  } else {
+    this.modalidad.set('');
   }
+}
+
 
   private validar(): boolean {
     const errs: Record<string, string> = {};
@@ -175,55 +189,59 @@ export class CitasCrear implements OnInit {
     this.errores.set(errs);
     return Object.keys(errs).length === 0;
   }
+guardar(): void {
+  this.mensaje.set('');
+  this.error.set('');
 
-  guardar(): void {
-    if (this.guardando()) {
-      return;
-    }
-
-    this.mensaje.set('');
-    this.error.set('');
-
-    if (!this.validar()) {
-      this.error.set('Revisá los campos marcados antes de continuar.');
-      return;
-    }
-
-    const usuario = this.usuarioActual();
-    if (!usuario) {
-      this.error.set('No se pudo identificar al usuario actual.');
-      return;
-    }
-
-    this.guardando.set(true);
-
-    const body = {
-      idcliente: usuario.Id,
-      idprofesional: Number(this.idprofesional()),
-      idservicio: Number(this.idservicio()),
-      Fecha: this.fecha(),
-      Hora: this.hora(),
-      Modalidad: this.modalidad() as 'PRESENCIAL' | 'VIRTUAL' | 'HIBRIDA',
-      Descripcion: this.descripcion().trim(),
-      Comentarios: this.comentarios().trim(),
-      Estado: EstadoCita.PENDIENTE as EstadoCita,
-    };
-
-    this.citaService.solicitar(body).subscribe({
-      next: () => {
-        this.mensaje.set('Cita creada correctamente.');
-        this.guardando.set(false);
-        setTimeout(() => this.router.navigate(['/citas']), 1200);
-      },
-      error: (err: any) => {
-        console.error(err);
-        this.error.set(
-          err.error?.message || 'No se pudo crear la cita.'
-        );
-        this.guardando.set(false);
-      },
-    });
+  if (!this.validar()) {
+    this.error.set('Revisá los campos marcados antes de continuar.');
+    return;
   }
+
+  this.mostrarConfirmacion.set(true);
+}
+
+cerrarConfirmacion(): void {
+  this.mostrarConfirmacion.set(false);
+}
+
+
+
+confirmarCita(): void {
+  if (this.guardando()) {
+    return;
+  }
+
+  this.mostrarConfirmacion.set(false);
+  this.guardando.set(true);
+
+  const body = {
+    idcliente: Number(this.usuarioActual()?.Id),
+    idprofesional: Number(this.idprofesional()),
+    idservicio: Number(this.idservicio()),
+    Fecha: this.fecha(),
+    Hora: this.hora(),
+    Modalidad: this.modalidad() as 'PRESENCIAL' | 'VIRTUAL' | 'HIBRIDA',
+    Descripcion: this.descripcion().trim(),
+    Comentarios: this.comentarios().trim(),
+    Estado: EstadoCita.PENDIENTE as EstadoCita,
+  };
+
+  this.citaService.solicitar(body).subscribe({
+    next: () => {
+      this.mensaje.set('Cita creada correctamente.');
+      this.guardando.set(false);
+      setTimeout(() => this.router.navigate(['/citas']), 1200);
+    },
+    error: (err: any) => {
+      console.error(err);
+      this.error.set(
+        err.error?.message || 'No se pudo crear la cita.'
+      );
+      this.guardando.set(false);
+    },
+  });
+}
 
   cancelar(): void {
     this.router.navigate(['/citas']);
