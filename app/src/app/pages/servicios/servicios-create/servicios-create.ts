@@ -45,7 +45,7 @@ export class ServiciosCreate implements OnInit {
   }
 
   cargarEspecialidades(): void {
-    this.especialidadService.listar().subscribe({
+    this.especialidadService.GetAllActivos().subscribe({
       next: (data) => this.especialidades.set(data),
       error: () => this.error.set('No se pudieron cargar las especialidades.'),
     });

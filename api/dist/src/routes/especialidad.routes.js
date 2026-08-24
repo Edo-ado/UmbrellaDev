@@ -9,6 +9,7 @@ export class especialidadRoutes {
         router.get("/buscar", especialidadcontroller.getByName);
         router.get("/estado/:estado", especialidadcontroller.getByEstado);
         router.patch("/CambioEstado/:id", especialidadcontroller.toggleStatus);
+        router.get("/activos", especialidadcontroller.getAllActivos);
         return router;
     }
 }

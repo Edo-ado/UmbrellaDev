@@ -12,6 +12,10 @@ export class EspecialidadService {
     return this.http.get<Especialidad[]>(`${this.apiUrl}`);
   }
 
+  GetAllActivos(): Observable<Especialidad[]> {
+    return this.http.get<Especialidad[]>(`${this.apiUrl}/activos`);
+  }
+
   obtenerPorId(id: number): Observable<Especialidad> {
     return this.http.get<Especialidad>(`${this.apiUrl}/id/${id}`);
   }
@@ -21,6 +25,8 @@ export class EspecialidadService {
       params: { nombre }
     });
   }
+
+ 
 
   obtenerPorEstado(estado: 'ACTIVO' | 'INACTIVO'): Observable<Especialidad[]> {
     return this.http.get<Especialidad[]>(`${this.apiUrl}/estado/${estado}`);

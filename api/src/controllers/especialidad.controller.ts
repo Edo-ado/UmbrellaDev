@@ -15,6 +15,16 @@ export class EspecialidadController {
     }
   };
 
+  getAllActivos = async (request: Request, response: Response, next: NextFunction) => {
+    try {
+      const especialidades = await EspecialidadService.getAllActivos();
+      return response.status(StatusCodes.OK).json(especialidades);
+    } catch (error) {
+      console.error(error);
+      next(error);
+    }
+  };
+
   getById = async (
     request: Request,
     response: Response,

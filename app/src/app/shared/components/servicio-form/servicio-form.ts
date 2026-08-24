@@ -36,7 +36,7 @@ export class ServicioForm {
 
   guardar = output<ServicioCreateDto | ServicioUpdateDto>();
   cancelar = output<void>();
-
+profesionales = input<Profesional[]>([]);
   servicioModel = signal<ServicioFormModel>(this.modeloVacio());
 
   servicioForm = form(this.servicioModel, (path) => {
