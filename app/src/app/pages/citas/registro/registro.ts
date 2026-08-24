@@ -1,7 +1,7 @@
 import { Component, inject, signal, computed, OnInit } from '@angular/core';
 import { CommonModule, DecimalPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { CitaService } from '../../../core/services/cita.service';
 import { UsuarioService } from '../../../core/services/usuario.service';
 import { ServicioService, Servicio } from '../../../core/services/servicios.service';
@@ -29,9 +29,9 @@ export class CitasCrear implements OnInit {
   private servicioService = inject(ServicioService);
   private authService = inject(AuthService);
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
 
-  
-mostrarConfirmacion = signal<boolean>(false);
+  mostrarConfirmacion = signal<boolean>(false);
   usuarios = signal<UsuarioOption[]>([]);
   serviciosDisponibles = signal<Servicio[]>([]);
 
@@ -41,12 +41,10 @@ mostrarConfirmacion = signal<boolean>(false);
   error = signal<string>('');
   mensaje = signal<string>('');
 
- 
   usuarioActual = this.authService.profesional;
 
   cargaValida = computed(() => this.usuarioActual()?.Role === Role.USUARIO);
 
-  
   idprofesional = signal<string>('');
   idservicio = signal<string>('');
   fecha = signal<string>('');
@@ -96,6 +94,7 @@ mostrarConfirmacion = signal<boolean>(false);
       next: (data: any[]) => {
         this.usuarios.set(data);
         this.loading.set(false);
+        this.precargarDesdeQueryParams();
       },
       error: (err: any) => {
         console.error(err);
@@ -105,37 +104,77 @@ mostrarConfirmacion = signal<boolean>(false);
     });
   }
 
-onProfesionalChange(): void {
-  this.idservicio.set('');
-  this.serviciosDisponibles.set([]);
-  this.modalidad.set('');
+  /**
+   * Si venimos desde el Panel General con un profesional/servicio
+   * ya elegidos (query params), los precargamos en el formulario.
+   */
+  private precargarDesdeQueryParams(): void {
+    const params = this.route.snapshot.queryParamMap;
+    const idProf = params.get('idprofesional');
+    const idServ = params.get('idservicio');
 
-  const profId = this.idprofesional();
-  if (!profId) return;
+    if (!idProf) {
+      return;
+    }
 
-  this.cargandoServicios.set(true);
-  this.servicioService.getByProfesional(Number(profId)).subscribe({
-    next: (data) => {
-      this.serviciosDisponibles.set(data);
-      this.cargandoServicios.set(false);
-    },
-    error: (err) => {
-      console.error(err);
-      this.cargandoServicios.set(false);
-    },
-  });
-}
+    const profesionalExiste = this.profesionales().some(
+      (p) => p.Id === Number(idProf),
+    );
 
-onServicioChange(): void {
-  const servicio = this.servicioSeleccionado();
+    if (!profesionalExiste) {
+      return;
+    }
 
-  if (servicio) {
-    this.modalidad.set(servicio.Modalidad);
-  } else {
-    this.modalidad.set('');
+    this.idprofesional.set(idProf);
+
+    this.cargandoServicios.set(true);
+    this.servicioService.getByProfesional(Number(idProf)).subscribe({
+      next: (data) => {
+        this.serviciosDisponibles.set(data);
+        this.cargandoServicios.set(false);
+
+        if (idServ && data.some((s) => s.Id === Number(idServ))) {
+          this.idservicio.set(idServ);
+          this.onServicioChange();
+        }
+      },
+      error: (err) => {
+        console.error(err);
+        this.cargandoServicios.set(false);
+      },
+    });
   }
-}
 
+  onProfesionalChange(): void {
+    this.idservicio.set('');
+    this.serviciosDisponibles.set([]);
+    this.modalidad.set('');
+
+    const profId = this.idprofesional();
+    if (!profId) return;
+
+    this.cargandoServicios.set(true);
+    this.servicioService.getByProfesional(Number(profId)).subscribe({
+      next: (data) => {
+        this.serviciosDisponibles.set(data);
+        this.cargandoServicios.set(false);
+      },
+      error: (err) => {
+        console.error(err);
+        this.cargandoServicios.set(false);
+      },
+    });
+  }
+
+  onServicioChange(): void {
+    const servicio = this.servicioSeleccionado();
+
+    if (servicio) {
+      this.modalidad.set(servicio.Modalidad);
+    } else {
+      this.modalidad.set('');
+    }
+  }
 
   private validar(): boolean {
     const errs: Record<string, string> = {};
@@ -189,59 +228,58 @@ onServicioChange(): void {
     this.errores.set(errs);
     return Object.keys(errs).length === 0;
   }
-guardar(): void {
-  this.mensaje.set('');
-  this.error.set('');
 
-  if (!this.validar()) {
-    this.error.set('Revisá los campos marcados antes de continuar.');
-    return;
+  guardar(): void {
+    this.mensaje.set('');
+    this.error.set('');
+
+    if (!this.validar()) {
+      this.error.set('Revisá los campos marcados antes de continuar.');
+      return;
+    }
+
+    this.mostrarConfirmacion.set(true);
   }
 
-  this.mostrarConfirmacion.set(true);
-}
-
-cerrarConfirmacion(): void {
-  this.mostrarConfirmacion.set(false);
-}
-
-
-
-confirmarCita(): void {
-  if (this.guardando()) {
-    return;
+  cerrarConfirmacion(): void {
+    this.mostrarConfirmacion.set(false);
   }
 
-  this.mostrarConfirmacion.set(false);
-  this.guardando.set(true);
+  confirmarCita(): void {
+    if (this.guardando()) {
+      return;
+    }
 
-  const body = {
-    idcliente: Number(this.usuarioActual()?.Id),
-    idprofesional: Number(this.idprofesional()),
-    idservicio: Number(this.idservicio()),
-    Fecha: this.fecha(),
-    Hora: this.hora(),
-    Modalidad: this.modalidad() as 'PRESENCIAL' | 'VIRTUAL' | 'HIBRIDA',
-    Descripcion: this.descripcion().trim(),
-    Comentarios: this.comentarios().trim(),
-    Estado: EstadoCita.PENDIENTE as EstadoCita,
-  };
+    this.mostrarConfirmacion.set(false);
+    this.guardando.set(true);
 
-  this.citaService.solicitar(body).subscribe({
-    next: () => {
-      this.mensaje.set('Cita creada correctamente.');
-      this.guardando.set(false);
-      setTimeout(() => this.router.navigate(['/citas']), 1200);
-    },
-    error: (err: any) => {
-      console.error(err);
-      this.error.set(
-        err.error?.message || 'No se pudo crear la cita.'
-      );
-      this.guardando.set(false);
-    },
-  });
-}
+    const body = {
+      idcliente: Number(this.usuarioActual()?.Id),
+      idprofesional: Number(this.idprofesional()),
+      idservicio: Number(this.idservicio()),
+      Fecha: this.fecha(),
+      Hora: this.hora(),
+      Modalidad: this.modalidad() as 'PRESENCIAL' | 'VIRTUAL' | 'HIBRIDA',
+      Descripcion: this.descripcion().trim(),
+      Comentarios: this.comentarios().trim(),
+      Estado: EstadoCita.PENDIENTE as EstadoCita,
+    };
+
+    this.citaService.solicitar(body).subscribe({
+      next: () => {
+        this.mensaje.set('Cita creada correctamente.');
+        this.guardando.set(false);
+        setTimeout(() => this.router.navigate(['/citas']), 1200);
+      },
+      error: (err: any) => {
+        console.error(err);
+        this.error.set(
+          err.error?.message || 'No se pudo crear la cita.'
+        );
+        this.guardando.set(false);
+      },
+    });
+  }
 
   cancelar(): void {
     this.router.navigate(['/citas']);

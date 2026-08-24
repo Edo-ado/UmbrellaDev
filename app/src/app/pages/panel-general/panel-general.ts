@@ -346,4 +346,20 @@ verDetalleProfesional(id: number): void {
   this.router.navigate(['/profesionalesDetalle/', id]);
 }
 
+
+solicitarCitaConServicio(servicio: Servicio): void {
+  const profesional = this.profesionalSeleccionado();
+
+  if (!profesional) {
+    return;
+  }
+
+  this.router.navigate(['/citas/crear'], {
+    queryParams: {
+      idprofesional: profesional.Id,
+      idservicio: servicio.Id,
+    },
+  });
+}
+
 }
