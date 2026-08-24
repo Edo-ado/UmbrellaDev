@@ -182,7 +182,7 @@ export const CitaServices = {
       );
     }
 
-    // Cambia Activo por el nombre real de tu campo.
+    // Cambia Activo por el nombre real del campo.
     if (!servicioExiste.Estado || servicioExiste.Estado !== "ACTIVO") {
       throw AppError.badRequest("El servicio no está activo");
     }
