@@ -37,6 +37,7 @@ export class CitasListadoComponent implements OnInit {
   // - DESARROLLADOR (profesional): solo las citas donde él es el profesional
   // - USUARIO (cliente): solo las citas donde él es el cliente
   // - ADMIN: todas
+
 citasVisibles = computed(() => {
   const usuario = this.usuarioActual();
   const todasLasCitas = this.citas();
@@ -94,9 +95,7 @@ citasVisibles = computed(() => {
     return this.citasVisibles().filter((cita) => {
       const coincideEstado = !estado || cita.Estado === estado;
 
-      const coincideProfesional =
-        !profesionalId ||
-        cita.idprofesional === Number(profesionalId);
+      const coincideProfesional =!profesionalId || cita.idprofesional === Number(profesionalId);
 
       const fechaCita = new Date(cita.Fecha);
 

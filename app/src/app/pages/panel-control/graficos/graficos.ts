@@ -64,12 +64,11 @@ reporteProfesionalData =
   profesionales =
     signal<Profesional[]>([]);
 
-reporteCalificacionesData =
+  reporteCalificacionesData =
   signal<ReporteCalificaciones[]>([]);
 
   categorias =
     signal<Categoria[]>([]);
-
 
   citasEstadoData =
     signal<{ estado: string; total: number }[]>([]);

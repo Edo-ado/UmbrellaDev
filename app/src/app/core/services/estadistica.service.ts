@@ -42,10 +42,6 @@ export class EstadisticasService {
 
   constructor(private http: HttpClient) {}
 
-  // Trae todas las citas y las agrupa por estado
-// Trae las citas entre una fecha inicial y una fecha final
-// y las agrupa por estado
-
 
   getCitasPorEstado(
     fechaInicio: string,
