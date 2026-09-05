@@ -182,7 +182,7 @@ export const CitaServices = {
       );
     }
 
-    // Cambia Activo por el nombre real de tu campo.
+    // Cambia Activo por el nombre real del campo.
     if (!servicioExiste.Estado || servicioExiste.Estado !== "ACTIVO") {
       throw AppError.badRequest("El servicio no está activo");
     }
@@ -272,7 +272,7 @@ export const CitaServices = {
 
     if (fechaCita > hoy) {
       throw AppError.badRequest(
-        "No puedes aceptar una cita cuyo día aún no ha llegado",
+        "Aun no es posible aceptar la cita, la fecha de la cita es posterior a la fecha actual",
       );
     }
 

@@ -6,25 +6,15 @@ import {
 } from '@angular/core';
 
 
+import {FormBuilder,ReactiveFormsModule,Validators} from '@angular/forms';
 
-import {
-  FormBuilder,
-  ReactiveFormsModule,
-  Validators
-} from '@angular/forms';
-
-import {
-  NgApexchartsModule
+import { NgApexchartsModule
 } from 'ng-apexcharts';
 
-import {
-  forkJoin
+import { forkJoin
 } from 'rxjs';
 
-import {
-  EstadisticasService,
-  ReporteProfesional,
-  ReporteCalificaciones
+import { EstadisticasService, ReporteProfesional, ReporteCalificaciones
 } from '../../../core/services/estadistica.service';
 
 import { AuthService } from '../../../core/services/auth.service';
@@ -74,12 +64,11 @@ reporteProfesionalData =
   profesionales =
     signal<Profesional[]>([]);
 
-reporteCalificacionesData =
+  reporteCalificacionesData =
   signal<ReporteCalificaciones[]>([]);
 
   categorias =
     signal<Categoria[]>([]);
-
 
   citasEstadoData =
     signal<{ estado: string; total: number }[]>([]);
@@ -310,10 +299,7 @@ const {
 
 const usuario = this.usuarioActual();
 
-const profesionalIdConsulta =
-  usuario?.Role === Role.DESARROLLADOR
-    ? usuario.Id
-    : profesionalId;
+const profesionalIdConsulta = usuario?.Role === Role.DESARROLLADOR? usuario.Id: profesionalId;
 
     if (!fechaInicio || !fechaFin) {
       this.filtrosForm.markAllAsTouched();
