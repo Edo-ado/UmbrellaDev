@@ -1,71 +1,57 @@
-<section class="hero">
+<main class="home-shell">
+  <!-- Fondo con retícula de laboratorio / escáner -->
+  <div class="grid-overlay" aria-hidden="true"></div>
+  
+  <section class="hero" aria-labelledby="home-title">
+    
+    <!-- HEADER / STATUS SUPERIOR -->
+    <div class="hud-top">
+      <div class="hud-tag"><span class="blink-dot"></span> SYS_STATUS: OPERATIONAL</div>
+      <div class="hud-code">SEC_LEVEL // 04</div>
+      <div class="hud-time">BIO_PROTOCOL_v4.02</div>
+    </div>
 
+    <!-- CONTENIDO PRINCIPAL CENTRADO -->
     <div class="hero-content">
+      <p class="hero-kicker">/ / UMBRELLA RESEARCH & DEVELOPMENT</p>
+      
+      <h1 id="home-title">
+        <span class="main-text">UMBRELLA</span>
+        <span class="glow-text">DEV</span>
+      </h1>
+      
+      <p class="hero-description">
+        Diseña, despliega y supervisa soluciones digitales con una infraestructura pensada para crecer sin perder el control.
+      </p>
 
-        <span class="hero-badge">
-            {{hero.badge}}
-        </span>
-
-        <h1>{{hero.title}}</h1>
-
-        <h2>{{hero.subtitle}}</h2>
-
-        <p>
-            {{hero.description}}
-        </p>
-
-        <div class="hero-buttons">
-
-            <button class="btn-primary">
-                {{hero.primaryButton}}
-            </button>
-
-            <button class="btn-secondary">
-                {{hero.secondaryButton}}
-            </button>
-
-        </div>
-
+      <div class="hero-actions">
+        <button class="btn-umbrella">
+          <span class="btn-glitch">INICIALIZAR SISTEMA</span>
+        </button>
+        <span class="action-subtext">[ AUTH_KEY REQUIRED ]</span>
+      </div>
     </div>
 
-    <div class="terminal">
-
-        <div class="terminal-header">
-
-            <span></span>
-            <span></span>
-            <span></span>
-
-        </div>
-
-        <div class="terminal-body">
-
-            <p>> Initializing UmbrellaDev...</p>
-
-            @for(protocol of protocols; track protocol){
-
-            <p>> {{protocol}}</p>
-
-            }
-
-            <br>
-
-            @for(item of status; track item.name){
-
-            <div class="status-row">
-
-                <span>{{item.name}}</span>
-
-                <span class="online">
-                    {{item.state}}
-                </span>
-
-            </div>
-
-            }
-
-        </div>
-
+    <!-- FOOTER HUD / METRICAS DE DIAGNÓSTICO -->
+    <div class="hud-bottom">
+      <div class="hud-block">
+        <span class="hud-label">INFRASTRUCTURE</span>
+        <span class="hud-val">99.98% STABLE</span>
+      </div>
+      <div class="hud-block">
+        <span class="hud-label">ACTIVE NODES</span>
+        <span class="hud-val">1,024 CLUSTERS</span>
+      </div>
+      <div class="hud-block align-right">
+        <span class="hud-label">DATA ENCRYPTION</span>
+        <span class="hud-val">256-BIT BIO-HEX</span>
+      </div>
     </div>
 
-</section>
+    <!-- BORDES DE INTERFAZ / MARCADORES -->
+    <span class="corner-mark top-left"></span>
+    <span class="corner-mark top-right"></span>
+    <span class="corner-mark bottom-left"></span>
+    <span class="corner-mark bottom-right"></span>
+  </section>
+</main>
