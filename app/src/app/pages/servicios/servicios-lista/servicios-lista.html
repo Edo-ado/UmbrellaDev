@@ -122,11 +122,13 @@
                   </span>
                 </td>
                 <td class="col-acciones">
-                  <button class="btn btn-accion" (click)="irAEditar(servicio.Id)">Editar</button>
-                  <button class="btn btn-accion" (click)="irADetalle(servicio.Id)">Ver detalle</button>
-                  <button class="btn btn-accion" (click)="toggleEstado(servicio.Id)">
-                    {{ servicio.Estado === 'ACTIVO' ? 'Desactivar' : 'Activar' }}
-                  </button>
+                  <div class="acciones-wrap">
+                    <button class="btn btn-accion" (click)="irAEditar(servicio.Id)">Editar</button>
+                    <button class="btn btn-accion" (click)="irADetalle(servicio.Id)">Ver detalle</button>
+                    <button class="btn btn-accion" (click)="toggleEstado(servicio.Id)">
+                      {{ servicio.Estado === 'ACTIVO' ? 'Desactivar' : 'Activar' }}
+                    </button>
+                  </div>
                 </td>
               </tr>
             }

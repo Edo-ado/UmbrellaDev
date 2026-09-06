@@ -73,8 +73,13 @@
 
                 @if (authService.autenticado()) {
                     <div class="user-session">
-                        <div class="user-avatar" aria-hidden="true">
-                            
+                        <div class="user-avatar">
+                            @if (authService.profesional()?.Foto; as foto) {
+                                <img
+                                    [src]="imageService.getUrl(foto)"
+                                    [alt]="'Foto de ' + authService.profesional()?.NombreCompleto"
+                                />
+                            }
                         </div>
 
                         <div class="user-info-text">
