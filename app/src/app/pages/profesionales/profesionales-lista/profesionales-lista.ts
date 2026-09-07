@@ -116,7 +116,7 @@ export class ProfesionalLista implements OnInit {
     this.loading.set(true);
     this.error.set('');
 
-    this.http.get<any[]>(`${this.apiUrl}/disponibilidad/${this.disponibilidadSeleccionada}`).subscribe({
+    this.http.get<any[]>(`${this.apiUrl}disponibilidad/${this.disponibilidadSeleccionada}`).subscribe({
       next: (data) => {
         this.profesionales.set(data);
         this.loading.set(false);

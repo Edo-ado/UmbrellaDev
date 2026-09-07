@@ -23,26 +23,6 @@ export class usuarioController {
             next(error);
         }
     };
-
-changeUserRole = async (request, response, next) => {
-        try {
-            const { id } = request.params;
-            const { role } = request.body;
-            if (!Object.values(Role).includes(role)) {
-                return response
-
-                    .status(StatusCodes.BAD_REQUEST)
-                    .json({ error: "Rol inválido" });
-            }
-            const usuario = await UsuarioService.changeUserRole(Number(id), role);
-            return response.status(StatusCodes.OK).json(usuario);
-        }   
-        catch (error) {
-            console.error(error);
-            next(error);
-        }
-    };
-
     getByRol = async (request, response, next) => {
         try {
             const { rol } = request.params;
@@ -122,13 +102,8 @@ changeUserRole = async (request, response, next) => {
     };
     update = async (request, response, next) => {
         try {
-            if (!request.user) {
-                return response.status(StatusCodes.UNAUTHORIZED).json({
-                    success: false,
-                    message: "Usuario no autenticado",
-                });
-            }
-            const usuario = await UsuarioService.actualizar(request.user.Id, request.body, request.file);
+            const id = Number(request.params.id);
+            const usuario = await UsuarioService.actualizar(id, request.body, request.file);
             return response.status(StatusCodes.OK).json({
                 message: "Usuario actualizado correctamente",
                 data: usuario,
@@ -235,6 +210,28 @@ changeUserRole = async (request, response, next) => {
             });
         }
         catch (error) {
+            next(error);
+        }
+    };
+    changeUserRole = async (request, response, next) => {
+        try {
+            const { id } = request.params;
+            const { nuevoRol } = request.body;
+            const usuario = await UsuarioService.cambiarRol(Number(id), nuevoRol);
+            return response.status(StatusCodes.OK).json(usuario);
+        }
+        catch (error) {
+            console.error(error);
+            next(error);
+        }
+    };
+    getDesarrolladoresDisponibles = async (request, response, next) => {
+        try {
+            const usuarios = await UsuarioService.getAllDesarrolladoresActivos();
+            return response.status(StatusCodes.OK).json(usuarios);
+        }
+        catch (error) {
+            console.error(error);
             next(error);
         }
     };

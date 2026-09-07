@@ -23,18 +23,6 @@ export class ServicioController {
             next(error);
         }
     };
-
-   getAllActivos = async (request, response, next) => {
-        try {
-            const servicios = await ServicioServices.GetAllActive();
-            return response.status(StatusCodes.OK).json(servicios);
-        }
-        catch (error) {
-            console.error(error);
-            next(error);
-        }
-    };
-
     getByName = async (request, response, next) => {
         try {
             const nombre = (request.query.nombre || request.query.Nombre);
@@ -68,6 +56,16 @@ export class ServicioController {
             next(error);
         }
     };
+    getAllActivos = async (request, response, next) => {
+        try {
+            const servicios = await ServicioServices.getAllActivos();
+            return response.status(StatusCodes.OK).json(servicios);
+        }
+        catch (error) {
+            console.error(error);
+            next(error);
+        }
+    };
     getByModalidad = async (request, response, next) => {
         try {
             const Modalidad = request.params.modalidad.toUpperCase();
@@ -86,14 +84,14 @@ export class ServicioController {
     };
     getByRangoPrecio = async (request, response, next) => {
         const { precioMin, precioMax } = request.query;
-        if (!precioMin || !precioMax) {
+        if (precioMin === undefined && precioMax === undefined) {
             return response
                 .status(400)
-                .json({ error: "Se necesitan valores minimos y maximos validos" });
+                .json({ error: "Se necesita al menos un precio válido" });
         }
-        const min = parseFloat(precioMin);
-        const max = parseFloat(precioMax);
-        if (isNaN(min) || isNaN(max)) {
+        const min = precioMin === undefined ? undefined : parseFloat(precioMin);
+        const max = precioMax === undefined ? undefined : parseFloat(precioMax);
+        if (min !== undefined && isNaN(min) || max !== undefined && isNaN(max)) {
             return response
                 .status(400)
                 .json({ error: "Los precios deben ser números válidos" });
@@ -134,6 +132,26 @@ export class ServicioController {
         try {
             const id = Number(request.params.id);
             const servicios = await ServicioServices.getServiciosProfesionalActivo(id);
+            return response.status(StatusCodes.OK).json(servicios);
+        }
+        catch (error) {
+            next(error);
+        }
+    };
+    getServiciosFiltrados = async (request, response, next) => {
+        try {
+            const query = request.query;
+            const filter = {
+                profesionalId: query.profesionalId ? Number(query.profesionalId) : undefined,
+                categoriaId: query.categoriaId ? Number(query.categoriaId) : undefined,
+                modalidad: query.modalidad || undefined,
+                precioMin: query.precioMin ? Number(query.precioMin) : undefined,
+                precioMax: query.precioMax ? Number(query.precioMax) : undefined,
+                nombre: query.nombre || undefined,
+                soloActivos: query.soloActivos === 'true',
+                soloProfesionalActivoYDisponible: query.soloProfesionalActivoYDisponible === 'true',
+            };
+            const servicios = await ServicioServices.getServiciosFiltrados(filter);
             return response.status(StatusCodes.OK).json(servicios);
         }
         catch (error) {

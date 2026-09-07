@@ -1,9 +1,8 @@
 <section class="servicios-page">
   <div class="servicios-hero hero-servicios">
     <div>
-      <p class="eyebrow">Umbrella Corporation</p>
+      <p class="eyebrow">Servicio</p>
       <h2>Detalle del servicio</h2>
-      <p class="subtitle">Información completa del servicio registrado.</p>
     </div>
   </div>
 
@@ -21,7 +20,6 @@
         <h3>{{ servicio.Nombre }}</h3>
         <p class="detalle-subtitulo">{{ servicio.categoria?.Nombre || 'Sin categoría' }}</p>
       </div>
-  
     </div>
 
     <div class="grid-detalle">
@@ -34,16 +32,6 @@
         <label>Categoría</label>
         <p>{{ servicio.categoria?.Nombre || 'Sin categoría' }}</p>
       </div>
-
-
-<div class="especialidades-box" *ngIf="servicio.servicioEspecialidades && servicio.servicioEspecialidades.length > 0">
-  <label>Especialidades</label>
-  <div class="tags-grid">
-    <span class="tag" *ngFor="let especialidad of servicio.servicioEspecialidades">
-      {{ especialidad.Nombre }}
-    </span>
-  </div>
-</div>
 
 
       <div class="campo-detalle">
@@ -72,7 +60,7 @@
       </div>
     </div>
 
-    <div class="detalle-header" style="margin-top: 1.5rem;">
+    <div class="detalle-header seccion-header">
       <h3>Profesional</h3>
     </div>
 
@@ -115,18 +103,17 @@
       <p class="estado-vacio">Este servicio no tiene un profesional asignado.</p>
     </ng-template>
 
-    <div class="especialidades-box" *ngIf="servicio.especialidades && servicio.especialidades.length > 0">
+    <div class="especialidades-box" *ngIf="servicio.servicioEspecialidades && servicio.servicioEspecialidades.length > 0">
       <label>Especialidades</label>
       <div class="tags-grid">
-        <span class="tag" *ngFor="let especialidad of servicio.especialidades">
+        <span class="tag" *ngFor="let especialidad of servicio.servicioEspecialidades">
           {{ especialidad.Nombre }}
         </span>
       </div>
     </div>
 
     <div class="acciones-filtro">
-      <button class="btn btn-secundario" (click)="volver()">Volver</button>
-  
+      <button class="btn btn-secundario" (click)="volver()">Volver a servicios</button>
     </div>
   </div>
 </section>

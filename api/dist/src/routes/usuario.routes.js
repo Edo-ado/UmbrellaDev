@@ -20,13 +20,15 @@ export class usuarioRoutes {
         router.get("/desarrolladores", usuariosController.getAllDesarrolladores);
         //toggle
         router.patch("/CambioDisponibilidad/:id", usuariosController.toggleDisponibilidadByProfesional);
+        //desarrolladores disponibles
+        router.get("/desarrolladoresDisponibles", usuariosController.getDesarrolladoresDisponibles);
+        router.get("/fechas", usuariosController.getByFechas);
         router.get("/fechas", usuariosController.getByFechas);
         router.post("/login", usuariosController.login);
         router.post("/register", usuariosController.register);
         router.get("/perfil", authenticateToken, usuariosController.perfil);
         router.get("/perfil/:id", usuariosController.perfil);
-        //change user role
-  router.patch("/cambiar-rol/:id", usuariosController.changeUserRole);
+        router.patch("/cambiar-rol/:id", usuariosController.changeUserRole);
         return router;
     }
 }

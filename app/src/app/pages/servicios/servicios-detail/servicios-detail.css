@@ -8,16 +8,16 @@
     padding:60px;
 }
 
-.profesionales-page{
+.servicios-page{
     max-width:1400px;
     margin:auto;
 }
 
-.profesionales-hero{
+.servicios-hero{
     display:flex;
     justify-content:space-between;
     align-items:center;
-    margin-bottom:35px;
+    margin-bottom:24px;
 }
 
 .eyebrow{
@@ -28,8 +28,8 @@
     margin-bottom:15px;
 }
 
-.profesionales-hero h2{
-    font-size:3rem;
+.servicios-hero h2{
+    font-size:2.4rem;
     margin:0;
 }
 
@@ -48,6 +48,87 @@
     margin-bottom:28px;
     box-shadow:
     0 0 30px rgba(255,0,0,.08);
+}
+
+.detalle-card {
+    max-width: 1050px;
+    margin: 0 auto 28px;
+}
+
+.detalle-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #252525;
+}
+
+.detalle-header h3 {
+    margin: 0;
+    font-size: 1.65rem;
+}
+
+.detalle-subtitulo {
+    color: #9b9b9b;
+    margin: 7px 0 0;
+}
+
+.grid-detalle {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1px;
+    margin-top: 22px;
+    background: #252525;
+    border: 1px solid #252525;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.campo-detalle {
+    background: #171717;
+    padding: 18px 20px;
+}
+
+.campo-detalle-full {
+    grid-column: 1 / -1;
+}
+
+.campo-detalle label,
+.especialidades-box label {
+    display: block;
+    margin-bottom: 8px;
+}
+
+.campo-detalle p {
+    margin: 0;
+    line-height: 1.5;
+}
+
+.seccion-header {
+    margin-top: 30px;
+}
+
+.especialidades-box {
+    margin-top: 22px;
+    padding: 18px 20px;
+    background: #171717;
+    border: 1px solid #252525;
+    border-radius: 10px;
+}
+
+.tags-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.estado-vacio {
+    padding: 22px 0;
+    text-align: left;
+}
+
+.detalle-card > .acciones-filtro {
+    margin-top: 26px;
 }
 
 .filtros{
@@ -219,7 +300,7 @@ tbody tr:hover{
 
 @media(max-width:900px){
 
-.profesionales-hero{
+.servicios-hero{
     flex-direction:column;
     align-items:flex-start;
     gap:20px;
@@ -229,8 +310,16 @@ tbody tr:hover{
 padding:25px;
 }
 
-.profesionales-hero h2{
+.servicios-hero h2{
 font-size:2.1rem;
+}
+
+.grid-detalle {
+    grid-template-columns: 1fr;
+}
+
+.campo-detalle-full {
+    grid-column: auto;
 }
 
 .acciones-filtro{

@@ -123,6 +123,8 @@ select:focus{
     background:#191919;
     border:1px solid #444;
     color:white;
+    padding:10px 12px;
+    white-space:nowrap;
 }
 
 .btn-accion:hover{
@@ -164,9 +166,15 @@ tbody tr:hover{
 }
 
 .col-acciones{
+    white-space:nowrap;
+}
+
+.acciones-wrap{
     display:flex;
-    gap:10px;
-    flex-wrap:wrap;
+    align-items:center;
+    gap:8px;
+    flex-wrap:nowrap;
+    width:max-content;
 }
 
 .tag{

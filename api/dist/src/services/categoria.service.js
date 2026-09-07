@@ -10,18 +10,6 @@ export const CategoriaService = {
             },
         });
     },
-
-async GetAllActivos() {
-        return prisma.categoria.findMany({
-            where: { Estado: "ACTIVO" },
-            include: {
-                especialidad: {
-                    omit: { Estado: true, Descripcion: true, CategoriaId: true },
-                },
-            },
-        });
-    },
-
     async getById(id) {
         return await prisma.categoria.findUnique({
             where: { Id: id },
@@ -35,6 +23,16 @@ async GetAllActivos() {
     async getByName(Nombre) {
         return await prisma.categoria.findMany({
             where: { Nombre: { contains: Nombre } },
+            include: {
+                especialidad: {
+                    omit: { Estado: true, Descripcion: true, CategoriaId: true },
+                },
+            },
+        });
+    },
+    GetAllActivos: async () => {
+        return await prisma.categoria.findMany({
+            where: { Estado: "ACTIVO" },
             include: {
                 especialidad: {
                     omit: { Estado: true, Descripcion: true, CategoriaId: true },

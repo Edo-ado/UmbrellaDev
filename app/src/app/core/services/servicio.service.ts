@@ -34,9 +34,12 @@ export class ServicioService {
     return this.http.get<Servicio[]>(`${this.apiUrl}/modalidad/${modalidad}`);
   }
 
-  obtenerPorRangoPrecio(precioMin: number, precioMax: number): Observable<Servicio[]> {
+  obtenerPorRangoPrecio(precioMin?: number | null, precioMax?: number | null): Observable<Servicio[]> {
     return this.http.get<Servicio[]>(`${this.apiUrl}/rango-precio`, {
-      params: { precioMin, precioMax }
+      params: {
+        ...(precioMin != null && { precioMin }),
+        ...(precioMax != null && { precioMax }),
+      }
     });
   }
 

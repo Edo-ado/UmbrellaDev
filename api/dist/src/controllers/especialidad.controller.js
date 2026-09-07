@@ -12,21 +12,21 @@ export class EspecialidadController {
             next(error);
         }
     };
-    getById = async (request, response, next) => {
+    getAllActivos = async (request, response, next) => {
         try {
-            const { id } = request.params;
-            const especialidad = await EspecialidadService.getById(Number(id));
-            return response.status(StatusCodes.OK).json(especialidad);
+            const especialidades = await EspecialidadService.getAllActivos();
+            return response.status(StatusCodes.OK).json(especialidades);
         }
         catch (error) {
             console.error(error);
             next(error);
         }
     };
-    getAllActivos = async (request, response, next) => {
+    getById = async (request, response, next) => {
         try {
-            const especialidades = await EspecialidadService.getAllActivos();
-            return response.status(StatusCodes.OK).json(especialidades);
+            const { id } = request.params;
+            const especialidad = await EspecialidadService.getById(Number(id));
+            return response.status(StatusCodes.OK).json(especialidad);
         }
         catch (error) {
             console.error(error);

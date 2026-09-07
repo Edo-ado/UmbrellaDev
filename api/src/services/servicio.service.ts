@@ -70,13 +70,20 @@ export const ServicioServices = {
     });
   },
 
-  async getByRangoPrecio(precioMin: number, precioMax: number) {
+  async getByRangoPrecio(precioMin?: number, precioMax?: number) {
+    const rangoPrecio: { gte?: number; lte?: number } = {};
+
+    if (precioMin !== undefined) {
+      rangoPrecio.gte = precioMin;
+    }
+
+    if (precioMax !== undefined) {
+      rangoPrecio.lte = precioMax;
+    }
+
     return await prisma.servicio.findMany({
       where: {
-        Precio: {
-          gte: precioMin,
-          lte: precioMax,
-        },
+        Precio: rangoPrecio,
       },
       include: {
         profesional: true,

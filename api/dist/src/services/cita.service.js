@@ -146,7 +146,7 @@ export const CitaServices = {
         if (servicioExiste.idprofesional !== idProfesional) {
             throw AppError.badRequest("El servicio no pertenece al profesional indicado");
         }
-        // Cambia Activo por el nombre real de tu campo.
+        // Cambia Activo por el nombre real del campo.
         if (!servicioExiste.Estado || servicioExiste.Estado !== "ACTIVO") {
             throw AppError.badRequest("El servicio no está activo");
         }
@@ -205,6 +205,13 @@ export const CitaServices = {
         }
         if (cita.Estado !== ESTADOCITA.PENDIENTE) {
             throw AppError.badRequest("Solo se pueden aceptar citas pendientes");
+        }
+        const hoy = new Date();
+        hoy.setHours(0, 0, 0, 0);
+        const fechaCita = new Date(cita.Fecha);
+        fechaCita.setHours(0, 0, 0, 0);
+        if (fechaCita > hoy) {
+            throw AppError.badRequest("Aun no es posible aceptar la cita, la fecha de la cita es posterior a la fecha actual");
         }
         const ocupado = await CitaServices.tieneCitaActiva(cita.idprofesional);
         if (ocupado) {
@@ -268,10 +275,10 @@ export const CitaServices = {
         if (!esPendiente && !esAceptada) {
             throw AppError.badRequest("La cita no puede cancelarse en su estado actual");
         }
-        if (esPendiente && rol !== "CLIENTE") {
+        if (esPendiente && rol !== "USUARIO") {
             throw AppError.badRequest("Una cita pendiente solo puede cancelarla el cliente");
         }
-        if (esAceptada && rol !== "CLIENTE" && rol !== "PROFESIONAL") {
+        if (esAceptada && rol !== "USUARIO" && rol !== "DESARROLLADOR") {
             throw AppError.badRequest("Una cita aceptada solo puede cancelarla el cliente o el profesional");
         }
         if (esAceptada && (!motivo || motivo.trim() === "")) {

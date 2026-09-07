@@ -22,7 +22,7 @@
 
     <div class="campo">
       <label for="estado">Estado</label>
-      <select id="estado" [(ngModel)]="estadoSeleccionado">
+      <select id="estado" [(ngModel)]="estadoSeleccionado" (change)="buscar()">
         <option value="">Todos</option>
         <option value="ACTIVO">Activo</option>
         <option value="INACTIVO">Inactivo</option>
@@ -31,7 +31,6 @@
 
     <div class="acciones-filtro">
       <button class="btn btn-secundario" (click)="limpiar()">Limpiar</button>
-      <button class="btn btn-primario" (click)="buscar()">Actualizar</button>
     </div>
   </div>
 

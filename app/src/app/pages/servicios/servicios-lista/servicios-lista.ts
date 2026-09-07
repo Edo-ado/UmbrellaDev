@@ -1,4 +1,4 @@
-import { Component, OnInit, signal, inject } from '@angular/core';
+import { Component, OnInit, signal, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -34,6 +34,32 @@ private authService = inject(AuthService);
   modalidadSeleccionada = '';
   precioMin: number | null = null;
   precioMax: number | null = null;
+  private filtrosVersion = signal(0);
+
+  serviciosFiltrados = computed(() => {
+    this.filtrosVersion();
+    const termino = this.termino.trim().toLowerCase();
+    const categoria = Number(this.categoriaSeleccionada);
+    const modalidad = this.modalidadSeleccionada;
+    const precioMin = this.precioMin;
+    const precioMax = this.precioMax;
+
+    return this.servicios().filter((servicio) => {
+      const coincideNombre = !termino || servicio.Nombre.toLowerCase().includes(termino);
+      const coincideCategoria = !this.categoriaSeleccionada || servicio.idcategoria === categoria;
+      const coincideModalidad = !modalidad || servicio.Modalidad === modalidad;
+      const coincidePrecioMin = precioMin == null || servicio.Precio >= precioMin;
+      const coincidePrecioMax = precioMax == null || servicio.Precio <= precioMax;
+
+      return (
+        coincideNombre &&
+        coincideCategoria &&
+        coincideModalidad &&
+        coincidePrecioMin &&
+        coincidePrecioMax
+      );
+    });
+  });
 
   ngOnInit(): void {
     this.cargarServicios();
@@ -105,129 +131,10 @@ cargarServicios() {
     });
   }
 
-  buscar() {
-    this.loading.set(true);
+  aplicarFiltros() {
     this.error.set('');
     this.mensaje.set('');
-
-    const termino = this.termino.trim();
-
-    if (!termino) {
-      this.cargarServicios();
-      return;
-    }
-
-    this.servicioService.buscarPorNombre(termino).subscribe({
-      next: (data) => {
-        this.servicios.set(data);
-        this.loading.set(false);
-
-        if (data.length === 0) {
-          this.mensaje.set(`No se encontró ningún servicio con el nombre "${termino}".`);
-        }
-      },
-      error: () => {
-        this.error.set('No se pudo realizar la búsqueda.');
-        this.loading.set(false);
-      },
-    });
-  }
-
-filtrarPorModalidad() {
-  if (!this.modalidadSeleccionada) {
-    this.cargarServicios();
-    return;
-  }
-
-  this.loading.set(true);
-  this.error.set('');
-
-  const usuario = this.authService.profesional();
-
-  //DESARROLLADOR
-  if (usuario?.Role === Role.DESARROLLADOR) {
-    const serviciosFiltrados = this.servicios().filter(
-      (servicio) => servicio.Modalidad === this.modalidadSeleccionada,
-    );
-
-    this.servicios.set(serviciosFiltrados);
-    this.loading.set(false);
-    return;
-  }
-
-  //aDMIN
-  this.servicioService
-    .obtenerPorModalidad(this.modalidadSeleccionada)
-    .subscribe({
-      next: (data) => {
-        this.servicios.set(data);
-        this.loading.set(false);
-      },
-      error: () => {
-        this.error.set('No se pudo filtrar por modalidad.');
-        this.loading.set(false);
-      },
-    });
-}
-
-filtrarPorCategoria() {
-  if (!this.categoriaSeleccionada) {
-    this.cargarServicios();
-    return;
-  }
-
-  this.loading.set(true);
-  this.error.set('');
-
-  const categoriaId = Number(this.categoriaSeleccionada);
-
-
-  if (this.esDesarrollador()) {
-    const serviciosFiltrados = this.servicios().filter(
-      (servicio) => servicio.idcategoria === categoriaId,
-    );
-
-    this.servicios.set(serviciosFiltrados);
-    this.loading.set(false);
-    return;
-  }
-
-
-  this.servicioService.obtenerPorCategoria(categoriaId).subscribe({
-    next: (data) => {
-      this.servicios.set(data);
-      this.loading.set(false);
-    },
-    error: () => {
-      this.error.set('No se pudo filtrar por categoría.');
-      this.loading.set(false);
-    },
-  });
-}
-
-private esDesarrollador(): boolean {
-  return this.authService.rol() === Role.DESARROLLADOR;
-}
-
-  filtrarPorRangoPrecio() {
-    if (this.precioMin == null || this.precioMax == null) {
-      this.cargarServicios();
-      return;
-    }
-
-    this.loading.set(true);
-    this.error.set('');
-
-    this.servicioService.obtenerPorRangoPrecio(this.precioMin, this.precioMax).subscribe({
-      next: (data) => {
-        this.servicios.set(data);
-        this.loading.set(false);
-      },
-      error: () => {
-        this.error.set('No se pudo filtrar por rango de precio.');
-        this.loading.set(false);
-      },
-    });
+    this.filtrosVersion.update((version) => version + 1);
   }
 
   limpiar() {

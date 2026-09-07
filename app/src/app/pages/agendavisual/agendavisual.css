@@ -208,6 +208,12 @@
   justify-self: end;
 }
 
+.btn-navegacion-mes {
+  width: 138px;
+  justify-content: center;
+  white-space: nowrap;
+}
+
 .titulo-mes {
   display: flex;
   align-items: center;
@@ -430,6 +436,10 @@
   .titulo-mes {
     order: -1;
     width: 100%;
+  }
+
+  .btn-navegacion-mes {
+    width: 138px;
   }
 
   .calendario {
