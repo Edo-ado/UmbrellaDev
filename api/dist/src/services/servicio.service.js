@@ -10,17 +10,6 @@ export const ServicioServices = {
             },
         });
     },
-   async GetAllActive() {
-        return prisma.servicio.findMany({
-            where: { Estado: "ACTIVO" },
-            include: {
-                profesional: true,
-                categoria: true,
-                servicioEspecialidades: true,
-            },
-        });
-    }
-    ,
     async getById(id) {
         return await prisma.servicio.findUnique({
             where: { Id: id },
@@ -72,12 +61,16 @@ export const ServicioServices = {
         });
     },
     async getByRangoPrecio(precioMin, precioMax) {
+        const rangoPrecio = {};
+        if (precioMin !== undefined) {
+            rangoPrecio.gte = precioMin;
+        }
+        if (precioMax !== undefined) {
+            rangoPrecio.lte = precioMax;
+        }
         return await prisma.servicio.findMany({
             where: {
-                Precio: {
-                    gte: precioMin,
-                    lte: precioMax,
-                },
+                Precio: rangoPrecio,
             },
             include: {
                 profesional: true,
@@ -183,7 +176,6 @@ export const ServicioServices = {
                 profesional: {
                     Estado: "ACTIVO",
                 },
-                Estado: "ACTIVO",
             },
             include: {
                 profesional: true,
@@ -192,4 +184,64 @@ export const ServicioServices = {
             },
         });
     },
+    //GET ALL ACTIVOS
+    async getAllActivos() {
+        return await prisma.servicio.findMany({
+            where: {
+                Estado: "ACTIVO",
+                profesional: {
+                    Estado: "ACTIVO",
+                },
+            },
+            include: {
+                profesional: true,
+                categoria: true,
+                servicioEspecialidades: true,
+            },
+        });
+    },
+    // FILTROS  ACTIVOS DE UN PROFESIONAL ACTIVO y SERVICIO ACTIVO
+    async getServiciosFiltrados(filter) {
+        const where = {};
+        if (filter.profesionalId) {
+            where.idprofesional = filter.profesionalId;
+        }
+        if (filter.categoriaId) {
+            where.idcategoria = filter.categoriaId;
+        }
+        if (filter.modalidad) {
+            where.Modalidad = filter.modalidad;
+        }
+        if (filter.precioMin !== undefined || filter.precioMax !== undefined) {
+            where.Precio = {};
+            if (filter.precioMin !== undefined) {
+                where.Precio.gte = filter.precioMin;
+            }
+            if (filter.precioMax !== undefined) {
+                where.Precio.lte = filter.precioMax;
+            }
+        }
+        if (filter.nombre && filter.nombre.trim()) {
+            where.Nombre = {
+                contains: filter.nombre.trim(),
+            };
+        }
+        if (filter.soloActivos) {
+            where.Estado = 'ACTIVO';
+        }
+        if (filter.soloProfesionalActivoYDisponible) {
+            where.profesional = {
+                Estado: 'ACTIVO',
+                Disponibilidad: true,
+            };
+        }
+        return await prisma.servicio.findMany({
+            where,
+            include: {
+                profesional: true,
+                categoria: true,
+                servicioEspecialidades: true,
+            },
+        });
+    }
 };

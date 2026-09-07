@@ -18,13 +18,13 @@
         type="text"
         [(ngModel)]="termino"
         placeholder="Buscar por nombre"
-        (keyup.enter)="buscar()"
+        (change)="aplicarFiltros()"
       />
     </div>
 
     <div class="campo">
       <label for="categoria">Categoría</label>
-      <select id="categoria" [(ngModel)]="categoriaSeleccionada" (change)="filtrarPorCategoria()">
+      <select id="categoria" [(ngModel)]="categoriaSeleccionada" (change)="aplicarFiltros()">
         <option value="">Todas</option>
         @for (categoria of categorias(); track categoria.Id) {
           <option [value]="categoria.Id">{{ categoria.Nombre }}</option>
@@ -34,7 +34,7 @@
 
     <div class="campo">
       <label for="modalidad">Modalidad</label>
-      <select id="modalidad" [(ngModel)]="modalidadSeleccionada" (change)="filtrarPorModalidad()">
+      <select id="modalidad" [(ngModel)]="modalidadSeleccionada" (change)="aplicarFiltros()">
         <option value="">Todas</option>
         <option value="VIRTUAL">Virtual</option>
         <option value="PRESENCIAL">Presencial</option>
@@ -49,6 +49,7 @@
         type="number"
         [(ngModel)]="precioMin"
         placeholder="Ej: 5000"
+        (change)="aplicarFiltros()"
       />
     </div>
 
@@ -59,13 +60,12 @@
         type="number"
         [(ngModel)]="precioMax"
         placeholder="Ej: 50000"
+        (change)="aplicarFiltros()"
       />
     </div>
 
     <div class="acciones-filtro">
       <button class="btn btn-secundario" (click)="limpiar()">Limpiar</button>
-      <button class="btn btn-primario" (click)="filtrarPorRangoPrecio()">Buscar por precio</button>
-      <button class="btn btn-primario" (click)="buscar()">Buscar</button>
     </div>
   </div>
 
@@ -89,7 +89,7 @@
 
   @if (!loading() && !error()) {
     <div class="panel tabla-wrap">
-      @if (servicios().length > 0) {
+      @if (serviciosFiltrados().length > 0) {
         <table>
           <thead>
             <tr>
@@ -103,7 +103,7 @@
             </tr>
           </thead>
           <tbody>
-            @for (servicio of servicios(); track servicio.Id) {
+            @for (servicio of serviciosFiltrados(); track servicio.Id) {
               <tr>
                 <td>{{ servicio.Nombre }}</td>
                 <td>{{ servicio.profesional?.NombreCompleto || 'Sin asignar' }}</td>

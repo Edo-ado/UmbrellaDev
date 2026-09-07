@@ -12,21 +12,21 @@ export class CategoriaController {
             next(error);
         }
     };
-    getById = async (request, response, next) => {
+    getAllActivos = async (request, response, next) => {
         try {
-            const { id } = request.params;
-            const categoria = await CategoriaService.getById(Number(id));
-            return response.status(StatusCodes.OK).json(categoria);
+            const categorias = await CategoriaService.GetAllActivos();
+            return response.status(StatusCodes.OK).json(categorias);
         }
         catch (error) {
             console.error(error);
             next(error);
         }
     };
-    getAllActivos = async (request, response, next) => {
+    getById = async (request, response, next) => {
         try {
-            const categorias = await CategoriaService.GetAllActivos();
-            return response.status(StatusCodes.OK).json(categorias);
+            const { id } = request.params;
+            const categoria = await CategoriaService.getById(Number(id));
+            return response.status(StatusCodes.OK).json(categoria);
         }
         catch (error) {
             console.error(error);

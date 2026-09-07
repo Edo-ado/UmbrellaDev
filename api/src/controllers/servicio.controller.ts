@@ -121,16 +121,16 @@ getAllActivos = async (
   getByRangoPrecio = async (request: Request, response: Response, next: NextFunction) => {
     const { precioMin, precioMax } = request.query;
 
-    if (!precioMin || !precioMax) {
+    if (precioMin === undefined && precioMax === undefined) {
       return response
         .status(400)
-        .json({ error: "Se necesitan valores minimos y maximos validos" });
+        .json({ error: "Se necesita al menos un precio válido" });
     }
 
-    const min = parseFloat(precioMin as string);
-    const max = parseFloat(precioMax as string);
+    const min = precioMin === undefined ? undefined : parseFloat(precioMin as string);
+    const max = precioMax === undefined ? undefined : parseFloat(precioMax as string);
 
-    if (isNaN(min) || isNaN(max)) {
+    if (min !== undefined && isNaN(min) || max !== undefined && isNaN(max)) {
       return response
         .status(400)
         .json({ error: "Los precios deben ser números válidos" });

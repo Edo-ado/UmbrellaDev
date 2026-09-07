@@ -7,14 +7,6 @@ export const EspecialidadService = {
             omit: { CategoriaId: true },
         });
     },
-    getAllActivos() {
-        return prisma.especialidad.findMany({
-            where: { Estado: "ACTIVO" },
-            include: { CategoriaAsociada: true },
-            omit: { CategoriaId: true },
-        });
-    }
-    ,
     async getById(id) {
         return await prisma.especialidad.findUnique({
             where: { Id: id },
@@ -22,18 +14,16 @@ export const EspecialidadService = {
             omit: { CategoriaId: true },
         });
     },
-
-    async GetMyEspecialidades(id) {
+    async getByName(Nombre) {
         return await prisma.especialidad.findMany({
-            where: { CategoriaId: id },
+            where: { Nombre: { contains: Nombre } },
             include: { CategoriaAsociada: true },
             omit: { CategoriaId: true },
         });
     },
-
-    async getByName(Nombre) {
+    async getAllActivos() {
         return await prisma.especialidad.findMany({
-            where: { Nombre: { contains: Nombre } },
+            where: { Estado: "ACTIVO" },
             include: { CategoriaAsociada: true },
             omit: { CategoriaId: true },
         });

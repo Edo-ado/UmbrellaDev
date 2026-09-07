@@ -17,9 +17,33 @@ function combinarFechaHora(fechaISO, hora) {
     fecha.setHours(h, m, 0, 0);
     return fecha;
 }
+// Formatea una fecha en YYYY-MM-DD usando componentes LOCALES (evita el
+// desfase UTC-vs-local que ya nos mordió antes con las citas).
+function formatFechaLocal(d) {
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, "0");
+    return `${y}-${m}-${day}`;
+}
+// Formatea la hora local en HH:mm.
+function formatHoraLocal(d) {
+    const h = String(d.getHours()).padStart(2, "0");
+    const m = String(d.getMinutes()).padStart(2, "0");
+    return `${h}:${m}`;
+}
 async function main() {
     console.log("Iniciando seed...");
     const passwordHash = await bcrypt.hash("1221", 10);
+    // -------------------------------------------------------------------------
+    // Fechas/horas dinámicas para las citas "de hoy" que se usan en vivo
+    // durante la defensa (aceptar / rechazar). Se calculan en tiempo de
+    // ejecución para que sigan siendo válidas sin importar qué día se corra
+    // el seed.
+    // -------------------------------------------------------------------------
+    const ahora = new Date();
+    const fechaHoy = formatFechaLocal(ahora);
+    const horaPendiente1 = formatHoraLocal(ahora);
+    const horaPendiente2 = sumarMinutos(horaPendiente1, 45);
     const models = [
         prisma.imagenesServicio,
         prisma.imagenesUsuario,
@@ -332,8 +356,11 @@ async function main() {
     const usuarios = await prisma.usuario.findMany({ select: { Id: true, Email: true } });
     const userMap = Object.fromEntries(usuarios.map((u) => [u.Email, u.Id]));
     // -------------------------------------------------------------------------
-    // Servicios (8 -> mínimo pedido: 8, activos e inactivos, precios/duraciones/
-    // categorías/modalidades distintas)
+    // Servicios
+    // Nota: "Consultoría en arquitectura backend" pasa a INACTIVO (checklist
+    // tabla 4) y se agregan 4 servicios nuevos para Carlos requeridos por la
+    // tabla 3 del checklist: Mantenimiento PS4, Mantenimiento de Monitores,
+    // Cambio de Batería Samsung y Manejo de Cloud.
     // -------------------------------------------------------------------------
     await prisma.servicio.create({
         data: {
@@ -393,7 +420,7 @@ async function main() {
             Descripcion: "Revisión y recomendaciones sobre la arquitectura de tu sistema.",
             Precio: 45000,
             Duracion: 90,
-            Estado: Estado.ACTIVO,
+            Estado: Estado.INACTIVO,
             Modalidad: MODALIDAD.VIRTUAL,
             profesional: { connect: { Id: userMap["carlos@profesional.com"] } },
             categoria: { connect: { Id: catMap["Asesoramiento"] } },
@@ -439,12 +466,166 @@ async function main() {
             servicioEspecialidades: { connect: [{ Id: espMap["Play Station 4"] }] },
         },
     });
+    // --- Servicios nuevos requeridos por el checklist (todos de Carlos) ---
+    await prisma.servicio.create({
+        data: {
+            Nombre: "Mantenimiento PS4",
+            Descripcion: "Limpieza, cambio de pasta térmica y revisión general de PS4.",
+            Precio: 28000,
+            Duracion: 90,
+            Estado: Estado.ACTIVO,
+            Modalidad: MODALIDAD.PRESENCIAL,
+            profesional: { connect: { Id: userMap["carlos@profesional.com"] } },
+            categoria: { connect: { Id: catMap["Mantenimiento de Consolas"] } },
+            servicioEspecialidades: { connect: [{ Id: espMap["Play Station 4"] }] },
+        },
+    });
+    await prisma.servicio.create({
+        data: {
+            Nombre: "Mantenimiento de Monitores",
+            Descripcion: "Diagnóstico y mantenimiento preventivo de monitores.",
+            Precio: 20000,
+            Duracion: 60,
+            Estado: Estado.ACTIVO,
+            Modalidad: MODALIDAD.PRESENCIAL,
+            profesional: { connect: { Id: userMap["carlos@profesional.com"] } },
+            categoria: { connect: { Id: catMap["Mantenimientos de Computadoras"] } },
+            servicioEspecialidades: { connect: [{ Id: espMap["Monitores"] }] },
+        },
+    });
+    await prisma.servicio.create({
+        data: {
+            Nombre: "Cambio de Batería Samsung",
+            Descripcion: "Reemplazo de batería para dispositivos Samsung.",
+            Precio: 35000,
+            Duracion: 90,
+            Estado: Estado.ACTIVO,
+            Modalidad: MODALIDAD.PRESENCIAL,
+            profesional: { connect: { Id: userMap["carlos@profesional.com"] } },
+            categoria: { connect: { Id: catMap["Arreglo de Celulares"] } },
+            servicioEspecialidades: { connect: [{ Id: espMap["Samsung"] }] },
+        },
+    });
+    await prisma.servicio.create({
+        data: {
+            Nombre: "Manejo de Cloud",
+            Descripcion: "Configuración y despliegue de infraestructura en la nube.",
+            Precio: 60000,
+            Duracion: 120,
+            Estado: Estado.ACTIVO,
+            Modalidad: MODALIDAD.VIRTUAL,
+            profesional: { connect: { Id: userMap["carlos@profesional.com"] } },
+            categoria: { connect: { Id: catMap["Desarrollo de software"] } },
+            servicioEspecialidades: { connect: [{ Id: espMap["Amazon Web Services"] }, { Id: espMap["Microsoft Azure"] }] },
+        },
+    });
     const servicios = await prisma.servicio.findMany({ select: { Id: true, Nombre: true, Precio: true, Duracion: true } });
     const servicioMap = Object.fromEntries(servicios.map((s) => [
         s.Nombre,
         { Id: s.Id, Precio: s.Precio, Duracion: s.Duracion ?? 60 },
     ]));
     const citasSeed = [
+        // ------------------------------------------------------------------
+        // Citas requeridas por el checklist de pre-defensa (sección 3).
+        // Cliente principal: jose@cliente.com | Profesional principal: carlos@profesional.com
+        // ------------------------------------------------------------------
+        {
+            // Pendiente #1 — se va a ACEPTAR en vivo. Fecha = hoy (dinámica).
+            clienteEmail: "jose@cliente.com",
+            profesionalEmail: "carlos@profesional.com",
+            servicioNombre: "Desarrollo de API REST",
+            fecha: fechaHoy,
+            hora: horaPendiente1,
+            modalidad: MODALIDAD.HIBRIDA,
+            descripcion: "Necesito una API REST para gestión de usuarios.",
+            estadoFinal: "PENDIENTE",
+            transiciones: [],
+        },
+        {
+            // Pendiente #2 — se va a RECHAZAR en vivo. Fecha = hoy (dinámica).
+            clienteEmail: "jose@cliente.com",
+            profesionalEmail: "carlos@profesional.com",
+            servicioNombre: "Mantenimiento PS4",
+            fecha: fechaHoy,
+            hora: horaPendiente2,
+            modalidad: MODALIDAD.PRESENCIAL,
+            descripcion: "Mi PS4 se apaga sola durante el uso.",
+            estadoFinal: "PENDIENTE",
+            transiciones: [],
+        },
+        {
+            // Aceptada, fecha FUTURA — para mostrar el bloqueo al intentar
+            // completarla antes de tiempo.
+            clienteEmail: "jose@cliente.com",
+            profesionalEmail: "maria@profesional.com",
+            servicioNombre: "Landing page en Angular",
+            fecha: "2026-08-30",
+            hora: "08:00",
+            modalidad: MODALIDAD.VIRTUAL,
+            descripcion: "Quiero una landing moderna para mi negocio.",
+            comentarios: "Perfecto, comenzamos según lo acordado.",
+            estadoFinal: "ACEPTADA",
+            transiciones: [{ de: "PENDIENTE", a: "ACEPTADA" }],
+        },
+        {
+            // Aceptada, fecha YA PASADA — se va a COMPLETAR en vivo.
+            clienteEmail: "jose@cliente.com",
+            profesionalEmail: "maria@profesional.com",
+            servicioNombre: "Optimización de rendimiento web",
+            fecha: "2026-08-15",
+            hora: "09:00",
+            modalidad: MODALIDAD.HIBRIDA,
+            descripcion: "Mi sitio carga muy lento y quiero mejorarlo.",
+            comentarios: "Confirmado, avanzamos con la optimización.",
+            estadoFinal: "ACEPTADA",
+            transiciones: [{ de: "PENDIENTE", a: "ACEPTADA" }],
+        },
+        {
+            // Completada, SIN reseña — se va a usar para crear la RESEÑA en vivo.
+            clienteEmail: "jose@cliente.com",
+            profesionalEmail: "carlos@profesional.com",
+            servicioNombre: "Mantenimiento de Monitores",
+            fecha: "2026-08-24",
+            hora: "14:00",
+            modalidad: MODALIDAD.PRESENCIAL,
+            descripcion: "Mi monitor parpadea y quiero que lo revisen.",
+            estadoFinal: "COMPLETA",
+            transiciones: [
+                { de: "PENDIENTE", a: "ACEPTADA" },
+                { de: "ACEPTADA", a: "COMPLETA" },
+            ],
+        },
+        {
+            // Estado que BLOQUEA horario — para provocar el conflicto de
+            // traslape al crear una nueva solicitud con Carlos el mismo día.
+            clienteEmail: "jose@cliente.com",
+            profesionalEmail: "carlos@profesional.com",
+            servicioNombre: "Cambio de Batería Samsung",
+            fecha: "2026-08-24",
+            hora: "16:00",
+            modalidad: MODALIDAD.PRESENCIAL,
+            descripcion: "Necesito cambiar la batería de mi Samsung.",
+            estadoFinal: "PENDIENTE",
+            transiciones: [],
+        },
+        {
+            // Rechazada — solo para mostrar que NO admite cambios (no se
+            // ejecuta ninguna acción sobre ella).
+            clienteEmail: "jose@cliente.com",
+            profesionalEmail: "carlos@profesional.com",
+            servicioNombre: "Manejo de Cloud",
+            fecha: "2026-08-24",
+            hora: "18:00",
+            modalidad: MODALIDAD.VIRTUAL,
+            descripcion: "Necesito ayuda para desplegar mi app en la nube.",
+            estadoFinal: "RECHAZADA",
+            motivoRechazo: "El profesional no tiene disponibilidad esa semana.",
+            transiciones: [{ de: "PENDIENTE", a: "RECHAZADA", motivo: "El profesional no tiene disponibilidad esa semana." }],
+        },
+        // ------------------------------------------------------------------
+        // Citas adicionales (se conservan del set original) para dar variedad
+        // a reportes, agregaciones y otros flujos no cubiertos en el checklist.
+        // ------------------------------------------------------------------
         {
             clienteEmail: "daniela@cliente.com",
             profesionalEmail: "carlos@profesional.com",
@@ -452,18 +633,7 @@ async function main() {
             fecha: "2026-08-25",
             hora: "09:00",
             modalidad: MODALIDAD.HIBRIDA,
-            descripcion: "Necesito una API REST para gestión de usuarios.",
-            estadoFinal: "PENDIENTE",
-            transiciones: [],
-        },
-        {
-            clienteEmail: "jose@cliente.com",
-            profesionalEmail: "carlos@profesional.com",
-            servicioNombre: "Consultoría en arquitectura backend",
-            fecha: "2026-08-25",
-            hora: "09:30",
-            modalidad: MODALIDAD.VIRTUAL,
-            descripcion: "Quiero asesoría rápida sobre mi arquitectura backend.",
+            descripcion: "Necesito una API REST para gestión de inventario.",
             estadoFinal: "PENDIENTE",
             transiciones: [],
         },
@@ -671,6 +841,7 @@ async function main() {
     await prisma.imagenesUsuario.createMany({ data: [] });
     console.log("Seed completado con éxito.");
     console.log(`Usuarios: ${usuarios.length} | Servicios: ${servicios.length} | Citas: ${citasSeed.length} | Reseñas: ${citasSeed.filter((c) => c.resena).length}`);
+    console.log(`Citas de "hoy" (${fechaHoy}) creadas para la demo: Pendiente #1 a las ${horaPendiente1}, Pendiente #2 a las ${horaPendiente2}.`);
 }
 main()
     .catch((e) => {

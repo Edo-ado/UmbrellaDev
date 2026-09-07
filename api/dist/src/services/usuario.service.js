@@ -68,6 +68,14 @@ export const UsuarioService = {
             },
         });
     },
+    async getAllDesarrolladoresActivos() {
+        return await prisma.usuario.findMany({
+            where: { Role: "DESARROLLADOR", Estado: "ACTIVO", Disponibilidad: true },
+            include: {
+                especialidades: true,
+            },
+        });
+    },
     async crear(data) {
         return prisma.usuario.create({
             data: {
@@ -155,7 +163,9 @@ export const UsuarioService = {
             ? {
                 Descripcion: data.Descripcion ?? usuario.Descripcion,
                 Ubicacion: data.Ubicacion ?? usuario.Ubicacion,
-                TarifaBase: data.TarifaBase ?? usuario.TarifaBase,
+                TarifaBase: data.TarifaBase !== undefined && data.TarifaBase !== null
+                    ? Number(data.TarifaBase)
+                    : usuario.TarifaBase,
                 especialidades: data.especialidadIds
                     ? { set: data.especialidadIds.map((Id) => ({ Id })) }
                     : undefined,
@@ -183,23 +193,6 @@ export const UsuarioService = {
             throw AppError.badRequest("El usuario indicado no existe");
         }
     },
-
-async changeUserRole(id, newRole) {
-        const usuario = await this.getById(id);
-        if (!usuario) {
-            throw AppError.badRequest("El usuario indicado no existe");
-        }
-        if (usuario.Role === newRole) {
-            throw AppError.badRequest("El usuario ya tiene el rol indicado");
-        }
-        return await prisma.usuario.update({
-            where: { Id: id },
-            data: {
-                Role: newRole,
-            },
-        });
-    },
-
     async toggleDisponibilidadByProfesional(id) {
         const usuario = await this.getById(id);
         if (!usuario) {
@@ -277,6 +270,9 @@ async changeUserRole(id, newRole) {
         const token = jwt.sign(payload, secret, options);
         return {
             token,
+            Id: usuario.Id,
+            Email: usuario.Email,
+            Role: usuario.Role,
         };
     },
     async perfil(usuarioId) {
@@ -331,4 +327,19 @@ async changeUserRole(id, newRole) {
             include: { especialidades: true },
         });
     },
+    async cambiarRol(id, nuevoRol) {
+        const usuario = await this.getById(id);
+        if (!usuario) {
+            throw new Error("El usuario indicado no existe");
+        }
+        if (usuario.Role === nuevoRol) {
+            throw new Error("El usuario ya tiene el rol indicado");
+        }
+        return await prisma.usuario.update({
+            where: { Id: id },
+            data: {
+                Role: nuevoRol,
+            },
+        });
+    }
 };

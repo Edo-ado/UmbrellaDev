@@ -12,14 +12,16 @@ export class ServicioRoutes {
         router.get("/buscar", ServiciosController.getByName);
         router.get("/modalidad/:modalidad", ServiciosController.getByModalidad);
         router.get("/rango-precio", ServiciosController.getByRangoPrecio);
+        //ACTIVOS
+        router.get("/activos", ServiciosController.getAllActivos);
         //CRUD
         router.post("/crear", ServiciosController.create);
         router.put("/update/:id", ServiciosController.update);
         router.patch("/CambioEstado/:id", ServiciosController.toggleStatus);
+        // Filtrado de servicios
+        router.get('/filtrados', ServiciosController.getServiciosFiltrados);
         //por usuario(servicios de un profesional)
         router.get("/profesional-activo/:id", ServiciosController.getByProfesionalActivo);
-        //get all servicios activos
-        router.get("/activos", ServiciosController.getAllActivos);
         return router;
     }
 }

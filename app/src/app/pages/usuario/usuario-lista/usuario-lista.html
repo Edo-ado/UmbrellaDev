@@ -16,6 +16,7 @@
         id="buscar"
         type="text"
         [(ngModel)]="termino"
+        (ngModelChange)="buscar()"
         placeholder="Buscar por nombre"
       />
     </div>
@@ -36,7 +37,6 @@
 
     <div class="acciones-filtro">
       <button class="btn btn-secundario" (click)="limpiar()">Limpiar</button>
-      <button class="btn btn-primario" (click)="buscar()">Actualizar</button>
     </div>
   </div>
 
