@@ -63,7 +63,7 @@
               <div class="profesional-avatar">
                 @if (profesional.Foto) {
                   <img
-                    [src]="profesional.Foto"
+                    [src]="fotoProfesionalUrl(profesional.Foto)"
                     [alt]="profesional.NombreCompleto"
                   />
                 } @else {

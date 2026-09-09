@@ -212,6 +212,7 @@ async getServiciosProfesionalActivo(profesionalId: number) {
   return await prisma.servicio.findMany({
     where: {
       idprofesional: profesionalId,
+      Estado: "ACTIVO",
 
       profesional: {
         Estado: "ACTIVO",

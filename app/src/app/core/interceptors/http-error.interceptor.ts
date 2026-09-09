@@ -52,11 +52,7 @@ export const httpErrorInterceptor: HttpInterceptorFn = (request, next) => {
                     }
                 }
             }
-            noti.error(
-                message,
-                `Error ${error.status}`,
-                5000
-            );
+            noti.error(message, null, 5000);
             return throwError(() => error);
         })
     );
