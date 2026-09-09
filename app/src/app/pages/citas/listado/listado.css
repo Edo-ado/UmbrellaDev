@@ -25,7 +25,6 @@
     text-transform:uppercase;
     letter-spacing:4px;
     font-size:.8rem;
-    margin-bottom:15px;
 }
 
 .usuarios-hero h2{
@@ -163,22 +162,43 @@ td{
 }
 
 
-.tag.aceptada {
-  color: #6ee89a;
-  background: rgba(110, 232, 154, .1);
-  border: 1px solid rgba(110, 232, 154, .3);
+.tag {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 92px;
+    padding: 8px 14px;
+    border: 1px solid #363636;
+    border-radius: 12px;
+    font-size: .72rem;
+    font-weight: 700;
+    letter-spacing: .5px;
+    text-transform: uppercase;
 }
 
-.tag.rechazada {
-  color: #ff7777;
-  background: rgba(255, 119, 119, .1);
-  border: 1px solid rgba(255, 119, 119, .3);
+.tag.pendiente {
+    color: #ffcf4b;
+    background: rgba(255, 207, 75, .1);
+    border: 1px solid rgba(255, 207, 75, .3);
+}
+
+.tag.aceptada {
+    color: #4bc3ff;
+    background: rgba(75, 195, 255, .1);
+    border: 1px solid rgba(75, 195, 255, .3);
+}
+
+.tag.rechazada,
+.tag.cancelada {
+    color: #ff7777;
+    background: rgba(255, 100, 100, .1);
+    border: 1px solid rgba(255, 100, 100, .3);
 }
 
 .tag.completa {
-  color: #8ab4ff;
-  background: rgba(138, 180, 255, .1);
-  border: 1px solid rgba(138, 180, 255, .3);
+    color: #4bff80;
+    background: rgba(75, 255, 128, .1);
+    border: 1px solid rgba(75, 255, 128, .3);
 }
 
 

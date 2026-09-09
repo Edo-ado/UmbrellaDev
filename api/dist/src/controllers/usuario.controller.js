@@ -103,7 +103,19 @@ export class usuarioController {
     update = async (request, response, next) => {
         try {
             const id = Number(request.params.id);
-            const usuario = await UsuarioService.actualizar(id, request.body, request.file);
+            const datos = { ...request.body };
+            if (typeof datos.especialidadIds === "string") {
+                try {
+                    datos.especialidadIds = JSON.parse(datos.especialidadIds);
+                }
+                catch {
+                    datos.especialidadIds = datos.especialidadIds
+                        .split(",")
+                        .filter((id) => id.trim() !== "")
+                        .map((id) => Number(id));
+                }
+            }
+            const usuario = await UsuarioService.actualizar(id, datos, request.file);
             return response.status(StatusCodes.OK).json({
                 message: "Usuario actualizado correctamente",
                 data: usuario,

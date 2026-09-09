@@ -145,7 +145,20 @@ getAllDesarrolladores = async (
 update = async (request: Request, response: Response, next: NextFunction) => {
   try {
     const id = Number(request.params.id);
-    const usuario = await UsuarioService.actualizar(id, request.body, request.file);
+    const datos = { ...request.body };
+
+    if (typeof datos.especialidadIds === "string") {
+      try {
+        datos.especialidadIds = JSON.parse(datos.especialidadIds);
+      } catch {
+        datos.especialidadIds = datos.especialidadIds
+          .split(",")
+          .filter((id: string) => id.trim() !== "")
+          .map((id: string) => Number(id));
+      }
+    }
+
+    const usuario = await UsuarioService.actualizar(id, datos, request.file);
 
     return response.status(StatusCodes.OK).json({
       message: "Usuario actualizado correctamente",

@@ -348,6 +348,47 @@
     line-height:1.6;
 }
 
+.especialidades-ayuda{
+    margin:0 0 12px;
+    color:#888;
+    font-size:.85rem;
+    line-height:1.5;
+}
+
+.especialidades-selector{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(190px,1fr));
+    gap:10px;
+}
+
+.especialidad-opcion{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    min-height:44px;
+    padding:10px 12px;
+    border:1px solid #2c2c2c;
+    border-radius:10px;
+    background:#171717;
+    color:#d8d8d8;
+    cursor:pointer;
+    font-size:.88rem;
+    transition:border-color .2s, background .2s, color .2s;
+}
+
+.especialidad-opcion:hover{
+    border-color:#8b1a2a;
+    background:#211316;
+}
+
+.especialidad-opcion input{
+    width:16px;
+    height:16px;
+    margin:0;
+    accent-color:#b00017;
+    cursor:pointer;
+}
+
 .perfil-separador{
     margin:32px 0 20px;
     padding-top:24px;
@@ -384,4 +425,16 @@
     .perfil-acciones .btn{
         width:100%;
     }
+}
+
+.perfil-acciones-cabecera{
+    display:flex;
+    gap:12px;
+    flex-wrap:wrap;
+}
+
+.panel-ayuda{
+    margin:-12px 0 24px;
+    color:#888;
+    line-height:1.5;
 }
