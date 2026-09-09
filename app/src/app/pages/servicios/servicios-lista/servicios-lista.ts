@@ -98,7 +98,7 @@ cargarServicios() {
   }
 
   if (usuario.Role === Role.DESARROLLADOR) {
-    this.servicioService.obtenerPorProfesionalActivo(usuario.Id).subscribe({
+    this.servicioService.obtenerPorProfesional(usuario.Id).subscribe({
       next: (data) => {
         this.servicios.set(data);
         this.loading.set(false);

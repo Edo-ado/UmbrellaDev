@@ -156,9 +156,19 @@ td{
 
 
 .acciones-cita {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
+        display:flex;
+        align-items:center;
+    justify-content:center;
+        flex-wrap:nowrap;
+        gap:8px;
+        min-width:max-content;
+        white-space:nowrap;
+}
+
+.acciones-cita .btn{
+        flex:0 0 auto;
+        padding:10px 14px;
+        white-space:nowrap;
 }
 
 
