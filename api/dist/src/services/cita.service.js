@@ -270,17 +270,7 @@ export const CitaServices = {
         if (!cita) {
             throw AppError.notFound("La cita indicada no existe");
         }
-        const esPendiente = cita.Estado === ESTADOCITA.PENDIENTE;
         const esAceptada = cita.Estado === ESTADOCITA.ACEPTADA;
-        if (!esPendiente && !esAceptada) {
-            throw AppError.badRequest("La cita no puede cancelarse en su estado actual");
-        }
-        if (esPendiente && rol !== "USUARIO") {
-            throw AppError.badRequest("Una cita pendiente solo puede cancelarla el cliente");
-        }
-        if (esAceptada && rol !== "USUARIO" && rol !== "DESARROLLADOR") {
-            throw AppError.badRequest("Una cita aceptada solo puede cancelarla el cliente o el profesional");
-        }
         if (esAceptada && (!motivo || motivo.trim() === "")) {
             throw AppError.badRequest("El motivo de cancelación es obligatorio");
         }

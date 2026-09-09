@@ -9,6 +9,7 @@ import { Role } from '../../../core/models/usuario.model';
 import { Categoria } from '../../../core/models/categoria.model';
 
 import { AuthService } from '../../../core/services/auth.service';
+import { NotificationService } from '../../../core/services/notification.service';
 
 @Component({
   selector: 'app-servicios-lista',
@@ -22,6 +23,7 @@ export class ServiciosLista implements OnInit {
   private categoriaService = inject(CategoriaService);
   private router = inject(Router);
 private authService = inject(AuthService);
+  private notificationService = inject(NotificationService);
 
   servicios = signal<Servicio[]>([]);
   categorias = signal<Categoria[]>([]);
@@ -96,7 +98,7 @@ cargarServicios() {
   }
 
   if (usuario.Role === Role.DESARROLLADOR) {
-    this.servicioService.obtenerPorProfesionalActivo(usuario.Id).subscribe({
+    this.servicioService.obtenerPorProfesional(usuario.Id).subscribe({
       next: (data) => {
         this.servicios.set(data);
         this.loading.set(false);
@@ -167,14 +169,18 @@ cargarServicios() {
     const confirmar = confirm('¿Deseas cambiar el estado de este servicio?');
     if (!confirmar) return;
 
+    const servicio = this.servicios().find((item) => item.Id === id);
+    const accion = servicio?.Estado === 'ACTIVO' ? 'desactivado' : 'activado';
+
     this.servicioService.toggleEstado(id).subscribe({
       next: () => {
-        this.mensaje.set('Estado actualizado correctamente.');
+        this.notificationService.success(`Servicio ${accion} correctamente.`);
         this.cargarServicios();
-        setTimeout(() => this.mensaje.set(''), 2500);
       },
       error: () => {
-        this.error.set('No se pudo actualizar el estado del servicio.');
+        this.notificationService.error(
+          'No se pudo actualizar el estado del servicio.'
+        );
       },
     });
   }

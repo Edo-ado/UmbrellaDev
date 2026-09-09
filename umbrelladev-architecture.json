@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "UmbrellaDev: arquitectura de la plataforma",
+    "output": "umbrelladev-architecture.html",
+    "quality_profile": "showcase",
+    "views": [
+      { "id": "request-path", "label": "Flujo principal", "focus": ["client", "routes", "services", "database"], "note": "Sigue una solicitud desde la interfaz Angular hasta la persistencia." },
+      { "id": "api-boundaries", "label": "Capas de la API", "focus": ["routes", "controllers", "services", "database"], "note": "Aísla el recorrido por rutas, controladores y servicios." },
+      { "id": "cross-cutting", "label": "Seguridad y archivos", "focus": ["client", "security", "media", "services"], "note": "Muestra autenticación, validación y manejo de imágenes." }
+    ]
+  },
+  "components": [
+    { "id": "client", "type": "frontend", "label": "Aplicación Angular", "sublabel": "app / Angular 21", "pos": [50, 270], "size": [180, 70] },
+    { "id": "routes", "type": "backend", "label": "Rutas HTTP", "sublabel": "api/src/routes", "pos": [300, 270], "size": [180, 70] },
+    { "id": "controllers", "type": "backend", "label": "Controladores", "sublabel": "api/src/controllers", "pos": [550, 270], "size": [180, 70] },
+    { "id": "services", "type": "backend", "label": "Servicios de dominio", "sublabel": "api/src/services", "pos": [800, 270], "size": [190, 70] },
+    { "id": "database", "type": "database", "label": "MariaDB", "sublabel": "Prisma 7 / persistencia", "pos": [1060, 270], "size": [180, 70] },
+    { "id": "security", "type": "security", "label": "Auth y validación", "sublabel": "JWT / Passport / Zod", "pos": [300, 110], "size": [180, 70] },
+    { "id": "media", "type": "cloud", "label": "Archivos e imágenes", "sublabel": "Multer / uploads", "pos": [800, 430], "size": [190, 70] }
+  ],
+  "boundaries": [
+    { "kind": "region", "label": "Frontend", "wraps": ["client"] },
+    { "kind": "region", "label": "API Node.js / Express", "wraps": ["routes", "controllers", "services", "security", "media"] },
+    { "kind": "security-group", "label": "Persistencia", "wraps": ["database"] }
+  ],
+  "connections": [
+    { "id": "client-to-routes", "from": "client", "to": "routes", "label": "HTTP / JSON", "variant": "emphasis" },
+    { "id": "routes-to-controllers", "from": "routes", "to": "controllers", "label": "dispatch" },
+    { "id": "controllers-to-services", "from": "controllers", "to": "services", "label": "casos de uso" },
+    { "id": "services-to-database", "from": "services", "to": "database", "label": "Prisma / SQL" },
+    { "id": "security-to-routes", "from": "security", "to": "routes", "label": "protege endpoints", "variant": "security", "fromSide": "bottom", "toSide": "top", "labelDy": 24 },
+    { "id": "controllers-to-media", "from": "controllers", "to": "media", "label": "subida de imágenes", "variant": "dashed", "fromSide": "bottom", "toSide": "top" },
+    { "id": "services-to-media", "from": "services", "to": "media", "label": "gestiona archivos", "variant": "dashed", "fromSide": "bottom", "toSide": "top", "labelDy": 24 }
+  ],
+  "cards": [
+    { "dot": "cyan", "title": "Cliente", "items": ["Angular organiza páginas, layout y componentes compartidos", "Consume la API mediante rutas HTTP"] },
+    { "dot": "emerald", "title": "API", "items": ["Express enruta solicitudes hacia controladores", "Los servicios concentran la lógica de dominio"] },
+    { "dot": "rose", "title": "Protección y datos", "items": ["JWT, Passport y Zod cubren acceso y validación", "Prisma conecta con MariaDB y Multer gestiona imágenes"] }
+  ]
+}

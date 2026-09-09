@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { CitaService } from '../../../core/services/cita.service';
 import { AuthService } from '../../../core/services/auth.service';
+import { NotificationService } from '../../../core/services/notification.service';
 import { Cita, EstadoCita } from '../../../core/models/cita.model';
 
 @Component({
@@ -16,12 +17,18 @@ import { Cita, EstadoCita } from '../../../core/models/cita.model';
 export class CitasListadoComponent implements OnInit {
   private citaService = inject(CitaService);
   private authService = inject(AuthService);
+  private notificationService = inject(NotificationService);
   private router = inject(Router);
 
   citas = signal<Cita[]>([]);
   loading = signal<boolean>(false);
   error = signal<string>('');
   mensaje = signal<string>('');
+  mostrandoModalMotivo = signal<boolean>(false);
+  citaPendienteMotivo = signal<Cita | null>(null);
+  accionMotivo = signal<'rechazo' | 'cancelacion'>('rechazo');
+  motivoEstado = signal<string>('');
+  errorMotivoEstado = signal<string>('');
 
   estadoSeleccionado = signal<string>('');
   profesionalSeleccionado = signal<string>('');
@@ -201,70 +208,87 @@ citasVisibles = computed(() => {
     this.citaService.aceptar(cita.Id).subscribe({
       next: () => {
         this.mensaje.set('Cita aceptada correctamente.');
+        this.notificationService.success('Cita aceptada correctamente.');
         this.cargarCitas();
       },
-      error: (err) => {
-        this.error.set(
-          err.error?.message || 'No se pudo aceptar la cita.'
-        );
-      },
+      error: () => {},
     });
   }
 
   rechazar(cita: Cita): void {
-    const motivo = prompt('Motivo del rechazo (obligatorio):');
-
-    if (!motivo || motivo.trim() === '') {
-      return;
-    }
-
-    this.error.set('');
-    this.mensaje.set('');
-
-    this.citaService.rechazar(cita.Id, motivo.trim()).subscribe({
-      next: () => {
-        this.mensaje.set('Cita rechazada correctamente.');
-        this.cargarCitas();
-      },
-      error: (err) => {
-        this.error.set(
-          err.error?.message || 'No se pudo rechazar la cita.'
-        );
-      },
-    });
+    this.abrirModalMotivo(cita, 'rechazo');
   }
 
   cancelar(cita: Cita): void {
-    const motivo = prompt('Motivo de la cancelación (obligatorio):');
+    this.abrirModalMotivo(cita, 'cancelacion');
+  }
 
-    if (!motivo || motivo.trim() === '') {
+  private abrirModalMotivo(
+    cita: Cita,
+    accion: 'rechazo' | 'cancelacion',
+  ): void {
+    this.citaPendienteMotivo.set(cita);
+    this.accionMotivo.set(accion);
+    this.motivoEstado.set('');
+    this.errorMotivoEstado.set('');
+    this.mostrandoModalMotivo.set(true);
+  }
+
+  cerrarModalMotivo(): void {
+    this.mostrandoModalMotivo.set(false);
+    this.citaPendienteMotivo.set(null);
+    this.motivoEstado.set('');
+    this.errorMotivoEstado.set('');
+  }
+
+  confirmarMotivo(): void {
+    const cita = this.citaPendienteMotivo();
+    const motivo = this.motivoEstado().trim();
+
+    if (!cita) {
       return;
     }
 
-    const usuario = this.usuarioActual();
-    const actorRol = usuario?.Role;
-
-    if (!actorRol) {
-      this.error.set('No se pudo identificar el rol del usuario.');
+    if (!motivo) {
+      const accion = this.accionMotivo() === 'rechazo' ? 'rechazo' : 'cancelación';
+      this.errorMotivoEstado.set(`El motivo de la ${accion} es obligatorio.`);
       return;
     }
 
     this.error.set('');
     this.mensaje.set('');
 
-    this.citaService
-      .cancelar(cita.Id, motivo.trim(), actorRol)
-      .subscribe({
+    if (this.accionMotivo() === 'rechazo') {
+      this.citaService.rechazar(cita.Id, motivo).subscribe({
         next: () => {
-          this.mensaje.set('Cita cancelada correctamente.');
+          this.cerrarModalMotivo();
+          this.mensaje.set('Cita rechazada correctamente.');
+          this.notificationService.success('Cita rechazada correctamente.');
           this.cargarCitas();
         },
-        error: (err) => {
-          this.error.set(
-            err.error?.message || 'No se pudo cancelar la cita.'
-          );
-        },
+        error: () => {},
       });
+      return;
+    }
+
+    const actorRol = this.usuarioActual()?.Role;
+
+    if (!actorRol) {
+      this.notificationService.error(
+        'No se pudo identificar el rol del usuario.'
+      );
+      return;
+    }
+
+    this.citaService.cancelar(cita.Id, motivo, actorRol).subscribe({
+      next: () => {
+        this.cerrarModalMotivo();
+        this.mensaje.set('Cita cancelada correctamente.');
+        this.notificationService.success('Cita cancelada correctamente.');
+        this.cargarCitas();
+      },
+      error: () => {},
+    });
   }
 
   completar(cita: Cita): void {
@@ -274,13 +298,10 @@ citasVisibles = computed(() => {
     this.citaService.completar(cita.Id).subscribe({
       next: () => {
         this.mensaje.set('Cita completada correctamente.');
+        this.notificationService.success('Cita completada correctamente.');
         this.cargarCitas();
       },
-      error: (err) => {
-        this.error.set(
-          err.error?.message || 'No se pudo completar la cita.'
-        );
-      },
+      error: () => {},
     });
   }
 }

@@ -5,7 +5,8 @@ import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../../core/services/auth.service';
 import { UsuarioService } from '../../../core/services/usuario.service';
 import { ImageService } from '../../../core/services/imagen.service';
-import { Profesional } from '../../../core/models/usuario.model';
+import { Especialidad, Profesional } from '../../../core/models/usuario.model';
+import { EspecialidadService } from '../../../core/services/especialidad.service';
 
 const TIPOS_IMAGEN_PERMITIDOS = ['image/jpeg', 'image/png', 'image/webp'];
 const TAMANO_MAXIMO_IMAGEN = 2 * 1024 * 1024; // 2 MB, igual que el backend
@@ -21,6 +22,7 @@ export class MiPerfil {
   private readonly authService = inject(AuthService);
   private readonly usuarioService = inject(UsuarioService);
   private readonly imageService = inject(ImageService);
+  private readonly especialidadService = inject(EspecialidadService);
 
   usuario = this.authService.profesional;
 
@@ -28,7 +30,9 @@ export class MiPerfil {
   esAdmin = computed(() => this.usuario()?.Role === 'ADMIN');
 
   editando = signal<boolean>(false);
+  editandoContrasena = signal<boolean>(false);
   guardando = signal<boolean>(false);
+  guardandoContrasena = signal<boolean>(false);
   error = signal<string>('');
   mensaje = signal<string>('');
 
@@ -47,6 +51,9 @@ export class MiPerfil {
   descripcion = signal<string>('');
   ubicacion = signal<string>('');
   tarifaBase = signal<number | null>(null);
+  especialidadesDisponibles = signal<Especialidad[]>([]);
+  especialidadIds = signal<number[]>([]);
+  cargandoEspecialidades = signal<boolean>(false);
 
   // Foto
   archivoFoto = signal<File | null>(null);
@@ -73,6 +80,10 @@ export class MiPerfil {
         this.cargarFormularioDesde(usuarioActual);
       }
     });
+
+    if (this.esProfesional()) {
+      this.cargarEspecialidades();
+    }
   }
 
   private cargarFormularioDesde(usuario: Profesional): void {
@@ -84,6 +95,35 @@ export class MiPerfil {
     this.descripcion.set(usuario.Descripcion ?? '');
     this.ubicacion.set(usuario.Ubicacion ?? '');
     this.tarifaBase.set(usuario.TarifaBase ?? null);
+    this.especialidadIds.set(
+      usuario.especialidades?.map((especialidad) => especialidad.Id) ?? [],
+    );
+  }
+
+  private cargarEspecialidades(): void {
+    this.cargandoEspecialidades.set(true);
+
+    this.especialidadService.GetAllActivos().subscribe({
+      next: (especialidades) => {
+        this.especialidadesDisponibles.set(especialidades);
+        this.cargandoEspecialidades.set(false);
+      },
+      error: () => {
+        this.cargandoEspecialidades.set(false);
+      },
+    });
+  }
+
+  toggleEspecialidad(id: number, activa: boolean): void {
+    this.especialidadIds.update((ids) =>
+      activa
+        ? Array.from(new Set([...ids, id]))
+        : ids.filter((especialidadId) => especialidadId !== id),
+    );
+  }
+
+  especialidadSeleccionada(id: number): boolean {
+    return this.especialidadIds().includes(id);
   }
 
   iniciarEdicion(): void {
@@ -101,6 +141,15 @@ export class MiPerfil {
     this.editando.set(true);
   }
 
+  iniciarCambioContrasena(): void {
+    this.nuevaContrasena.set('');
+    this.confirmarContrasena.set('');
+    this.errorContrasena.set('');
+    this.error.set('');
+    this.mensaje.set('');
+    this.editandoContrasena.set(true);
+  }
+
   cancelarEdicion(): void {
     const usuarioActual = this.usuario();
     if (usuarioActual) {
@@ -113,6 +162,13 @@ export class MiPerfil {
     this.errorContrasena.set('');
     this.error.set('');
     this.editando.set(false);
+  }
+
+  cancelarCambioContrasena(): void {
+    this.nuevaContrasena.set('');
+    this.confirmarContrasena.set('');
+    this.errorContrasena.set('');
+    this.editandoContrasena.set(false);
   }
 
   onFotoSeleccionada(event: Event): void {
@@ -191,10 +247,6 @@ export class MiPerfil {
       return;
     }
 
-    if (!this.contrasenaValida()) {
-      return;
-    }
-
     // NOTA: la forma exacta de ProfesionalUpdateDto no está confirmada en este
     // proyecto; se construye el objeto con las claves que el backend
     // (usuario.service.ts) realmente lee en actualizar(). Ojo con "Contraseña"
@@ -206,14 +258,11 @@ export class MiPerfil {
       Pais: this.pais().trim(),
     };
 
-    if (this.nuevaContrasena()) {
-      datos['Contraseña'] = this.nuevaContrasena();
-    }
-
     if (this.esProfesional()) {
       datos['Descripcion'] = this.descripcion().trim();
       datos['Ubicacion'] = this.ubicacion().trim();
       datos['TarifaBase'] = this.tarifaBase();
+      datos['especialidadIds'] = this.especialidadIds();
     }
 
     this.guardando.set(true);
@@ -244,6 +293,36 @@ export class MiPerfil {
           this.guardando.set(false);
           this.error.set(
             err?.error?.message || 'No se pudo actualizar el perfil.'
+          );
+        },
+      });
+  }
+
+  guardarContrasena(): void {
+    if (!this.contrasenaValida()) {
+      return;
+    }
+
+    this.guardandoContrasena.set(true);
+    this.error.set('');
+    this.mensaje.set('');
+
+    this.usuarioService
+      .actualizar(this.usuario()?.Id ?? 0, {
+        Contraseña: this.nuevaContrasena(),
+      } as any)
+      .subscribe({
+        next: () => {
+          this.guardandoContrasena.set(false);
+          this.editandoContrasena.set(false);
+          this.nuevaContrasena.set('');
+          this.confirmarContrasena.set('');
+          this.mensaje.set('Contraseña actualizada correctamente.');
+        },
+        error: (err) => {
+          this.guardandoContrasena.set(false);
+          this.error.set(
+            err?.error?.message || 'No se pudo actualizar la contraseña.',
           );
         },
       });

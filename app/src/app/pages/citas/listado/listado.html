@@ -108,7 +108,7 @@
                   <span
                     class="tag"
                     [class.pendiente]="cita.Estado === 'PENDIENTE'"
-                    [class.confirmada]="cita.Estado === 'ACEPTADA'"
+                    [class.aceptada]="cita.Estado === 'ACEPTADA'"
                     [class.rechazada]="cita.Estado === 'RECHAZADA'"
                     [class.completada]="cita.Estado === 'COMPLETA'"
                     [class.cancelada]="cita.Estado === 'CANCELADA'"
@@ -157,3 +157,67 @@
     </div>
   }
 </section>
+
+@if (mostrandoModalMotivo()) {
+  <div
+    class="modal-overlay"
+    role="presentation"
+    (click)="cerrarModalMotivo()"
+  >
+    <div
+      class="modal-rechazo"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="titulo-modal-motivo"
+      (click)="$event.stopPropagation()"
+    >
+      <div class="modal-icono">!</div>
+      <div>
+        <p class="modal-eyebrow">Cambio de estado</p>
+        <h3 id="titulo-modal-motivo">
+          {{ accionMotivo() === 'rechazo' ? 'Rechazar cita' : 'Cancelar cita' }}
+        </h3>
+        <p class="modal-descripcion">
+          Indica el motivo para que quede registrado en el historial.
+        </p>
+      </div>
+
+      @if (citaPendienteMotivo(); as cita) {
+        <div class="modal-cita-resumen">
+          <strong>{{ cita.cliente?.NombreCompleto }}</strong>
+          <span>{{ cita.Fecha | date: 'dd/MM/yyyy' }} · {{ cita.Hora }}</span>
+        </div>
+      }
+
+      <label for="motivo-estado">
+        Motivo de {{ accionMotivo() === 'rechazo' ? 'rechazo' : 'cancelación' }} *
+      </label>
+      <textarea
+        id="motivo-estado"
+        rows="5"
+        maxlength="500"
+        placeholder="Escribe el motivo de forma clara..."
+        [ngModel]="motivoEstado()"
+        (ngModelChange)="motivoEstado.set($event)"
+      ></textarea>
+
+      @if (errorMotivoEstado()) {
+        <small class="modal-error">{{ errorMotivoEstado() }}</small>
+      }
+
+      <div class="modal-acciones">
+        <button class="btn btn-secundario" (click)="cerrarModalMotivo()">
+          Volver
+        </button>
+        <button
+          class="btn"
+          [class.btn-rechazar]="accionMotivo() === 'rechazo'"
+          [class.btn-cancelar]="accionMotivo() === 'cancelacion'"
+          (click)="confirmarMotivo()"
+        >
+          Confirmar {{ accionMotivo() === 'rechazo' ? 'rechazo' : 'cancelación' }}
+        </button>
+      </div>
+    </div>
+  </div>
+}

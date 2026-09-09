@@ -8,10 +8,15 @@
       </p>
     </div>
 
-    @if (usuario() && !esAdmin() && !editando()) {
-      <button class="btn btn-primario" (click)="iniciarEdicion()">
-        Editar perfil
-      </button>
+    @if (usuario() && !esAdmin() && !editando() && !editandoContrasena()) {
+      <div class="perfil-acciones-cabecera">
+        <button class="btn btn-secundario" (click)="iniciarCambioContrasena()">
+          Cambiar contraseña
+        </button>
+        <button class="btn btn-primario" (click)="iniciarEdicion()">
+          Editar perfil
+        </button>
+      </div>
     }
   </div>
 
@@ -257,12 +262,53 @@
                 placeholder="Contale a tus clientes sobre tu experiencia..."
               ></textarea>
             </div>
+
+            <div class="campo full especialidades-edicion">
+              <label>Especialidades con las que trabajas</label>
+              <p class="especialidades-ayuda">
+                Activa o desactiva las especialidades que ofreces actualmente.
+              </p>
+
+              @if (cargandoEspecialidades()) {
+                <span class="hint">Cargando especialidades...</span>
+              } @else if (especialidadesDisponibles().length > 0) {
+                <div class="especialidades-selector">
+                  @for (especialidad of especialidadesDisponibles(); track especialidad.Id) {
+                    <label class="especialidad-opcion">
+                      <input
+                        type="checkbox"
+                        [checked]="especialidadSeleccionada(especialidad.Id)"
+                        (change)="toggleEspecialidad(especialidad.Id, $any($event.target).checked)"
+                      />
+                      <span>{{ especialidad.Nombre }}</span>
+                    </label>
+                  }
+                </div>
+              } @else {
+                <span class="hint">No hay especialidades activas disponibles.</span>
+              }
+            </div>
           }
         </div>
 
-        <div class="perfil-separador">
-          <p class="eyebrow">Cambiar contraseña (opcional)</p>
+        <div class="perfil-acciones">
+          <button class="btn btn-secundario" [disabled]="guardando()" (click)="cancelarEdicion()">
+            Cancelar
+          </button>
+
+          <button class="btn btn-primario" [disabled]="guardando()" (click)="guardar()">
+            {{ guardando() ? 'Guardando...' : 'Guardar cambios' }}
+          </button>
         </div>
+      </div>
+    }
+
+    @if (editandoContrasena()) {
+      <div class="panel perfil-form cambio-contrasena">
+        <h3>Cambiar contraseña</h3>
+        <p class="panel-ayuda">
+          Usa una contraseña de al menos 6 caracteres y no la compartas con nadie.
+        </p>
 
         <div class="grid-formulario">
           <div class="campo">
@@ -272,7 +318,6 @@
               type="password"
               [ngModel]="nuevaContrasena()"
               (ngModelChange)="nuevaContrasena.set($event)"
-              placeholder="Dejar en blanco para no cambiarla"
             />
           </div>
 
@@ -292,12 +337,11 @@
         }
 
         <div class="perfil-acciones">
-          <button class="btn btn-secundario" [disabled]="guardando()" (click)="cancelarEdicion()">
+          <button class="btn btn-secundario" [disabled]="guardandoContrasena()" (click)="cancelarCambioContrasena()">
             Cancelar
           </button>
-
-          <button class="btn btn-primario" [disabled]="guardando()" (click)="guardar()">
-            {{ guardando() ? 'Guardando...' : 'Guardar cambios' }}
+          <button class="btn btn-primario" [disabled]="guardandoContrasena()" (click)="guardarContrasena()">
+            {{ guardandoContrasena() ? 'Guardando...' : 'Actualizar contraseña' }}
           </button>
         </div>
       </div>

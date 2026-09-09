@@ -15,6 +15,7 @@ import { AuthService } from '../../core/services/auth.service';
 import { CitaService } from '../../core/services/cita.service';
 import { UsuarioService } from '../../core/services/usuario.service';
 import { ServicioService } from '../../core/services/servicio.service';
+import { ImageService } from '../../core/services/imagen.service';
 
 import { FormsModule } from '@angular/forms';
 import { Categoria } from '../../core/models/categoria.model';
@@ -34,6 +35,7 @@ export class PanelGeneral implements OnInit {
   private router = inject(Router);
   private categoriaService = inject(CategoriaService);
   private authService = inject(AuthService);
+  private imageService = inject(ImageService);
 
   //filtros
     categoriaSeleccionada = '';
@@ -129,6 +131,10 @@ cargarProfesionales(): void {
     this.errorServicios.set('');
 
     this.cargarServicios(profesional.Id);
+  }
+
+  fotoProfesionalUrl(foto?: string | null): string {
+    return foto ? this.imageService.getUrl(foto) : '';
   }
 
   cargarServicios(profesionalId: number): void {

@@ -123,32 +123,40 @@
     align-items:center;
     justify-content:center;
     width:fit-content;
-    padding:7px 14px;
-    border-radius:999px;
-    font-size:.78rem;
-    font-weight:600;
+    min-width:92px;
+    padding:8px 14px;
+    border-radius:12px;
+    font-size:.72rem;
+    font-weight:700;
+    letter-spacing:.5px;
+    text-transform:uppercase;
+    border:1px solid transparent;
     background:#262626;
     color:#dddddd;
 }
 
 .pendiente{
-    background:#3a2e0a;
+    background:rgba(255, 207, 75, .1);
+    border-color:rgba(255, 207, 75, .3);
     color:#ffcf4b;
 }
 
-.confirmada{
-    background:#0a2a3a;
+.aceptada{
+    background:rgba(75, 195, 255, .1);
+    border-color:rgba(75, 195, 255, .3);
     color:#4bc3ff;
 }
 
 .completada{
-    background:#10381b;
+    background:rgba(75, 255, 128, .1);
+    border-color:rgba(75, 255, 128, .3);
     color:#4bff80;
 }
 
 .cancelada{
-    background:#411414;
-    color:#ff6464;
+    background:rgba(255, 100, 100, .1);
+    border-color:rgba(255, 100, 100, .3);
+    color:#ff7777;
 }
 
 @media(max-width:900px){
@@ -167,13 +175,15 @@
 
 /* --- Tags faltantes (ACEPTADA / RECHAZADA) --- */
 .aceptada{
-    background:#0a2a3a;
+    background:rgba(75, 195, 255, .1);
+    border-color:rgba(75, 195, 255, .3);
     color:#4bc3ff;
 }
 
 .rechazada{
-    background:#411414;
-    color:#ff6464;
+    background:rgba(255, 100, 100, .1);
+    border-color:rgba(255, 100, 100, .3);
+    color:#ff7777;
 }
 
 /* --- Feedback de éxito (reseña enviada) --- */

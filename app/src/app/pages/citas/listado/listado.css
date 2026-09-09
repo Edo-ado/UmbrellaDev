@@ -25,7 +25,6 @@
     text-transform:uppercase;
     letter-spacing:4px;
     font-size:.8rem;
-    margin-bottom:15px;
 }
 
 .usuarios-hero h2{
@@ -157,28 +156,59 @@ td{
 
 
 .acciones-cita {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
+        display:flex;
+        align-items:center;
+    justify-content:center;
+        flex-wrap:nowrap;
+        gap:8px;
+        min-width:max-content;
+        white-space:nowrap;
 }
 
+.acciones-cita .btn{
+        flex:0 0 auto;
+        padding:10px 14px;
+        white-space:nowrap;
+}
+
+
+.tag {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 92px;
+    padding: 8px 14px;
+    border: 1px solid #363636;
+    border-radius: 12px;
+    font-size: .72rem;
+    font-weight: 700;
+    letter-spacing: .5px;
+    text-transform: uppercase;
+}
+
+.tag.pendiente {
+    color: #ffcf4b;
+    background: rgba(255, 207, 75, .1);
+    border: 1px solid rgba(255, 207, 75, .3);
+}
 
 .tag.aceptada {
-  color: #6ee89a;
-  background: rgba(110, 232, 154, .1);
-  border: 1px solid rgba(110, 232, 154, .3);
+    color: #4bc3ff;
+    background: rgba(75, 195, 255, .1);
+    border: 1px solid rgba(75, 195, 255, .3);
 }
 
-.tag.rechazada {
-  color: #ff7777;
-  background: rgba(255, 119, 119, .1);
-  border: 1px solid rgba(255, 119, 119, .3);
+.tag.rechazada,
+.tag.cancelada {
+    color: #ff7777;
+    background: rgba(255, 100, 100, .1);
+    border: 1px solid rgba(255, 100, 100, .3);
 }
 
 .tag.completa {
-  color: #8ab4ff;
-  background: rgba(138, 180, 255, .1);
-  border: 1px solid rgba(138, 180, 255, .3);
+    color: #4bff80;
+    background: rgba(75, 255, 128, .1);
+    border: 1px solid rgba(75, 255, 128, .3);
 }
 
 
@@ -206,4 +236,136 @@ td{
 
 .btn-completar:hover {
   background: #3a5fb0;
+}
+
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    background: rgba(0, 0, 0, .78);
+    backdrop-filter: blur(8px);
+}
+
+.modal-rechazo {
+    width: min(100%, 520px);
+    padding: 30px;
+    background:
+        radial-gradient(circle at top right, rgba(176, 0, 23, .2), transparent 45%),
+        #121212;
+    border: 1px solid #3a1b20;
+    border-radius: 20px;
+    box-shadow: 0 24px 80px rgba(0, 0, 0, .55), 0 0 35px rgba(176, 0, 23, .12);
+}
+
+.modal-icono {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    margin-bottom: 20px;
+    border: 1px solid rgba(255, 119, 119, .35);
+    border-radius: 50%;
+    background: rgba(176, 0, 23, .18);
+    color: #ff7777;
+    font-size: 1.4rem;
+    font-weight: 700;
+}
+
+.modal-eyebrow {
+    margin: 0 0 7px;
+    color: #ff7777;
+    font-size: .75rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+.modal-rechazo h3 {
+    margin: 0;
+    color: #ffffff;
+    font-size: 1.5rem;
+}
+
+.modal-descripcion {
+    margin: 10px 0 20px;
+    color: #a7a7a7;
+    line-height: 1.6;
+}
+
+.modal-cita-resumen {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    margin-bottom: 20px;
+    padding: 14px 16px;
+    border-left: 3px solid #b00017;
+    background: #191919;
+    color: #ffffff;
+}
+
+.modal-cita-resumen span {
+    color: #9b9b9b;
+    font-size: .88rem;
+}
+
+.modal-rechazo label {
+    display: block;
+    margin-bottom: 9px;
+    color: #d7d7d7;
+    font-size: .85rem;
+}
+
+.modal-rechazo textarea {
+    width: 100%;
+    box-sizing: border-box;
+    min-height: 125px;
+    padding: 14px;
+    resize: vertical;
+    background: #0c0c0c;
+    border: 1px solid #303030;
+    border-radius: 12px;
+    color: #ffffff;
+    font: inherit;
+    line-height: 1.5;
+    outline: none;
+}
+
+.modal-rechazo textarea:focus {
+    border-color: #b00017;
+    box-shadow: 0 0 0 3px rgba(176, 0, 23, .15);
+}
+
+.modal-rechazo textarea::placeholder {
+    color: #686868;
+}
+
+.modal-error {
+    display: block;
+    margin-top: 8px;
+    color: #ff7777;
+}
+
+.modal-acciones {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 24px;
+}
+
+@media (max-width: 560px) {
+    .modal-rechazo {
+        padding: 24px;
+    }
+
+    .modal-acciones {
+        flex-direction: column-reverse;
+    }
+
+    .modal-acciones .btn {
+        width: 100%;
+    }
 }
