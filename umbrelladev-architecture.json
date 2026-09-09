@@ -17,7 +17,7 @@
     { "id": "controllers", "type": "backend", "label": "Controladores", "sublabel": "api/src/controllers", "pos": [550, 270], "size": [180, 70] },
     { "id": "services", "type": "backend", "label": "Servicios de dominio", "sublabel": "api/src/services", "pos": [800, 270], "size": [190, 70] },
     { "id": "database", "type": "database", "label": "MariaDB", "sublabel": "Prisma 7 / persistencia", "pos": [1060, 270], "size": [180, 70] },
-    { "id": "security", "type": "security", "label": "Auth y validación", "sublabel": "JWT / Passport / Zod", "pos": [300, 110], "size": [180, 70] },
+    { "id": "security", "type": "security", "label": "Auth y validación", "sublabel": "JWT / jsonwebtoken / Zod", "pos": [300, 110], "size": [180, 70] },
     { "id": "media", "type": "cloud", "label": "Archivos e imágenes", "sublabel": "Multer / uploads", "pos": [800, 430], "size": [190, 70] }
   ],
   "boundaries": [
@@ -37,6 +37,6 @@
   "cards": [
     { "dot": "cyan", "title": "Cliente", "items": ["Angular organiza páginas, layout y componentes compartidos", "Consume la API mediante rutas HTTP"] },
     { "dot": "emerald", "title": "API", "items": ["Express enruta solicitudes hacia controladores", "Los servicios concentran la lógica de dominio"] },
-    { "dot": "rose", "title": "Protección y datos", "items": ["JWT, Passport y Zod cubren acceso y validación", "Prisma conecta con MariaDB y Multer gestiona imágenes"] }
+    { "dot": "rose", "title": "Protección y datos", "items": ["JWT, jsonwebtoken y Zod cubren acceso y validación", "Prisma conecta con MariaDB y Multer gestiona imágenes"] }
   ]
 }
